@@ -137,3 +137,39 @@ public enum NarrativeType
     /// <summary>Discovery or revelation</summary>
     Discovery
 }
+
+/// <summary>
+/// Types of events that can trigger achievements
+/// </summary>
+public enum TriggerType
+{
+    /// <summary>Player entered a room</summary>
+    RoomVisited,
+    
+    /// <summary>Player collected an item</summary>
+    ItemCollected,
+    
+    /// <summary>Player solved a puzzle</summary>
+    PuzzleSolved,
+    
+    /// <summary>Player executed a command</summary>
+    CommandExecuted,
+    
+    /// <summary>Player completed a story pack</summary>
+    StoryCompleted,
+    
+    /// <summary>Time-based trigger</summary>
+    TimeElapsed,
+    
+    /// <summary>Player stat reached threshold</summary>
+    StatThreshold,
+    
+    /// <summary>Player examined an object</summary>
+    ObjectExamined,
+    
+    /// <summary>Player opened a container</summary>
+    ContainerOpened,
+    
+    /// <summary>Game flag was set</summary>
+    FlagSet
+}
