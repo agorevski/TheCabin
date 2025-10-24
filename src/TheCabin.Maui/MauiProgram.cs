@@ -92,7 +92,13 @@ public static class MauiProgram
         services.AddSingleton<ICommandParserService>(sp =>
             sp.GetRequiredService<ILocalCommandParser>() as ICommandParserService 
             ?? new LocalCommandParser());
-        services.AddSingleton<IPuzzleEngine, PuzzleEngine>();
+        
+        // Achievement service (optional dependency for engine components)
+        services.AddSingleton<IAchievementService, AchievementService>();
+        
+        // Puzzle engine with achievement service
+        services.AddSingleton<IPuzzleEngine>(sp =>
+            new PuzzleEngine(sp.GetService<IAchievementService>()));
         
         // Memory cache
         services.AddMemoryCache();
@@ -100,6 +106,24 @@ public static class MauiProgram
     
     private static void RegisterEngineComponents(IServiceCollection services)
     {
+        // Game state machine with achievement service
+        services.AddSingleton(sp => 
+            new GameStateMachine(
+                sp.GetService<IAchievementService>()));
+        
+        // Command router with achievement service
+        services.AddSingleton(sp =>
+            new CommandRouter(
+                sp.GetServices<ICommandHandler>(),
+                sp.GetService<IAchievementService>()));
+        
+        // Inventory manager with achievement service
+        services.AddSingleton<IInventoryManager>(sp =>
+        {
+            var gameState = sp.GetRequiredService<GameStateMachine>().CurrentState;
+            return new InventoryManager(gameState, sp.GetService<IAchievementService>());
+        });
+        
         // Command handlers
         services.AddTransient<ICommandHandler, MoveCommandHandler>();
         services.AddTransient<ICommandHandler, TakeCommandHandler>();

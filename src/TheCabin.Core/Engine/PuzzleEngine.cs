@@ -9,9 +9,12 @@ namespace TheCabin.Core.Engine;
 public class PuzzleEngine : IPuzzleEngine
 {
     private readonly Dictionary<string, Func<GameState, bool>> _puzzleCheckers = new();
+    private readonly IAchievementService? _achievementService;
     
-    public PuzzleEngine()
+    public PuzzleEngine(IAchievementService? achievementService = null)
     {
+        _achievementService = achievementService;
+        
         // Register built-in puzzle types
         RegisterBuiltInPuzzles();
     }
@@ -19,7 +22,7 @@ public class PuzzleEngine : IPuzzleEngine
     /// <summary>
     /// Checks if any puzzle conditions have been met
     /// </summary>
-    public Task<PuzzleResult> CheckPuzzleCompletionAsync(GameState gameState)
+    public async Task<PuzzleResult> CheckPuzzleCompletionAsync(GameState gameState)
     {
         foreach (var puzzle in _puzzleCheckers)
         {
@@ -34,17 +37,26 @@ public class PuzzleEngine : IPuzzleEngine
                 gameState.Progress.CompletedPuzzles.Add(puzzle.Key);
                 gameState.Player.Stats.PuzzlesSolved++;
                 
-                return Task.FromResult(new PuzzleResult
+                // Track achievement
+                if (_achievementService != null)
+                {
+                    await _achievementService.TrackEventAsync(
+                        TriggerType.PuzzleSolved,
+                        puzzle.Key,
+                        gameState);
+                }
+                
+                return new PuzzleResult
                 {
                     Completed = true,
                     PuzzleId = puzzle.Key,
                     CompletionMessage = GetCompletionMessage(puzzle.Key),
                     Reward = GetReward(puzzle.Key)
-                });
+                };
             }
         }
         
-        return Task.FromResult(new PuzzleResult { Completed = false });
+        return new PuzzleResult { Completed = false };
     }
     
     /// <summary>

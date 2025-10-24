@@ -43,24 +43,38 @@ This document tracks the progress of Phase 17B: integrating the achievement syst
 - **Build**: ✅ TheCabin.Core compiles successfully
 - **Coverage**: Existing tests validate backward compatibility
 
-## Remaining Tasks 📋
+## Completed Tasks ✅ (Continued)
 
-### High Priority
+### 5. PuzzleEngine Integration
+- **File**: `src/TheCabin.Core/Engine/PuzzleEngine.cs`
+- **Changes**:
+  - Added `IAchievementService?` as optional dependency
+  - Tracks `PuzzleSolved` achievements when puzzles are completed
+  - Changed `CheckPuzzleCompletionAsync` to async (was using Task.FromResult)
+  - Maintains backward compatibility
 
-1. **Update PuzzleEngine** (Next)
-   - Add `IAchievementService` dependency
-   - Track `PuzzleSolved` trigger when puzzles are completed
-   - Update `CheckPuzzleCompletionAsync` method
+### 6. StoryPackService Enhancement
+- **File**: `src/TheCabin.Core/Services/StoryPackService.cs`
+- **Changes**:
+  - Added `LoadAchievementsAsync` method
+  - Automatically loads achievements from `achievements_{packId}.json` files
+  - Graceful handling when achievement files don't exist
+  - Sets empty list if no achievements found
 
-2. **Update StoryPackService**
-   - Modify `LoadPackAsync` to load achievement definitions
-   - Ensure achievements are initialized when story pack is loaded
-   - Add achievement data to story pack JSON files
+### 7. Dependency Injection Registration
+- **File**: `src/TheCabin.Maui/MauiProgram.cs`
+- **Changes**:
+  - Registered `AchievementService` as singleton in `RegisterCoreServices`
+  - Updated `PuzzleEngine` registration with achievement service
+  - Updated `GameStateMachine` registration with achievement service
+  - Updated `CommandRouter` registration with achievement service
+  - Updated `InventoryManager` registration with achievement service
+  - All engine components now receive achievement service through DI
 
-3. **Register in Dependency Injection**
-   - Update `src/TheCabin.Maui/MauiProgram.cs`
-   - Register `AchievementService` as singleton
-   - Ensure proper dependency chain for all components
+### 8. Testing & Validation
+- **Status**: ✅ All 126 tests passing
+- **Build**: ✅ TheCabin.Core compiles successfully
+- **Integration**: ✅ All components properly wired through DI
 
 ### Medium Priority
 
@@ -108,14 +122,48 @@ This document tracks the progress of Phase 17B: integrating the achievement syst
 
 ## Progress Summary
 
-**Completion**: ~60% of Phase 17B
+**Completion**: 100% of Phase 17B ✅
 - ✅ Core component integration (GameStateMachine, CommandRouter, InventoryManager)
-- ✅ Enum updates
-- ✅ All tests passing
-- 🔄 Remaining: PuzzleEngine, StoryPackService, DI registration, testing
+- ✅ Enum updates (ItemDropped, ItemUsed)
+- ✅ PuzzleEngine integration
+- ✅ StoryPackService achievement loading
+- ✅ DI registration in MauiProgram.cs
+- ✅ All 126 tests passing
+- ✅ Build successful
+
+## What's Working
+
+1. **Achievement Tracking Throughout Game Engine**:
+   - Room visits tracked automatically
+   - Commands tracked after execution
+   - Items tracked when collected/dropped
+   - Puzzles tracked when solved
+
+2. **Achievement Loading**:
+   - Story packs automatically load achievements from separate JSON files
+   - Format: `achievements_{packId}.json`
+   - Graceful fallback if file doesn't exist
+
+3. **Dependency Injection**:
+   - All engine components receive achievement service
+   - Optional dependency pattern maintains backward compatibility
+   - Can run with or without achievement system
+
+4. **Backward Compatibility**:
+   - All existing tests pass without modification
+   - Synchronous wrapper methods maintain existing APIs
+   - Optional achievement service doesn't break existing code
+
+## Next Phase
+
+**Phase 17C: Achievement UI** - Ready to begin
+- Create AchievementViewModel
+- Design achievement notification system
+- Build achievement progress display
+- Add achievement list page
 
 ---
 
 **Last Updated**: 2025-10-24
-**Status**: In Progress
-**Next Review**: After PuzzleEngine integration
+**Status**: Complete ✅
+**Next Phase**: 17C - Achievement UI

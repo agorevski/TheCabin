@@ -139,7 +139,49 @@ public class StoryPackService : IStoryPackService
             throw new InvalidDataException($"Failed to deserialize story pack from {filePath}");
         }
         
+        // Try to load achievements from separate file
+        await LoadAchievementsAsync(pack, filePath);
+        
         return pack;
+    }
+    
+    private async Task LoadAchievementsAsync(StoryPack pack, string packFilePath)
+    {
+        // Look for achievements file: achievements_{packId}.json
+        var directory = Path.GetDirectoryName(packFilePath);
+        var achievementsFileName = $"achievements_{pack.Id}.json";
+        var achievementsPath = Path.Combine(directory ?? "", achievementsFileName);
+        
+        if (File.Exists(achievementsPath))
+        {
+            try
+            {
+                var json = await File.ReadAllTextAsync(achievementsPath);
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    ReadCommentHandling = JsonCommentHandling.Skip,
+                    AllowTrailingCommas = true
+                };
+                
+                var achievements = JsonSerializer.Deserialize<List<Achievement>>(json, options);
+                
+                if (achievements != null && achievements.Count > 0)
+                {
+                    pack.Achievements = achievements;
+                }
+            }
+            catch
+            {
+                // If achievements file is invalid, just continue without them
+                pack.Achievements = new List<Achievement>();
+            }
+        }
+        else
+        {
+            // No achievements file, use empty list
+            pack.Achievements = new List<Achievement>();
+        }
     }
     
     private void ValidatePackInternal(StoryPack pack)
