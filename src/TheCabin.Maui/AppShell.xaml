@@ -18,5 +18,11 @@
         ContentTemplate="{DataTemplate views:StoryPackSelectorPage}"
         Route="StoryPackSelectorPage"
         IsVisible="False" />
+    
+    <ShellContent
+        Title="Load Game"
+        ContentTemplate="{DataTemplate views:LoadGamePage}"
+        Route="LoadGamePage"
+        IsVisible="False" />
 
 </Shell>

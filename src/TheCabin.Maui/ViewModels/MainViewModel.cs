@@ -138,6 +138,61 @@ public partial class MainViewModel : BaseViewModel
             await InitializeAsync();
         }
     }
+    
+    [RelayCommand]
+    private async Task SaveGameAsync()
+    {
+        if (_currentGameState == null)
+        {
+            await ShowErrorAsync("No active game to save");
+            return;
+        }
+        
+        var saveName = await Shell.Current.DisplayPromptAsync(
+            "Save Game",
+            "Enter a name for this save:",
+            "Save",
+            "Cancel",
+            placeholder: $"Save {DateTime.Now:yyyy-MM-dd HH:mm}");
+        
+        if (string.IsNullOrWhiteSpace(saveName))
+            return;
+        
+        await ExecuteAsync(async () =>
+        {
+            await _gameStateService.SaveGameAsync(_currentGameState, saveName);
+            AddNarrativeEntry($"Game saved as '{saveName}'", NarrativeType.SystemMessage);
+            await Shell.Current.DisplayAlert("Success", "Game saved successfully!", "OK");
+        }, "Failed to save game");
+    }
+    
+    [RelayCommand]
+    private async Task LoadGameAsync()
+    {
+        await Shell.Current.GoToAsync("//LoadGamePage");
+    }
+    
+    public async Task LoadSavedGameAsync(int saveId)
+    {
+        await ExecuteAsync(async () =>
+        {
+            var loadedState = await _gameStateService.LoadGameAsync(saveId);
+            _currentGameState = loadedState;
+            
+            // Clear and reload story feed
+            StoryFeed.Clear();
+            
+            // Show current location
+            var room = _currentGameState.World.Rooms[_currentGameState.Player.CurrentLocationId];
+            AddNarrativeEntry(room.Description, NarrativeType.Description);
+            AddNarrativeEntry("Game loaded successfully!", NarrativeType.SystemMessage);
+            
+            // Update UI
+            UpdateUIState();
+            
+            _logger.LogInformation("Game loaded from save {SaveId}", saveId);
+        }, "Failed to load game");
+    }
 
     [RelayCommand]
     private void ToggleTts()

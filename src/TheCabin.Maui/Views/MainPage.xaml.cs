@@ -2,9 +2,10 @@ using TheCabin.Maui.ViewModels;
 
 namespace TheCabin.Maui.Views;
 
-public partial class MainPage : ContentPage
+public partial class MainPage : ContentPage, IQueryAttributable
 {
     private readonly MainViewModel _viewModel;
+    private bool _isInitialized;
 
     public MainPage(MainViewModel viewModel)
     {
@@ -16,6 +17,23 @@ public partial class MainPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await _viewModel.InitializeAsync();
+        
+        if (!_isInitialized)
+        {
+            await _viewModel.InitializeAsync();
+            _isInitialized = true;
+        }
+    }
+    
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        if (query.ContainsKey("LoadSaveId"))
+        {
+            var saveId = (int)query["LoadSaveId"];
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                await _viewModel.LoadSavedGameAsync(saveId);
+            });
+        }
     }
 }

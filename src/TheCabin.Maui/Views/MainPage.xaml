@@ -139,41 +139,55 @@
                 <RoundRectangle CornerRadius="8"/>
             </Border.StrokeShape>
             
-            <Grid ColumnDefinitions="*,*,*,*,*">
+            <Grid ColumnDefinitions="*,*,*,*,*,*,*">
                 <Button Grid.Column="0"
                         Text="📚"
                         Command="{Binding SelectStoryPackCommand}"
                         BackgroundColor="Transparent"
                         TextColor="White"
-                        FontSize="24"/>
+                        FontSize="20"/>
                 
                 <Button Grid.Column="1"
+                        Text="💾"
+                        Command="{Binding SaveGameCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="White"
+                        FontSize="20"/>
+                
+                <Button Grid.Column="2"
+                        Text="📂"
+                        Command="{Binding LoadGameCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="White"
+                        FontSize="20"/>
+                
+                <Button Grid.Column="3"
                         Text="🎒"
                         Command="{Binding ShowInventoryCommand}"
                         BackgroundColor="Transparent"
                         TextColor="White"
-                        FontSize="24"/>
+                        FontSize="20"/>
                 
-                <Button Grid.Column="2"
+                <Button Grid.Column="4"
                         Text="❓"
                         Command="{Binding ShowHelpCommand}"
                         BackgroundColor="Transparent"
                         TextColor="White"
-                        FontSize="24"/>
+                        FontSize="20"/>
                 
-                <Button Grid.Column="3"
+                <Button Grid.Column="5"
                         Text="🔄"
                         Command="{Binding NewGameCommand}"
                         BackgroundColor="Transparent"
                         TextColor="White"
-                        FontSize="24"/>
+                        FontSize="20"/>
                 
-                <Button Grid.Column="4"
+                <Button Grid.Column="6"
                         Text="{Binding TtsEnabled, Converter={StaticResource TtsIconConverter}}"
                         Command="{Binding ToggleTtsCommand}"
                         BackgroundColor="Transparent"
                         TextColor="White"
-                        FontSize="24"/>
+                        FontSize="20"/>
             </Grid>
         </Border>
         
