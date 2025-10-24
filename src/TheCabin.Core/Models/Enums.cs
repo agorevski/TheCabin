@@ -179,3 +179,21 @@ public enum TriggerType
     /// <summary>Game flag was set</summary>
     FlagSet
 }
+
+/// <summary>
+/// Types of puzzles with different solving mechanics
+/// </summary>
+public enum PuzzleType
+{
+    /// <summary>Steps must be completed in specific order</summary>
+    Sequential,
+    
+    /// <summary>Steps can be completed in any order</summary>
+    Combinatorial,
+    
+    /// <summary>Must be completed within time limit</summary>
+    Timed,
+    
+    /// <summary>Based on room/world state conditions</summary>
+    Environmental
+}

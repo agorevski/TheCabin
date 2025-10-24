@@ -16,6 +16,36 @@ public interface IPuzzleEngine
     /// Registers a custom puzzle checker
     /// </summary>
     void RegisterPuzzle(string puzzleId, Func<GameState, bool> checker);
+    
+    /// <summary>
+    /// Initializes puzzles from a story pack
+    /// </summary>
+    void InitializePuzzles(List<Puzzle> puzzles);
+    
+    /// <summary>
+    /// Attempts to complete a puzzle step
+    /// </summary>
+    Task<PuzzleStepResult> AttemptStepAsync(string puzzleId, ParsedCommand command, GameState gameState);
+    
+    /// <summary>
+    /// Gets the current state of a puzzle
+    /// </summary>
+    PuzzleState? GetPuzzleState(string puzzleId, GameState gameState);
+    
+    /// <summary>
+    /// Gets all active puzzles
+    /// </summary>
+    List<Puzzle> GetActivePuzzles(GameState gameState);
+    
+    /// <summary>
+    /// Gets available hints for a puzzle
+    /// </summary>
+    List<Hint> GetAvailableHints(string puzzleId, GameState gameState);
+    
+    /// <summary>
+    /// Checks if a puzzle step's conditions are met
+    /// </summary>
+    bool CheckStepConditions(PuzzleStep step, GameState gameState);
 }
 
 /// <summary>

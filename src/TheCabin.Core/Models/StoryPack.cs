@@ -54,6 +54,11 @@ public class StoryPack
     /// Achievements available in this story pack
     /// </summary>
     public List<Achievement> Achievements { get; set; } = new();
+    
+    /// <summary>
+    /// Puzzles available in this story pack
+    /// </summary>
+    public List<Puzzle> Puzzles { get; set; } = new();
 }
 
 /// <summary>

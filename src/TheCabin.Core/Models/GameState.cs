@@ -83,6 +83,11 @@ public class ProgressState
     public List<string> CompletedPuzzles { get; set; } = new();
     
     /// <summary>
+    /// Current state of active puzzles (puzzle ID -> state)
+    /// </summary>
+    public Dictionary<string, PuzzleState> PuzzleStates { get; set; } = new();
+    
+    /// <summary>
     /// IDs of areas/rooms that have been unlocked
     /// </summary>
     public List<string> UnlockedAreas { get; set; } = new();
