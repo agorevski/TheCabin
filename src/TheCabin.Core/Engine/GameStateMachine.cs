@@ -9,22 +9,34 @@ namespace TheCabin.Core.Engine;
 public class GameStateMachine
 {
     private readonly IInventoryManager _inventoryManager;
+    private readonly IAchievementService? _achievementService;
     
     /// <summary>
     /// Current game state
     /// </summary>
     public GameState CurrentState { get; private set; }
     
-    public GameStateMachine(IInventoryManager inventoryManager)
+    public GameStateMachine(
+        IInventoryManager inventoryManager, 
+        IAchievementService? achievementService = null)
     {
         _inventoryManager = inventoryManager ?? throw new ArgumentNullException(nameof(inventoryManager));
+        _achievementService = achievementService; // Optional dependency
         CurrentState = new GameState();
     }
     
     /// <summary>
-    /// Initializes a new game from a story pack
+    /// Initializes a new game from a story pack (synchronous version for backward compatibility)
     /// </summary>
     public void Initialize(StoryPack storyPack)
+    {
+        InitializeAsync(storyPack).GetAwaiter().GetResult();
+    }
+    
+    /// <summary>
+    /// Initializes a new game from a story pack with achievement tracking
+    /// </summary>
+    public async Task InitializeAsync(StoryPack storyPack)
     {
         if (storyPack == null)
             throw new ArgumentNullException(nameof(storyPack));
@@ -59,6 +71,12 @@ public class GameStateMachine
             }
         };
         
+        // Initialize achievements if available
+        if (_achievementService != null && storyPack.Achievements != null && storyPack.Achievements.Any())
+        {
+            await _achievementService.InitializeAsync(storyPack.Achievements);
+        }
+        
         // Add initial narrative entry
         var startingRoom = GetCurrentRoom();
         CurrentState.StoryLog.Add(new NarrativeEntry
@@ -69,6 +87,15 @@ public class GameStateMachine
         
         // Mark starting room as visited
         startingRoom.IsVisited = true;
+        
+        // Track initial room visit
+        if (_achievementService != null)
+        {
+            await _achievementService.TrackEventAsync(
+                TriggerType.RoomVisited, 
+                storyPack.StartingRoomId, 
+                CurrentState);
+        }
     }
     
     /// <summary>
@@ -137,9 +164,17 @@ public class GameStateMachine
     }
     
     /// <summary>
-    /// Transitions the player to a new room
+    /// Transitions the player to a new room (synchronous version for backward compatibility)
     /// </summary>
     public void TransitionTo(string roomId)
+    {
+        TransitionToAsync(roomId).GetAwaiter().GetResult();
+    }
+    
+    /// <summary>
+    /// Transitions the player to a new room with achievement tracking
+    /// </summary>
+    public async Task TransitionToAsync(string roomId)
     {
         if (!CanTransitionTo(roomId))
         {
@@ -156,6 +191,15 @@ public class GameStateMachine
         {
             newRoom.IsVisited = true;
             CurrentState.Player.Stats.RoomsExplored++;
+            
+            // Track room visited achievement
+            if (_achievementService != null)
+            {
+                await _achievementService.TrackEventAsync(
+                    TriggerType.RoomVisited, 
+                    roomId, 
+                    CurrentState);
+            }
         }
         
         // Increment turn counter

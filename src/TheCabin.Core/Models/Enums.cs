@@ -149,6 +149,12 @@ public enum TriggerType
     /// <summary>Player collected an item</summary>
     ItemCollected,
     
+    /// <summary>Player dropped an item</summary>
+    ItemDropped,
+    
+    /// <summary>Player used an item</summary>
+    ItemUsed,
+    
     /// <summary>Player solved a puzzle</summary>
     PuzzleSolved,
     

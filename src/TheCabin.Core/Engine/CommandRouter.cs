@@ -10,14 +10,17 @@ public class CommandRouter
 {
     private readonly Dictionary<string, ICommandHandler> _handlers;
     private readonly GameStateMachine _stateMachine;
+    private readonly IAchievementService? _achievementService;
     
     public CommandRouter(
         IEnumerable<ICommandHandler> handlers,
-        GameStateMachine stateMachine)
+        GameStateMachine stateMachine,
+        IAchievementService? achievementService = null)
     {
         _handlers = handlers?.ToDictionary(h => h.Verb.ToLowerInvariant(), h => h)
             ?? throw new ArgumentNullException(nameof(handlers));
         _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
+        _achievementService = achievementService; // Optional dependency
     }
     
     /// <summary>
@@ -61,6 +64,15 @@ public class CommandRouter
             // Update game stats
             _stateMachine.CurrentState.Player.Stats.CommandsExecuted++;
             _stateMachine.CurrentState.World.TurnNumber++;
+            
+            // Track achievement for command execution
+            if (_achievementService != null && result.Success)
+            {
+                await _achievementService.TrackEventAsync(
+                    TriggerType.CommandExecuted,
+                    verb,
+                    _stateMachine.CurrentState);
+            }
             
             // Add narrative entry
             _stateMachine.AddNarrativeEntry(

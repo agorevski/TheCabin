@@ -9,10 +9,12 @@ namespace TheCabin.Core.Engine;
 public class InventoryManager : IInventoryManager
 {
     private readonly GameState _gameState;
+    private readonly IAchievementService? _achievementService;
     
-    public InventoryManager(GameState gameState)
+    public InventoryManager(GameState gameState, IAchievementService? achievementService = null)
     {
         _gameState = gameState ?? throw new ArgumentNullException(nameof(gameState));
+        _achievementService = achievementService; // Optional dependency
     }
     
     /// <summary>
@@ -28,9 +30,17 @@ public class InventoryManager : IInventoryManager
     }
     
     /// <summary>
-    /// Adds an item to the inventory
+    /// Adds an item to the inventory (synchronous version for backward compatibility)
     /// </summary>
     public void AddItem(GameObject item)
+    {
+        AddItemAsync(item).GetAwaiter().GetResult();
+    }
+    
+    /// <summary>
+    /// Adds an item to the inventory with achievement tracking
+    /// </summary>
+    public async Task AddItemAsync(GameObject item)
     {
         if (item == null)
             throw new ArgumentNullException(nameof(item));
@@ -44,12 +54,29 @@ public class InventoryManager : IInventoryManager
         
         // Update stats
         _gameState.Player.Stats.ItemsCollected++;
+        
+        // Track achievement
+        if (_achievementService != null)
+        {
+            await _achievementService.TrackEventAsync(
+                TriggerType.ItemCollected,
+                item.Id,
+                _gameState);
+        }
     }
     
     /// <summary>
-    /// Removes an item from the inventory by ID
+    /// Removes an item from the inventory by ID (synchronous version)
     /// </summary>
     public void RemoveItem(string itemId)
+    {
+        RemoveItemAsync(itemId).GetAwaiter().GetResult();
+    }
+    
+    /// <summary>
+    /// Removes an item from the inventory by ID with achievement tracking
+    /// </summary>
+    public async Task RemoveItemAsync(string itemId)
     {
         if (string.IsNullOrWhiteSpace(itemId))
             throw new ArgumentException("Item ID cannot be empty", nameof(itemId));
@@ -61,6 +88,15 @@ public class InventoryManager : IInventoryManager
         {
             inventory.Items.Remove(item);
             inventory.TotalWeight -= item.Weight;
+            
+            // Track achievement
+            if (_achievementService != null)
+            {
+                await _achievementService.TrackEventAsync(
+                    TriggerType.ItemDropped,
+                    item.Id,
+                    _gameState);
+            }
         }
     }
     
