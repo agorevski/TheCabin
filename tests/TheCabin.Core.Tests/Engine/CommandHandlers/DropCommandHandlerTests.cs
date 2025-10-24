@@ -11,12 +11,19 @@ public class DropCommandHandlerTests
     private readonly IInventoryManager _inventoryManager;
     private readonly DropCommandHandler _handler;
     private readonly GameState _gameState;
+    private readonly GameStateMachine _stateMachine;
 
     public DropCommandHandlerTests()
     {
         _gameState = CreateTestGameState();
         _inventoryManager = new InventoryManager(_gameState);
-        _handler = new DropCommandHandler(_inventoryManager);
+        _stateMachine = new GameStateMachine(_inventoryManager);
+        
+        // Initialize the state machine with a simple story pack
+        var storyPack = CreateTestStoryPack();
+        _stateMachine.Initialize(storyPack);
+        
+        _handler = new DropCommandHandler(_inventoryManager, _stateMachine);
     }
 
     [Fact]
@@ -84,17 +91,21 @@ public class DropCommandHandlerTests
     {
         // Arrange
         var lantern = CreateTestObject("lantern", "Lantern", isCollectable: true);
-        _inventoryManager.AddItem(lantern);
+        
+        // Add to the state machine's inventory (not the test gameState)
+        _stateMachine.CurrentState.Player.Inventory.Items.Add(lantern);
+        _stateMachine.CurrentState.World.Objects[lantern.Id] = lantern;
+        
         var command = new ParsedCommand { Verb = "drop", Object = "lantern" };
-        var currentRoom = _gameState.World.Rooms[_gameState.Player.CurrentLocationId];
+        var currentRoom = _stateMachine.GetCurrentRoom();
         var initialCount = currentRoom.State.VisibleObjectIds.Count;
 
         // Act
-        var result = await _handler.ExecuteAsync(command, _gameState);
+        var result = await _handler.ExecuteAsync(command, _stateMachine.CurrentState);
 
         // Assert
         Assert.True(result.Success);
-        Assert.True(currentRoom.State.VisibleObjectIds.Contains("lantern"));
+        Assert.Contains("lantern", currentRoom.State.VisibleObjectIds);
         Assert.Equal(initialCount + 1, currentRoom.State.VisibleObjectIds.Count);
     }
 
@@ -121,6 +132,18 @@ public class DropCommandHandlerTests
 
     private GameState CreateTestGameState()
     {
+        return new GameState
+        {
+            Player = new Player
+            {
+                CurrentLocationId = "test_room",
+                Inventory = new Inventory()
+            }
+        };
+    }
+    
+    private StoryPack CreateTestStoryPack()
+    {
         var room = new Room
         {
             Id = "test_room",
@@ -131,19 +154,14 @@ public class DropCommandHandlerTests
             }
         };
 
-        return new GameState
+        return new StoryPack
         {
-            Player = new Player
-            {
-                CurrentLocationId = "test_room",
-                Inventory = new Inventory()
-            },
-            World = new WorldState
-            {
-                CurrentThemeId = "test",
-                Rooms = new Dictionary<string, Room> { { "test_room", room } },
-                Objects = new Dictionary<string, GameObject>()
-            }
+            Id = "test",
+            Theme = "Test",
+            Description = "Test story pack",
+            StartingRoomId = "test_room",
+            Rooms = new List<Room> { room },
+            Objects = new Dictionary<string, GameObject>()
         };
     }
 

@@ -17,7 +17,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TheCabin")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+d3a9d1fda145382c59c4b33d0b23cb0bb4c405a2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+3a28d8236fc35a27041ffd11ff5bfaaedddef14d")]
 [assembly: System.Reflection.AssemblyProductAttribute("TheCabin")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TheCabin")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

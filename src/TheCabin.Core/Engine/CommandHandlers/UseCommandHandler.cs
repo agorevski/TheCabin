@@ -133,15 +133,26 @@ public class UseCommandHandler : ICommandHandler
 
     private void ApplyToObject(GameObject obj, StateChange change)
     {
-        // Use reflection to set property
+        // Try to set as a state flag first
+        if (obj.State != null && change.Property.StartsWith("is_", StringComparison.OrdinalIgnoreCase))
+        {
+            var flagKey = change.Property.ToLower();
+            obj.State.Flags[flagKey] = Convert.ToBoolean(change.NewValue);
+            return;
+        }
+        
+        // Handle CurrentState property
+        if (change.Property == "CurrentState" && obj.State != null)
+        {
+            obj.State.CurrentState = change.NewValue?.ToString() ?? "default";
+            return;
+        }
+        
+        // Try to set as a property
         var property = obj.GetType().GetProperty(change.Property);
         if (property != null && property.CanWrite)
         {
             property.SetValue(obj, change.NewValue);
-        }
-        else if (change.Property == "CurrentState" && obj.State != null)
-        {
-            obj.State.CurrentState = change.NewValue?.ToString() ?? "default";
         }
     }
 

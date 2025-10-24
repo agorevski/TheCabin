@@ -9,12 +9,14 @@ namespace TheCabin.Core.Engine.CommandHandlers;
 public class DropCommandHandler : ICommandHandler
 {
     private readonly IInventoryManager _inventoryManager;
+    private readonly GameStateMachine _stateMachine;
 
     public string Verb => "drop";
 
-    public DropCommandHandler(IInventoryManager inventoryManager)
+    public DropCommandHandler(IInventoryManager inventoryManager, GameStateMachine stateMachine)
     {
         _inventoryManager = inventoryManager ?? throw new ArgumentNullException(nameof(inventoryManager));
+        _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
     }
 
     public Task<CommandValidationResult> ValidateAsync(ParsedCommand command, GameState gameState)
@@ -52,7 +54,7 @@ public class DropCommandHandler : ICommandHandler
         _inventoryManager.RemoveItem(item.Id);
 
         // Add to current room
-        var currentRoom = gameState.World.Rooms[gameState.Player.CurrentLocationId];
+        var currentRoom = _stateMachine.GetCurrentRoom();
         if (!currentRoom.ObjectIds.Contains(item.Id))
         {
             currentRoom.ObjectIds.Add(item.Id);

@@ -103,7 +103,10 @@ public static class MauiProgram
         // Command handlers
         services.AddTransient<ICommandHandler, MoveCommandHandler>();
         services.AddTransient<ICommandHandler, TakeCommandHandler>();
-        services.AddTransient<ICommandHandler, DropCommandHandler>();
+        services.AddTransient<ICommandHandler>(sp =>
+            new DropCommandHandler(
+                sp.GetRequiredService<IInventoryManager>(),
+                sp.GetRequiredService<GameStateMachine>()));
         services.AddTransient<ICommandHandler, UseCommandHandler>();
         services.AddTransient<ICommandHandler, ExamineCommandHandler>();
         services.AddTransient<ICommandHandler, OpenCommandHandler>();

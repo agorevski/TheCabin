@@ -21,23 +21,26 @@ public class CommandRouterIntegrationTests
         // Create test story pack
         var storyPack = CreateIntegrationTestStoryPack();
         
-        // Create inventory manager
+        // Create a temporary game state for initial setup
         var tempGameState = new GameState();
-        _inventoryManager = new InventoryManager(tempGameState);
+        var tempInventoryManager = new InventoryManager(tempGameState);
         
         // Create state machine and initialize
-        _stateMachine = new GameStateMachine(_inventoryManager);
+        _stateMachine = new GameStateMachine(tempInventoryManager);
         _stateMachine.Initialize(storyPack);
         
-        // Get the actual game state
+        // Get the actual game state after initialization
         _gameState = _stateMachine.CurrentState;
+        
+        // Create inventory manager with the ACTUAL game state
+        _inventoryManager = new InventoryManager(_gameState);
         
         // Create command handlers
         var handlers = new List<ICommandHandler>
         {
             new MoveCommandHandler(_stateMachine),
             new TakeCommandHandler(_stateMachine, _inventoryManager),
-            new DropCommandHandler(_inventoryManager),
+            new DropCommandHandler(_inventoryManager, _stateMachine),
             new UseCommandHandler(_stateMachine, _inventoryManager, new PuzzleEngine()),
             new LookCommandHandler(_stateMachine),
             new ExamineCommandHandler(_stateMachine, _inventoryManager),
@@ -291,7 +294,7 @@ public class CommandRouterIntegrationTests
                         new StateChange
                         {
                             Target = "chest",
-                            Property = "IsLocked",
+                            Property = "is_locked",
                             NewValue = false
                         }
                     }
@@ -322,6 +325,7 @@ public class CommandRouterIntegrationTests
                 {
                     Verb = "open",
                     SuccessMessage = "You open the chest.",
+                    FailureMessage = "The chest is locked.",
                     StateChanges = new List<StateChange>()
                 },
                 ["close"] = new ActionDefinition

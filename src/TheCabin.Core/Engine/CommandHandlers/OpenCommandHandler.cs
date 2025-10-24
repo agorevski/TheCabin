@@ -77,11 +77,15 @@ public class OpenCommandHandler : ICommandHandler
             var isLocked = (bool)targetObject.State.Flags["is_locked"];
             if (isLocked)
             {
+                var message = !string.IsNullOrWhiteSpace(openAction.FailureMessage) 
+                    ? openAction.FailureMessage 
+                    : $"The {targetObject.Name} is locked.";
+                    
                 return Task.FromResult(new CommandResult
                 {
                     Success = false,
                     Type = CommandResultType.RequirementsNotMet,
-                    Message = openAction.FailureMessage ?? $"The {targetObject.Name} is locked."
+                    Message = message
                 });
             }
         }
