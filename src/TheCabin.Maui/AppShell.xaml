@@ -11,5 +11,12 @@
         Title="The Cabin"
         ContentTemplate="{DataTemplate views:MainPage}"
         Route="MainPage" />
+    
+    <!-- Additional routes -->
+    <ShellContent
+        Title="Story Selector"
+        ContentTemplate="{DataTemplate views:StoryPackSelectorPage}"
+        Route="StoryPackSelectorPage"
+        IsVisible="False" />
 
 </Shell>

@@ -91,9 +91,23 @@ public partial class MainViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task ShowInventoryAsync()
+    private async Task ShowSettingsAsync()
     {
-        await Shell.Current.GoToAsync(nameof(Views.InventoryPage));
+        await Shell.Current.GoToAsync(nameof(SettingsPage));
+    }
+    
+    [RelayCommand]
+    private async Task SelectStoryPackAsync()
+    {
+        await Shell.Current.GoToAsync("//StoryPackSelectorPage");
+    }
+    
+    [RelayCommand]
+    private async Task StartNewGameAsync()
+    {
+        // This will be called when returning from story selector
+        // For now, just show a message
+        await Shell.Current.DisplayAlert("New Game", "Story pack selected! Ready to start.", "OK");
     }
     
     [RelayCommand]

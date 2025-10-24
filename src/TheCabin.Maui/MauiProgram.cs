@@ -117,6 +117,7 @@ public static class MauiProgram
         services.AddTransient<ViewModels.MainViewModel>();
         services.AddTransient<ViewModels.InventoryViewModel>();
         services.AddTransient<ViewModels.SettingsViewModel>();
+        services.AddTransient<ViewModels.StoryPackSelectorViewModel>();
     }
     
     private static void RegisterViews(IServiceCollection services)
@@ -124,6 +125,7 @@ public static class MauiProgram
         services.AddTransient<Views.MainPage>();
         services.AddTransient<Views.InventoryPage>();
         services.AddTransient<Views.SettingsPage>();
+        services.AddTransient<Views.StoryPackSelectorPage>();
     }
     
     private static void CopyEmbeddedStoryPacks(string targetPath)

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TheCabin.Maui.ViewModels"
+             xmlns:models="clr-namespace:TheCabin.Maui.Models"
+             x:Class="TheCabin.Maui.Views.StoryPackSelectorPage"
+             x:DataType="vm:StoryPackSelectorViewModel"
+             Title="{Binding Title}"
+             BackgroundColor="#1a1a1a">
+    
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16">
+        
+        <!-- Header -->
+        <Border Grid.Row="0"
+                BackgroundColor="#2d2d2d"
+                StrokeThickness="0"
+                Padding="20"
+                Margin="0,0,0,16">
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Choose Your Adventure"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       HorizontalOptions="Center"/>
+                <Label Text="Select a story pack to begin your journey"
+                       FontSize="14"
+                       TextColor="#aaa"
+                       HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+        </Border>
+        
+        <!-- Story Pack List -->
+        <ScrollView Grid.Row="1">
+            <CollectionView ItemsSource="{Binding AvailablePacks}"
+                           SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:StoryPackInfoViewModel">
+                        <Border BackgroundColor="#2d2d2d"
+                               StrokeThickness="1"
+                               Stroke="#444"
+                               Padding="16"
+                               Margin="0,0,0,12">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer 
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:StoryPackSelectorViewModel}}, Path=SelectPackCommand}"
+                                    CommandParameter="{Binding .}"/>
+                            </Border.GestureRecognizers>
+                            
+                            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
+                                
+                                <!-- Icon -->
+                                <Label Grid.Row="0" Grid.Column="0" Grid.RowSpan="4"
+                                       Text="{Binding Icon}"
+                                       FontSize="48"
+                                       VerticalOptions="Center"
+                                       Margin="0,0,16,0"/>
+                                
+                                <!-- Theme Title -->
+                                <Label Grid.Row="0" Grid.Column="1"
+                                       Text="{Binding Theme}"
+                                       FontSize="20"
+                                       FontAttributes="Bold"
+                                       TextColor="White"/>
+                                
+                                <!-- Difficulty Badge -->
+                                <Border Grid.Row="0" Grid.Column="2"
+                                       BackgroundColor="{Binding DifficultyColor}"
+                                       Padding="8,4"
+                                       VerticalOptions="Start">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="4"/>
+                                    </Border.StrokeShape>
+                                    <Label Text="{Binding DifficultyText}"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="White"/>
+                                </Border>
+                                
+                                <!-- Description -->
+                                <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                       Text="{Binding Description}"
+                                       FontSize="14"
+                                       TextColor="#ccc"
+                                       LineBreakMode="WordWrap"
+                                       Margin="0,8,0,0"/>
+                                
+                                <!-- Tags -->
+                                <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+                                       Text="{Binding TagsDisplay}"
+                                       FontSize="12"
+                                       TextColor="#888"
+                                       Margin="0,8,0,0"
+                                       IsVisible="{Binding TagsDisplay, Converter={StaticResource StringNotEmptyConverter}}"/>
+                                
+                                <!-- Play Time -->
+                                <HorizontalStackLayout Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+                                                      Spacing="8"
+                                                      Margin="0,8,0,0">
+                                    <Label Text="⏱️"
+                                           FontSize="14"/>
+                                    <Label Text="{Binding PlayTimeDisplay}"
+                                           FontSize="14"
+                                           TextColor="#aaa"/>
+                                </HorizontalStackLayout>
+                                
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Padding="32"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center">
+                        <Label Text="📚"
+                               FontSize="64"
+                               HorizontalOptions="Center"/>
+                        <Label Text="No story packs available"
+                               FontSize="16"
+                               TextColor="#aaa"
+                               HorizontalOptions="Center"
+                               Margin="0,16,0,0"/>
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </ScrollView>
+        
+        <!-- Cancel Button -->
+        <Button Grid.Row="2"
+                Text="Cancel"
+                Command="{Binding CancelCommand}"
+                BackgroundColor="#444"
+                TextColor="White"
+                Margin="0,16,0,0"
+                HeightRequest="50"/>
+        
+    </Grid>
+</ContentPage>

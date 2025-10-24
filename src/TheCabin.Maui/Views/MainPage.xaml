@@ -139,29 +139,36 @@
                 <RoundRectangle CornerRadius="8"/>
             </Border.StrokeShape>
             
-            <Grid ColumnDefinitions="*,*,*,*">
+            <Grid ColumnDefinitions="*,*,*,*,*">
                 <Button Grid.Column="0"
+                        Text="📚"
+                        Command="{Binding SelectStoryPackCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="White"
+                        FontSize="24"/>
+                
+                <Button Grid.Column="1"
                         Text="🎒"
                         Command="{Binding ShowInventoryCommand}"
                         BackgroundColor="Transparent"
                         TextColor="White"
                         FontSize="24"/>
                 
-                <Button Grid.Column="1"
+                <Button Grid.Column="2"
                         Text="❓"
                         Command="{Binding ShowHelpCommand}"
                         BackgroundColor="Transparent"
                         TextColor="White"
                         FontSize="24"/>
                 
-                <Button Grid.Column="2"
+                <Button Grid.Column="3"
                         Text="🔄"
                         Command="{Binding NewGameCommand}"
                         BackgroundColor="Transparent"
                         TextColor="White"
                         FontSize="24"/>
                 
-                <Button Grid.Column="3"
+                <Button Grid.Column="4"
                         Text="{Binding TtsEnabled, Converter={StaticResource TtsIconConverter}}"
                         Command="{Binding ToggleTtsCommand}"
                         BackgroundColor="Transparent"
