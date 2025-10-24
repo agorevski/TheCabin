@@ -72,7 +72,7 @@ public class UseCommandHandler : ICommandHandler
         var puzzleResult = await _puzzleEngine.CheckPuzzleCompletionAsync(gameState);
 
         var messages = new List<string> { useAction.SuccessMessage };
-        if (puzzleResult.Completed)
+        if (puzzleResult.Completed && !string.IsNullOrEmpty(puzzleResult.CompletionMessage))
         {
             messages.Add(puzzleResult.CompletionMessage);
             gameState.Player.Stats.PuzzlesSolved++;

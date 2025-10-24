@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TheCabin.Infrastructure.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+29894e5936b566f914dd30f11e0776c316134193")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+990037fe00a852fa71c2cceacb617515dcf921b4")]
 [assembly: System.Reflection.AssemblyProductAttribute("TheCabin.Infrastructure.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TheCabin.Infrastructure.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
