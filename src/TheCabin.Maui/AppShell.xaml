@@ -8,15 +8,29 @@
     Shell.NavBarIsVisible="False">
 
     <ShellContent
-        Title="The Cabin"
-        ContentTemplate="{DataTemplate views:MainPage}"
-        Route="MainPage" />
-    
-    <!-- Additional routes -->
-    <ShellContent
         Title="Story Selector"
         ContentTemplate="{DataTemplate views:StoryPackSelectorPage}"
-        Route="StoryPackSelectorPage"
+        Route="StoryPackSelectorPage" />
+    
+    <!-- Game Screen -->
+    <ShellContent
+        Title="The Cabin"
+        ContentTemplate="{DataTemplate views:MainPage}"
+        Route="MainPage"
+        IsVisible="False" />
+    
+    <!-- Inventory -->
+    <ShellContent
+        Title="Inventory"
+        ContentTemplate="{DataTemplate views:InventoryPage}"
+        Route="InventoryPage"
+        IsVisible="False" />
+    
+    <!-- Settings -->
+    <ShellContent
+        Title="Settings"
+        ContentTemplate="{DataTemplate views:SettingsPage}"
+        Route="SettingsPage"
         IsVisible="False" />
     
     <ShellContent
