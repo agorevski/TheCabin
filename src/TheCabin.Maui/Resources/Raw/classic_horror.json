@@ -1,0 +1,42 @@
+{
+  "theme": "Classic Horror",
+  "description": "You awaken in a decaying log cabin deep in the woods. A storm rages outside. The smell of mildew and something metallic fills the air.",
+  "rooms": [
+    {
+      "id": "main_room",
+      "description": "A flickering candle casts shadows across the warped floorboards. A locked door creaks in the wind.",
+      "objects": [
+        "candle",
+        "door",
+        "note"
+      ],
+      "exits": {
+        "north": "attic",
+        "east": "basement"
+      }
+    },
+    {
+      "id": "attic",
+      "description": "Dust and cobwebs blanket old furniture. A cracked mirror reflects your pale face.",
+      "objects": [
+        "mirror",
+        "chest"
+      ],
+      "exits": {
+        "south": "main_room"
+      }
+    },
+    {
+      "id": "basement",
+      "description": "Moisture drips from the ceiling. Rusted chains hang from the walls.",
+      "objects": [
+        "lantern",
+        "chains",
+        "skeleton"
+      ],
+      "exits": {
+        "west": "main_room"
+      }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "theme": "Arctic Survival",
+  "description": "You\u2019re stranded in an abandoned polar research cabin as the temperature plummets and wind howls outside.",
+  "rooms": [
+    {
+      "id": "main_lab",
+      "description": "Metal desks covered in frost. A generator hums weakly in the corner.",
+      "objects": [
+        "generator",
+        "radio",
+        "coat"
+      ],
+      "exits": {
+        "north": "storage_room",
+        "south": "bunk_room"
+      }
+    },
+    {
+      "id": "storage_room",
+      "description": "Shelves hold frozen food cans and broken tools.",
+      "objects": [
+        "can",
+        "toolbox"
+      ],
+      "exits": {
+        "south": "main_lab"
+      }
+    },
+    {
+      "id": "bunk_room",
+      "description": "Empty cots and scattered notebooks. One bed has fresh footprints beside it.",
+      "objects": [
+        "notebook",
+        "thermos"
+      ],
+      "exits": {
+        "north": "main_lab"
+      }
+    }
+  ]
+}

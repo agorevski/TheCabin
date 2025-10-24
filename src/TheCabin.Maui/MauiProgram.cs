@@ -69,10 +69,22 @@ public static class MauiProgram
     
     private static void RegisterCoreServices(IServiceCollection services)
     {
-        // Story pack service with file path
-        var storyPackPath = Path.Combine(FileSystem.AppDataDirectory, "story_packs");
+        // Story pack service - copy from embedded resources to app data on first run
         services.AddSingleton<IStoryPackService>(sp => 
-            new StoryPackService(storyPackPath));
+        {
+            var storyPackPath = Path.Combine(FileSystem.AppDataDirectory, "story_packs");
+            
+            // Ensure directory exists
+            if (!Directory.Exists(storyPackPath))
+            {
+                Directory.CreateDirectory(storyPackPath);
+            }
+            
+            // Copy story packs from embedded resources to AppDataDirectory
+            CopyEmbeddedStoryPacks(storyPackPath);
+            
+            return new StoryPackService(storyPackPath);
+        });
         
         // Core services
         services.AddSingleton<IGameStateService, GameStateService>();
@@ -102,13 +114,46 @@ public static class MauiProgram
     
     private static void RegisterViewModels(IServiceCollection services)
     {
-        // TODO: Add ViewModels as they are created
-        // services.AddTransient<MainViewModel>();
+        services.AddTransient<ViewModels.MainViewModel>();
     }
     
     private static void RegisterViews(IServiceCollection services)
     {
-        // TODO: Add Views as they are created
-        // services.AddTransient<MainPage>();
+        services.AddTransient<Views.MainPage>();
+    }
+    
+    private static void CopyEmbeddedStoryPacks(string targetPath)
+    {
+        // Story pack files to copy from Resources/Raw
+        var storyPacks = new[]
+        {
+            "classic_horror.json",
+            "arctic_survival.json",
+            "fantasy_magic.json",
+            "sci_fi_isolation.json",
+            "cozy_mystery.json"
+        };
+        
+        foreach (var packFile in storyPacks)
+        {
+            var targetFile = Path.Combine(targetPath, packFile);
+            
+            // Only copy if doesn't exist (don't overwrite user modifications)
+            if (!File.Exists(targetFile))
+            {
+                try
+                {
+                    using var stream = FileSystem.OpenAppPackageFileAsync(packFile).Result;
+                    using var reader = new StreamReader(stream);
+                    var content = reader.ReadToEnd();
+                    File.WriteAllText(targetFile, content);
+                }
+                catch (Exception ex)
+                {
+                    // Log but don't fail - app can still work without story packs
+                    System.Diagnostics.Debug.WriteLine($"Failed to copy {packFile}: {ex.Message}");
+                }
+            }
+        }
     }
 }

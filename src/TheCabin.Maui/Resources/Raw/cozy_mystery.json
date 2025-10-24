@@ -1,0 +1,41 @@
+{
+  "theme": "Cozy Mystery",
+  "description": "A blizzard has stranded you in a warm mountain cabin. Something\u2019s off \u2014 and the truth hides in handwritten notes and old photos.",
+  "rooms": [
+    {
+      "id": "living_room",
+      "description": "A crackling fire warms the cabin. A photo album rests on the coffee table.",
+      "objects": [
+        "photo_album",
+        "fireplace",
+        "cup_of_tea"
+      ],
+      "exits": {
+        "north": "bedroom",
+        "east": "study"
+      }
+    },
+    {
+      "id": "bedroom",
+      "description": "A quilt-covered bed and a half-open wardrobe. The window rattles in the wind.",
+      "objects": [
+        "wardrobe",
+        "letter"
+      ],
+      "exits": {
+        "south": "living_room"
+      }
+    },
+    {
+      "id": "study",
+      "description": "Stacks of papers and old journals. A typewriter still holds a half-finished note.",
+      "objects": [
+        "typewriter",
+        "journal"
+      ],
+      "exits": {
+        "west": "living_room"
+      }
+    }
+  ]
+}

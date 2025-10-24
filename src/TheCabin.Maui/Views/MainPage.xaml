@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:TheCabin.Maui.ViewModels"
+             xmlns:models="clr-namespace:TheCabin.Maui.Models"
+             x:Class="TheCabin.Maui.Views.MainPage"
+             x:DataType="viewmodels:MainViewModel"
+             BackgroundColor="#1a1a1a"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto,Auto" Padding="16">
+        
+        <!-- Stats Bar -->
+        <Border Grid.Row="0" 
+                BackgroundColor="#2d2d2d"
+                Stroke="#444"
+                StrokeThickness="1"
+                Padding="12,8"
+                Margin="0,0,0,12">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="8"/>
+            </Border.StrokeShape>
+            
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                <Label Grid.Column="0" 
+                       Text="{Binding CurrentLocation}"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       VerticalOptions="Center"/>
+                
+                <HorizontalStackLayout Grid.Column="1" Spacing="8" Margin="12,0">
+                    <Label Text="❤️" FontSize="16" VerticalOptions="Center"/>
+                    <Label Text="{Binding PlayerHealth}" TextColor="White" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+                
+                <HorizontalStackLayout Grid.Column="2" Spacing="8" Margin="12,0">
+                    <Label Text="💡" FontSize="16" VerticalOptions="Center"/>
+                    <Label Text="{Binding LightLevel}" TextColor="White" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+                
+                <HorizontalStackLayout Grid.Column="3" Spacing="8" Margin="12,0">
+                    <Label Text="🕐" FontSize="16" VerticalOptions="Center"/>
+                    <Label Text="{Binding GameTime}" TextColor="White" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+            </Grid>
+        </Border>
+        
+        <!-- Story Feed -->
+        <Border Grid.Row="1" 
+                BackgroundColor="#2d2d2d"
+                Stroke="#444"
+                StrokeThickness="1"
+                Padding="16">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="8"/>
+            </Border.StrokeShape>
+            
+            <CollectionView ItemsSource="{Binding StoryFeed}"
+                           VerticalScrollBarVisibility="Always">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:NarrativeEntry">
+                        <Grid Padding="0,8">
+                            <Label Text="{Binding Text}"
+                                   TextColor="{Binding TextColor}"
+                                   FontSize="16"
+                                   LineBreakMode="WordWrap"
+                                   FontFamily="OpenSansRegular"
+                                   FontAttributes="{Binding IsImportant, Converter={StaticResource BoolToFontAttributesConverter}}"/>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Border>
+        
+        <!-- Transcript Preview -->
+        <Border Grid.Row="2"
+                BackgroundColor="#3a3a3a"
+                Stroke="#555"
+                StrokeThickness="1"
+                Padding="12"
+                Margin="0,12,0,0"
+                IsVisible="{Binding IsListening}">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="6"/>
+            </Border.StrokeShape>
+            
+            <HorizontalStackLayout Spacing="8">
+                <Label Text="🎤" FontSize="16" VerticalOptions="Center"/>
+                <Label Text="{Binding TranscriptText}"
+                       FontSize="14"
+                       TextColor="#aaa"
+                       VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+        </Border>
+        
+        <!-- Voice Control Button -->
+        <Grid Grid.Row="3" 
+              Padding="0,16"
+              HorizontalOptions="Center">
+            <Button x:Name="VoiceButton"
+                    Command="{Binding ToggleListeningCommand}"
+                    HeightRequest="80"
+                    WidthRequest="80"
+                    CornerRadius="40"
+                    BackgroundColor="{Binding IsListening, Converter={StaticResource BoolToRecordingColorConverter}}"
+                    BorderWidth="3"
+                    BorderColor="#4A90E2"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}">
+                <Button.Shadow>
+                    <Shadow Brush="#4A90E2"
+                            Opacity="0.7"
+                            Radius="20"
+                            Offset="0,0"/>
+                </Button.Shadow>
+                
+                <Label Text="🎙️" 
+                       FontSize="32"
+                       TextColor="White"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"/>
+            </Button>
+            
+            <!-- Processing Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsProcessing}"
+                              IsVisible="{Binding IsProcessing}"
+                              Color="White"
+                              HeightRequest="80"
+                              WidthRequest="80"/>
+        </Grid>
+        
+        <!-- Bottom Navigation -->
+        <Border Grid.Row="4" 
+                BackgroundColor="#2d2d2d"
+                Stroke="#444"
+                StrokeThickness="1"
+                Padding="8">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="8"/>
+            </Border.StrokeShape>
+            
+            <Grid ColumnDefinitions="*,*,*,*">
+                <Button Grid.Column="0"
+                        Text="🎒"
+                        Command="{Binding ShowInventoryCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="White"
+                        FontSize="24"/>
+                
+                <Button Grid.Column="1"
+                        Text="❓"
+                        Command="{Binding ShowHelpCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="White"
+                        FontSize="24"/>
+                
+                <Button Grid.Column="2"
+                        Text="🔄"
+                        Command="{Binding NewGameCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="White"
+                        FontSize="24"/>
+                
+                <Button Grid.Column="3"
+                        Text="{Binding TtsEnabled, Converter={StaticResource TtsIconConverter}}"
+                        Command="{Binding ToggleTtsCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="White"
+                        FontSize="24"/>
+            </Grid>
+        </Border>
+        
+    </Grid>
+</ContentPage>

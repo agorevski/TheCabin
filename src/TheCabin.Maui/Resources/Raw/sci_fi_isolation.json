@@ -1,0 +1,41 @@
+{
+  "theme": "Sci-Fi Isolation",
+  "description": "Trapped in a failing cabin aboard a derelict spacecraft orbiting a dead planet.",
+  "rooms": [
+    {
+      "id": "bridge",
+      "description": "Broken panels flicker erratically. A viewport reveals the planet\u2019s red storms.",
+      "objects": [
+        "panel",
+        "helmet",
+        "console"
+      ],
+      "exits": {
+        "south": "quarters"
+      }
+    },
+    {
+      "id": "quarters",
+      "description": "Your cryopod lies shattered. A log recorder blinks with a red light.",
+      "objects": [
+        "cryopod",
+        "log_recorder"
+      ],
+      "exits": {
+        "north": "bridge",
+        "east": "engine_room"
+      }
+    },
+    {
+      "id": "engine_room",
+      "description": "Pipes hiss steam. A reactor core pulses weakly in the gloom.",
+      "objects": [
+        "reactor",
+        "toolkit"
+      ],
+      "exits": {
+        "west": "quarters"
+      }
+    }
+  ]
+}
