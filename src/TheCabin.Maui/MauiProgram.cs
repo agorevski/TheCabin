@@ -103,6 +103,11 @@ public static class MauiProgram
         // Command handlers
         services.AddTransient<ICommandHandler, MoveCommandHandler>();
         services.AddTransient<ICommandHandler, TakeCommandHandler>();
+        services.AddTransient<ICommandHandler, DropCommandHandler>();
+        services.AddTransient<ICommandHandler, UseCommandHandler>();
+        services.AddTransient<ICommandHandler, ExamineCommandHandler>();
+        services.AddTransient<ICommandHandler, OpenCommandHandler>();
+        services.AddTransient<ICommandHandler, CloseCommandHandler>();
         services.AddTransient<ICommandHandler, LookCommandHandler>();
         services.AddTransient<ICommandHandler, InventoryCommandHandler>();
     }
