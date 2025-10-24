@@ -132,4 +132,25 @@ public class GameContext
     /// Active story/game flags
     /// </summary>
     public Dictionary<string, bool> GameFlags { get; set; } = new();
+    
+    /// <summary>
+    /// Creates context from game state
+    /// </summary>
+    public static GameContext FromGameState(GameState gameState)
+    {
+        var room = gameState.World.Rooms.GetValueOrDefault(gameState.Player.CurrentLocationId);
+        
+        return new GameContext
+        {
+            CurrentLocation = gameState.Player.CurrentLocationId,
+            VisibleObjects = room?.State.VisibleObjectIds ?? new List<string>(),
+            InventoryItems = gameState.Player.Inventory.Items.Select(i => i.Id).ToList(),
+            RecentCommands = gameState.StoryLog
+                .Where(e => e.Type == NarrativeType.PlayerCommand)
+                .Select(e => e.Text)
+                .TakeLast(5)
+                .ToList(),
+            GameFlags = gameState.Progress.StoryFlags
+        };
+    }
 }
