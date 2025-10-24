@@ -91,6 +91,49 @@ public partial class MainViewModel : BaseViewModel
     }
 
     [RelayCommand]
+    private async Task ShowInventoryAsync()
+    {
+        await Shell.Current.GoToAsync(nameof(Views.InventoryPage));
+    }
+    
+    [RelayCommand]
+    private async Task ShowHelpAsync()
+    {
+        await Shell.Current.DisplayAlert(
+            "Help",
+            "🎙️ Voice Commands:\n\n" +
+            "• Look around\n" +
+            "• Take [object]\n" +
+            "• Go [direction]\n" +
+            "• Use [object]\n" +
+            "• Inventory\n\n" +
+            "Tap the microphone to speak!",
+            "OK");
+    }
+
+    [RelayCommand]
+    private async Task NewGameAsync()
+    {
+        var confirm = await ShowConfirmAsync(
+            "New Game",
+            "Start a new game? Current progress will be lost.");
+        
+        if (confirm)
+        {
+            StoryFeed.Clear();
+            await InitializeAsync();
+        }
+    }
+
+    [RelayCommand]
+    private void ToggleTts()
+    {
+        TtsEnabled = !TtsEnabled;
+        var message = TtsEnabled ? "Text-to-speech enabled" : "Text-to-speech disabled";
+        AddNarrativeEntry(message, NarrativeType.SystemMessage);
+    }
+
+    [RelayCommand]
     private async Task ToggleListeningAsync()
     {
         if (IsListening)
@@ -267,65 +310,4 @@ public partial class MainViewModel : BaseViewModel
         });
     }
 
-    [RelayCommand]
-    private async Task ShowInventoryAsync()
-    {
-        if (_currentGameState == null)
-            return;
-
-        var items = _currentGameState.Player.Inventory.Items;
-        if (items.Count == 0)
-        {
-            await ShowMessageAsync("Inventory", "You're not carrying anything.");
-            return;
-        }
-
-        var itemList = string.Join("\n", items.Select(i => $"• {i.Name}"));
-        var weight = _currentGameState.Player.Inventory.TotalWeight;
-        var capacity = _currentGameState.Player.Inventory.MaxCapacity;
-        
-        await ShowMessageAsync(
-            "Inventory",
-            $"{itemList}\n\nWeight: {weight}/{capacity} kg");
-    }
-
-    [RelayCommand]
-    private async Task ShowHelpAsync()
-    {
-        var helpText = @"Voice Commands:
-• Look / Look around
-• Go [direction] (north, south, east, west, up, down)
-• Take [object]
-• Use [object]
-• Examine [object]
-• Inventory
-
-Example: ""Take the lantern"" or ""Go north""
-
-Tap the microphone button and speak your command clearly.";
-
-        await ShowMessageAsync("Help", helpText);
-    }
-
-    [RelayCommand]
-    private async Task NewGameAsync()
-    {
-        var confirm = await ShowConfirmAsync(
-            "New Game",
-            "Start a new game? Current progress will be lost.");
-        
-        if (confirm)
-        {
-            StoryFeed.Clear();
-            await InitializeAsync();
-        }
-    }
-
-    [RelayCommand]
-    private void ToggleTts()
-    {
-        TtsEnabled = !TtsEnabled;
-        var message = TtsEnabled ? "Text-to-speech enabled" : "Text-to-speech disabled";
-        AddNarrativeEntry(message, NarrativeType.SystemMessage);
-    }
 }

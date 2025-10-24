@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:TheCabin.Maui.ViewModels"
+             x:Class="TheCabin.Maui.Views.SettingsPage"
+             x:DataType="viewmodels:SettingsViewModel"
+             BackgroundColor="#1a1a1a"
+             Title="Settings">
+
+    <ScrollView Padding="16">
+        <VerticalStackLayout Spacing="16">
+            
+            <!-- Voice Recognition Settings -->
+            <Border BackgroundColor="#2d2d2d" Stroke="#444" StrokeThickness="1" Padding="16">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8"/>
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="🎙️ Voice Recognition" FontSize="18" FontAttributes="Bold" TextColor="White"/>
+                    
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Enable Voice" TextColor="White" VerticalOptions="Center"/>
+                        <Switch Grid.Column="1" IsToggled="{Binding VoiceEnabled}"/>
+                    </Grid>
+                    
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Push-to-Talk Mode" TextColor="White" VerticalOptions="Center"/>
+                        <Switch Grid.Column="1" IsToggled="{Binding PushToTalk}"/>
+                    </Grid>
+                    
+                    <Label Text="Confidence Threshold" TextColor="White"/>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Slider Grid.Column="0" Minimum="0.5" Maximum="1.0" Value="{Binding ConfidenceThreshold}"/>
+                        <Label Grid.Column="1" Text="{Binding ConfidenceThreshold, StringFormat='{0:P0}'}" TextColor="#aaa" Margin="8,0,0,0"/>
+                    </Grid>
+                    
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Offline Mode" TextColor="White" VerticalOptions="Center"/>
+                        <Switch Grid.Column="1" IsToggled="{Binding OfflineMode}"/>
+                    </Grid>
+                    
+                    <Button Text="Test Voice" Command="{Binding TestVoiceCommand}" BackgroundColor="#4A90E2"/>
+                </VerticalStackLayout>
+            </Border>
+            
+            <!-- Text-to-Speech Settings -->
+            <Border BackgroundColor="#2d2d2d" Stroke="#444" StrokeThickness="1" Padding="16">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8"/>
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="🔊 Text-to-Speech" FontSize="18" FontAttributes="Bold" TextColor="White"/>
+                    
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Enable Narration" TextColor="White" VerticalOptions="Center"/>
+                        <Switch Grid.Column="1" IsToggled="{Binding TtsEnabled}"/>
+                    </Grid>
+                    
+                    <Label Text="Speech Rate" TextColor="White"/>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Slider Grid.Column="0" Minimum="0.5" Maximum="2.0" Value="{Binding SpeechRate}"/>
+                        <Label Grid.Column="1" Text="{Binding SpeechRate, StringFormat='{0:F1}x'}" TextColor="#aaa" Margin="8,0,0,0"/>
+                    </Grid>
+                    
+                    <Label Text="Voice Pitch" TextColor="White"/>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Slider Grid.Column="0" Minimum="0.5" Maximum="2.0" Value="{Binding VoicePitch}"/>
+                        <Label Grid.Column="1" Text="{Binding VoicePitch, StringFormat='{0:F1}'}" TextColor="#aaa" Margin="8,0,0,0"/>
+                    </Grid>
+                    
+                    <Button Text="Test TTS" Command="{Binding TestTtsCommand}" BackgroundColor="#4A90E2"/>
+                </VerticalStackLayout>
+            </Border>
+            
+            <!-- Display Settings -->
+            <Border BackgroundColor="#2d2d2d" Stroke="#444" StrokeThickness="1" Padding="16">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8"/>
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="🎨 Display" FontSize="18" FontAttributes="Bold" TextColor="White"/>
+                    
+                    <Label Text="Font Size" TextColor="White"/>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Slider Grid.Column="0" Minimum="12" Maximum="24" Value="{Binding FontSize}"/>
+                        <Label Grid.Column="1" Text="{Binding FontSize, StringFormat='{0:F0}pt'}" TextColor="#aaa" Margin="8,0,0,0"/>
+                    </Grid>
+                    
+                    <Label Text="Theme" TextColor="White"/>
+                    <Picker ItemsSource="{Binding AvailableThemes}" SelectedItem="{Binding SelectedTheme}" TextColor="White" BackgroundColor="#1a1a1a"/>
+                </VerticalStackLayout>
+            </Border>
+            
+            <!-- Actions -->
+            <Border BackgroundColor="#2d2d2d" Stroke="#444" StrokeThickness="1" Padding="16">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8"/>
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="12">
+                    <Button Text="Reset to Defaults" Command="{Binding ResetToDefaultsCommand}" BackgroundColor="#D0021B"/>
+                </VerticalStackLayout>
+            </Border>
+            
+            <!-- About -->
+            <Border BackgroundColor="#2d2d2d" Stroke="#444" StrokeThickness="1" Padding="16">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8"/>
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="ℹ️ About" FontSize="18" FontAttributes="Bold" TextColor="White"/>
+                    <Label Text="{Binding AppVersion}" FontSize="12" TextColor="#aaa"/>
+                    <Label Text="© 2025 The Cabin" FontSize="12" TextColor="#aaa"/>
+                </VerticalStackLayout>
+            </Border>
+            
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

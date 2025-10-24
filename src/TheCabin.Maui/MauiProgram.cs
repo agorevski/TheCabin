@@ -115,11 +115,15 @@ public static class MauiProgram
     private static void RegisterViewModels(IServiceCollection services)
     {
         services.AddTransient<ViewModels.MainViewModel>();
+        services.AddTransient<ViewModels.InventoryViewModel>();
+        services.AddTransient<ViewModels.SettingsViewModel>();
     }
     
     private static void RegisterViews(IServiceCollection services)
     {
         services.AddTransient<Views.MainPage>();
+        services.AddTransient<Views.InventoryPage>();
+        services.AddTransient<Views.SettingsPage>();
     }
     
     private static void CopyEmbeddedStoryPacks(string targetPath)
