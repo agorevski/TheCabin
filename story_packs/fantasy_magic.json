@@ -1,0 +1,42 @@
+{
+  "theme": "Fantasy Magic",
+  "description": "You find yourself in a wizard\u2019s forest cabin filled with alchemical instruments and glowing runes.",
+  "rooms": [
+    {
+      "id": "study",
+      "description": "Scrolls and books lie open on a rune-etched desk. A cauldron bubbles mysteriously.",
+      "objects": [
+        "cauldron",
+        "scroll",
+        "crystal"
+      ],
+      "exits": {
+        "north": "garden",
+        "east": "library"
+      }
+    },
+    {
+      "id": "garden",
+      "description": "Glowing herbs sway in the moonlight. A stone arch leads deeper into the forest.",
+      "objects": [
+        "herb",
+        "archway"
+      ],
+      "exits": {
+        "south": "study"
+      }
+    },
+    {
+      "id": "library",
+      "description": "Dusty tomes line every wall. A magical barrier shimmers near a hidden door.",
+      "objects": [
+        "book",
+        "barrier",
+        "wand"
+      ],
+      "exits": {
+        "west": "study"
+      }
+    }
+  ]
+}
