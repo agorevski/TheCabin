@@ -6,6 +6,7 @@ using TheCabin.Core.Engine;
 using TheCabin.Core.Interfaces;
 using TheCabin.Core.Models;
 using TheCabin.Maui.Models;
+using TheCabin.Maui.Services;
 
 namespace TheCabin.Maui.ViewModels;
 
@@ -16,6 +17,8 @@ public partial class MainViewModel : BaseViewModel
     private readonly IGameStateService _gameStateService;
     private readonly ITextToSpeechService _ttsService;
     private readonly IStoryPackService _storyPackService;
+    private readonly IAchievementService _achievementService;
+    private readonly IAchievementNotificationService _notificationService;
     private readonly ILogger<MainViewModel> _logger;
     private readonly CommandRouter _commandRouter;
     
@@ -55,6 +58,8 @@ public partial class MainViewModel : BaseViewModel
         IGameStateService gameStateService,
         ITextToSpeechService ttsService,
         IStoryPackService storyPackService,
+        IAchievementService achievementService,
+        IAchievementNotificationService notificationService,
         ILogger<MainViewModel> logger,
         CommandRouter commandRouter)
     {
@@ -63,6 +68,8 @@ public partial class MainViewModel : BaseViewModel
         _gameStateService = gameStateService;
         _ttsService = ttsService;
         _storyPackService = storyPackService;
+        _achievementService = achievementService;
+        _notificationService = notificationService;
         _logger = logger;
         _commandRouter = commandRouter;
 
@@ -94,6 +101,12 @@ public partial class MainViewModel : BaseViewModel
     private async Task ShowSettingsAsync()
     {
         await Shell.Current.GoToAsync(nameof(SettingsPage));
+    }
+    
+    [RelayCommand]
+    private async Task ShowAchievementsAsync()
+    {
+        await Shell.Current.GoToAsync("//AchievementsPage");
     }
     
     [RelayCommand]
@@ -276,6 +289,18 @@ public partial class MainViewModel : BaseViewModel
             // Add result to story feed
             var entryType = result.Success ? NarrativeType.Success : NarrativeType.Failure;
             AddNarrativeEntry(result.Message, entryType);
+            
+            // Check for achievement unlocks
+            if (result.Success && _achievementService != null && _notificationService != null)
+            {
+                var unlockedAchievements = await _achievementService.CheckAchievementsAsync(_currentGameState);
+                foreach (var achievement in unlockedAchievements)
+                {
+                    _logger.LogInformation("Achievement unlocked: {Name}", achievement.Name);
+                    await _notificationService.ShowAchievementUnlockedAsync(achievement);
+                    AddNarrativeEntry($"🏆 Achievement Unlocked: {achievement.Name}", NarrativeType.Discovery);
+                }
+            }
             
             // Update UI state
             UpdateUIState();

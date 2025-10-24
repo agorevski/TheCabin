@@ -38,5 +38,12 @@
         ContentTemplate="{DataTemplate views:LoadGamePage}"
         Route="LoadGamePage"
         IsVisible="False" />
+    
+    <!-- Achievements -->
+    <ShellContent
+        Title="Achievements"
+        ContentTemplate="{DataTemplate views:AchievementsPage}"
+        Route="AchievementsPage"
+        IsVisible="False" />
 
 </Shell>

@@ -16,6 +16,13 @@
             <converters:BoolToRecordingColorConverter x:Key="BoolToRecordingColorConverter" />
             <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
             <converters:TtsIconConverter x:Key="TtsIconConverter" />
+            
+            <!-- Achievement Converters -->
+            <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
+            <converters:BoolToUnlockIconConverter x:Key="BoolToUnlockIconConverter" />
+            <converters:BoolToUnlockColorConverter x:Key="BoolToUnlockColorConverter" />
+            <converters:FilterToColorConverter x:Key="FilterToColorConverter" />
+            <converters:FilterToOpacityConverter x:Key="FilterToOpacityConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

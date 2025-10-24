@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TheCabin.Maui.ViewModels"
+             xmlns:models="clr-namespace:TheCabin.Maui.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="TheCabin.Maui.Views.AchievementsPage"
+             x:DataType="vm:AchievementsPageViewModel"
+             Title="{Binding Title}"
+             Shell.BackgroundColor="{StaticResource Primary}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Converter for unlocked opacity -->
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="16">
+        
+        <!-- Statistics Header -->
+        <Border Grid.Row="0"
+                Padding="16"
+                Margin="0,0,0,12"
+                BackgroundColor="{StaticResource CardBackground}"
+                StrokeThickness="0">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12"/>
+            </Border.StrokeShape>
+            
+            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                <!-- Completion Text -->
+                <VerticalStackLayout Grid.Column="0" Grid.Row="0" Spacing="4">
+                    <Label Text="Achievement Progress"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+                    <Label Text="{Binding CompletionText}"
+                           FontSize="14"
+                           TextColor="{StaticResource Gray600}"/>
+                </VerticalStackLayout>
+
+                <!-- Trophy Icon -->
+                <Label Grid.Column="1" Grid.Row="0"
+                       Text="🏆"
+                       FontSize="32"
+                       VerticalOptions="Center"/>
+
+                <!-- Progress Bar -->
+                <ProgressBar Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1"
+                             Progress="{Binding CompletionPercentage}"
+                             ProgressColor="{StaticResource Success}"
+                             Margin="0,8,0,0"
+                             HeightRequest="8"/>
+            </Grid>
+        </Border>
+
+        <!-- Filter Buttons -->
+        <Border Grid.Row="1"
+                Padding="8"
+                Margin="0,0,0,12"
+                BackgroundColor="{StaticResource CardBackground}"
+                StrokeThickness="0">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12"/>
+            </Border.StrokeShape>
+            
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                <!-- All Button -->
+                <Button Grid.Column="0"
+                        Text="All"
+                        Command="{Binding FilterAchievementsCommand}"
+                        CommandParameter="All"
+                        BackgroundColor="{Binding SelectedFilter, Converter={StaticResource FilterToColorConverter}, ConverterParameter=All}"
+                        TextColor="White"
+                        FontSize="14"
+                        HeightRequest="40">
+                    <Button.Shadow>
+                        <Shadow Brush="Black" Opacity="0.3" Radius="4" Offset="0,2"/>
+                    </Button.Shadow>
+                </Button>
+
+                <!-- Unlocked Button -->
+                <Button Grid.Column="1"
+                        Text="{Binding UnlockedCount, StringFormat='Unlocked ({0})'}"
+                        Command="{Binding FilterAchievementsCommand}"
+                        CommandParameter="Unlocked"
+                        BackgroundColor="{StaticResource Success}"
+                        TextColor="White"
+                        FontSize="14"
+                        HeightRequest="40"
+                        Opacity="{Binding SelectedFilter, Converter={StaticResource FilterToOpacityConverter}, ConverterParameter=Unlocked}">
+                    <Button.Shadow>
+                        <Shadow Brush="Black" Opacity="0.3" Radius="4" Offset="0,2"/>
+                    </Button.Shadow>
+                </Button>
+
+                <!-- Locked Button -->
+                <Button Grid.Column="2"
+                        Text="{Binding LockedCount, StringFormat='Locked ({0})'}"
+                        Command="{Binding FilterAchievementsCommand}"
+                        CommandParameter="Locked"
+                        BackgroundColor="{StaticResource Gray500}"
+                        TextColor="White"
+                        FontSize="14"
+                        HeightRequest="40"
+                        Opacity="{Binding SelectedFilter, Converter={StaticResource FilterToOpacityConverter}, ConverterParameter=Locked}">
+                    <Button.Shadow>
+                        <Shadow Brush="Black" Opacity="0.3" Radius="4" Offset="0,2"/>
+                    </Button.Shadow>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- Achievements List -->
+        <RefreshView Grid.Row="2"
+                     IsRefreshing="{Binding IsBusy}"
+                     Command="{Binding RefreshCommand}">
+            
+            <CollectionView ItemsSource="{Binding FilteredAchievements}"
+                           SelectionMode="None">
+                
+                <!-- Empty View -->
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Padding="32"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        Spacing="16"
+                                        IsVisible="{Binding HasAchievements, Converter={StaticResource InvertedBoolConverter}}">
+                        <Label Text="🏆"
+                               FontSize="64"
+                               HorizontalOptions="Center"/>
+                        <Label Text="{Binding EmptyStateMessage}"
+                               FontSize="16"
+                               HorizontalTextAlignment="Center"
+                               TextColor="{StaticResource Gray600}"/>
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <!-- Item Template -->
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:AchievementViewModel">
+                        <Border Padding="16"
+                                Margin="0,0,0,12"
+                                BackgroundColor="{StaticResource CardBackground}"
+                                StrokeThickness="0"
+                                Opacity="{Binding IsUnlocked, Converter={StaticResource BoolToOpacityConverter}}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12"/>
+                            </Border.StrokeShape>
+                            
+                            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12">
+                                
+                                <!-- Icon -->
+                                <Label Grid.Column="0" Grid.Row="0" Grid.RowSpan="3"
+                                       Text="{Binding Icon}"
+                                       FontSize="36"
+                                       VerticalOptions="Center"/>
+
+                                <!-- Achievement Name -->
+                                <Label Grid.Column="1" Grid.Row="0"
+                                       Text="{Binding Name}"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       LineBreakMode="WordWrap"/>
+
+                                <!-- Description -->
+                                <Label Grid.Column="1" Grid.Row="1"
+                                       Text="{Binding Description}"
+                                       FontSize="12"
+                                       TextColor="{StaticResource Gray600}"
+                                       LineBreakMode="WordWrap"
+                                       Margin="0,4,0,0"/>
+
+                                <!-- Progress Bar (if has progress) -->
+                                <ProgressBar Grid.Column="1" Grid.Row="2"
+                                            Progress="{Binding ProgressPercentage}"
+                                            ProgressColor="{StaticResource Primary}"
+                                            IsVisible="{Binding HasProgress}"
+                                            Margin="0,8,0,0"
+                                            HeightRequest="6"/>
+
+                                <!-- Status -->
+                                <Label Grid.Column="1" Grid.Row="2"
+                                       Text="{Binding StatusText}"
+                                       FontSize="11"
+                                       TextColor="{StaticResource Gray500}"
+                                       IsVisible="{Binding HasProgress, Converter={StaticResource InvertedBoolConverter}}"
+                                       Margin="0,8,0,0"/>
+
+                                <!-- Lock/Check Icon -->
+                                <Label Grid.Column="2" Grid.Row="0" Grid.RowSpan="3"
+                                       Text="{Binding IsUnlocked, Converter={StaticResource BoolToUnlockIconConverter}}"
+                                       FontSize="24"
+                                       TextColor="{Binding IsUnlocked, Converter={StaticResource BoolToUnlockColorConverter}}"
+                                       VerticalOptions="Center"/>
+                            </Grid>
+
+                            <Border.Shadow>
+                                <Shadow Brush="Black" Opacity="0.1" Radius="8" Offset="0,2"/>
+                            </Border.Shadow>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>
