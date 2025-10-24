@@ -1,0 +1,1988 @@
+{
+  "files_in_context": [
+    {
+      "path": "src/TheCabin.Maui/Platforms/Android/Services/AndroidVoiceRecognitionService.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285041421,
+      "cline_edit_date": 1761285041421,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Services/MauiTextToSpeechService.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285059274,
+      "cline_edit_date": 1761285059274,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/MauiProgram.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761285068766,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/MauiProgram.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285094047,
+      "cline_edit_date": 1761285094047,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_6_SUMMARY.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285184801,
+      "cline_edit_date": 1761285184801,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/BaseViewModel.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285255730,
+      "cline_edit_date": 1761285255730,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Models/NarrativeEntry.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285270377,
+      "cline_edit_date": 1761285270377,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/MainViewModel.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285315500,
+      "cline_edit_date": 1761285315500,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Views/MainPage.xaml",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285349173,
+      "cline_edit_date": 1761285349173,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Views/MainPage.xaml.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285365125,
+      "cline_edit_date": 1761285365125,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Converters/ValueConverters.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285391068,
+      "cline_edit_date": 1761285391068,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/App.xaml",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285408440,
+      "cline_edit_date": 1761285408440,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/AppShell.xaml",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285423992,
+      "cline_edit_date": 1761285423992,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/MauiProgram.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285437586,
+      "cline_edit_date": 1761285437586,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Services/StoryPackService.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761285464443,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/MauiProgram.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285484795,
+      "cline_edit_date": 1761285484795,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/MauiProgram.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285506070,
+      "cline_edit_date": 1761285506070,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/TheCabin.Maui.csproj",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285564557,
+      "cline_edit_date": 1761285564557,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_7_SUMMARY.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285637981,
+      "cline_edit_date": 1761285637981,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/InventoryViewModel.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285705337,
+      "cline_edit_date": 1761285705337,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Views/InventoryPage.xaml",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285740240,
+      "cline_edit_date": 1761285740240,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Views/InventoryPage.xaml.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285759492,
+      "cline_edit_date": 1761285759492,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/SettingsViewModel.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285792043,
+      "cline_edit_date": 1761285792043,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Views/SettingsPage.xaml",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285820715,
+      "cline_edit_date": 1761285820715,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Views/SettingsPage.xaml.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285832558,
+      "cline_edit_date": 1761285832558,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/MauiProgram.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285849330,
+      "cline_edit_date": 1761285849330,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/AppShell.xaml.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285863195,
+      "cline_edit_date": 1761285863195,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/MainViewModel.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285878217,
+      "cline_edit_date": 1761285878217,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/MainViewModel.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285895951,
+      "cline_edit_date": 1761285895951,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/MainViewModel.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761285903480,
+      "cline_edit_date": 1761285895951,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/MainViewModel.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285923755,
+      "cline_edit_date": 1761285923755,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_8_SUMMARY.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761285967885,
+      "cline_edit_date": 1761285967885,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/StoryPackSelectorViewModel.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286028268,
+      "cline_edit_date": 1761286028268,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Views/StoryPackSelectorPage.xaml",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286056568,
+      "cline_edit_date": 1761286056568,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Views/StoryPackSelectorPage.xaml.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286068487,
+      "cline_edit_date": 1761286068487,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Services/StoryPackService.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761286075141,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/StoryPackInfo.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286088008,
+      "cline_edit_date": 1761286088008,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/StoryPack.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761286115239,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Extensions/StoryPackInfoExtensions.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286133869,
+      "cline_edit_date": 1761286133869,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Models/StoryPackInfoViewModel.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286151694,
+      "cline_edit_date": 1761286151694,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/StoryPackSelectorViewModel.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286179964,
+      "cline_edit_date": 1761286179964,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Views/StoryPackSelectorPage.xaml",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286208897,
+      "cline_edit_date": 1761286208897,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/MauiProgram.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286234901,
+      "cline_edit_date": 1761286234901,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/AppShell.xaml",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286251263,
+      "cline_edit_date": 1761286251263,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/AppShell.xaml",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286266659,
+      "cline_edit_date": 1761286266659,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/MainViewModel.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286283146,
+      "cline_edit_date": 1761286283146,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Views/MainPage.xaml",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286315882,
+      "cline_edit_date": 1761286315882,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_9_SUMMARY.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286372044,
+      "cline_edit_date": 1761286372044,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Models/GameSaveInfoViewModel.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286444870,
+      "cline_edit_date": 1761286444870,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/LoadGameViewModel.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286465590,
+      "cline_edit_date": 1761286465590,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Views/LoadGamePage.xaml",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286498564,
+      "cline_edit_date": 1761286498564,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Views/LoadGamePage.xaml.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286511399,
+      "cline_edit_date": 1761286511399,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/MauiProgram.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286536467,
+      "cline_edit_date": 1761286536467,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/MauiProgram.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286551774,
+      "cline_edit_date": 1761286551774,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/AppShell.xaml",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286566940,
+      "cline_edit_date": 1761286566940,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/MainViewModel.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761286575137,
+      "cline_edit_date": 1761286283146,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/MainViewModel.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286596668,
+      "cline_edit_date": 1761286596668,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Views/MainPage.xaml.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286617972,
+      "cline_edit_date": 1761286617972,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Views/MainPage.xaml",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761286626969,
+      "cline_edit_date": 1761286315882,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Views/MainPage.xaml",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286649064,
+      "cline_edit_date": 1761286649064,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_10_SUMMARY.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286708675,
+      "cline_edit_date": 1761286708675,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/DropCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286782854,
+      "cline_edit_date": 1761286782854,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/TakeCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761286791771,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/DropCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286817766,
+      "cline_edit_date": 1761286817766,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/UseCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286846310,
+      "cline_edit_date": 1761286846310,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/ExamineCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286869706,
+      "cline_edit_date": 1761286869706,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/OpenCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286898597,
+      "cline_edit_date": 1761286898597,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/CloseCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286920471,
+      "cline_edit_date": 1761286920471,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/MauiProgram.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761286931020,
+      "cline_edit_date": 1761286551774,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/MauiProgram.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761286946293,
+      "cline_edit_date": 1761286946293,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_11_SUMMARY.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761287029524,
+      "cline_edit_date": 1761287029524,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandHandlers/DropCommandHandlerTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761287079109,
+      "cline_edit_date": 1761287079109,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/DropCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761287087315,
+      "cline_edit_date": 1761286817766,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandHandlers/DropCommandHandlerTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761287102906,
+      "cline_edit_date": 1761287102906,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandHandlers/DropCommandHandlerTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761287118700,
+      "cline_edit_date": 1761287118700,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/UseCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761287151728,
+      "cline_edit_date": 1761286846310,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandHandlers/UseCommandHandlerTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761287195917,
+      "cline_edit_date": 1761287195917,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/GameStateMachine.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761287206796,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandHandlers/UseCommandHandlerTests.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761287225621,
+      "cline_edit_date": 1761287225621,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_12_SUMMARY.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761287327903,
+      "cline_edit_date": 1761287327903,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/ExamineCommandHandler.cs",
+      "record_state": "active",
+      "record_source": "read_tool",
+      "cline_read_date": 1761287362597,
+      "cline_edit_date": 1761286869706,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandHandlers/ExamineCommandHandlerTests.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761287404812,
+      "cline_edit_date": 1761287404812,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/OpenCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761287431872,
+      "cline_edit_date": 1761286898597,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandHandlers/OpenCommandHandlerTests.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761287477294,
+      "cline_edit_date": 1761287477294,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/CloseCommandHandler.cs",
+      "record_state": "active",
+      "record_source": "read_tool",
+      "cline_read_date": 1761287504955,
+      "cline_edit_date": 1761286920471,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandHandlers/CloseCommandHandlerTests.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761287547932,
+      "cline_edit_date": 1761287547932,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_13_SUMMARY.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761287632482,
+      "cline_edit_date": 1761287632482,
+      "user_edit_date": null
+    },
+    {
+      "path": "story_packs/classic_horror.json",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761317686686,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Services/StoryPackServiceTests.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761317723347,
+      "cline_edit_date": 1761317723347,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandRouterIntegrationTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761317783410,
+      "cline_edit_date": 1761317783410,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandRouter.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761317792925,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/DropCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761317799974,
+      "cline_edit_date": 1761286817766,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandRouterIntegrationTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761317850286,
+      "cline_edit_date": 1761317850286,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/OpenCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761317891997,
+      "cline_edit_date": 1761286898597,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_14_SUMMARY.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761317950514,
+      "cline_edit_date": 1761317950514,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/MainPage.xaml.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761318026784,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/MainPage.xaml",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761318034637,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/MainPage.xaml",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318079431,
+      "cline_edit_date": 1761318079431,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/MainPage.xaml.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318099125,
+      "cline_edit_date": 1761318099125,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/AppShell.xaml",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318124404,
+      "cline_edit_date": 1761318124404,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/AppShell.xaml",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318138645,
+      "cline_edit_date": 1761318138645,
+      "user_edit_date": null
+    },
+    {
+      "path": "build-and-test.ps1",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318163628,
+      "cline_edit_date": 1761318163628,
+      "user_edit_date": null
+    },
+    {
+      "path": "build-and-test.ps1",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761318182286,
+      "cline_edit_date": 1761318163628,
+      "user_edit_date": null
+    },
+    {
+      "path": "build-and-test.ps1",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318203450,
+      "cline_edit_date": 1761318203450,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_15_SUMMARY.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318353368,
+      "cline_edit_date": 1761318353368,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandRouterIntegrationTests.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761318396998,
+      "cline_edit_date": 1761317850286,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/OpenCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761318406938,
+      "cline_edit_date": 1761286898597,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/OpenCommandHandler.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318427256,
+      "cline_edit_date": 1761318427256,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/DropCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761318436769,
+      "cline_edit_date": 1761286817766,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/DropCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318454317,
+      "cline_edit_date": 1761318454317,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandRouterIntegrationTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318472298,
+      "cline_edit_date": 1761318472298,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandHandlers/DropCommandHandlerTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318489673,
+      "cline_edit_date": 1761318489673,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/MauiProgram.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318516769,
+      "cline_edit_date": 1761318516769,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandRouterIntegrationTests.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761318550322,
+      "cline_edit_date": 1761318472298,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandRouterIntegrationTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318576629,
+      "cline_edit_date": 1761318576629,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/UseCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318598913,
+      "cline_edit_date": 1761318598913,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/UseCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318622056,
+      "cline_edit_date": 1761318622056,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandRouterIntegrationTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318641097,
+      "cline_edit_date": 1761318641097,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/DropCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761318731174,
+      "cline_edit_date": 1761318454317,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/DropCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318748799,
+      "cline_edit_date": 1761318748799,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandHandlers/DropCommandHandlerTests.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761318808066,
+      "cline_edit_date": 1761318489673,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandHandlers/DropCommandHandlerTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318830978,
+      "cline_edit_date": 1761318830978,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandHandlers/DropCommandHandlerTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318879942,
+      "cline_edit_date": 1761318879942,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandHandlers/DropCommandHandlerTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761318938445,
+      "cline_edit_date": 1761318938445,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/DropCommandHandler.cs",
+      "record_state": "active",
+      "record_source": "read_tool",
+      "cline_read_date": 1761318989873,
+      "cline_edit_date": 1761318748799,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandHandlers/DropCommandHandlerTests.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761319011645,
+      "cline_edit_date": 1761319011645,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandRouterIntegrationTests.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761319058830,
+      "cline_edit_date": 1761318641097,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/TakeCommandHandler.cs",
+      "record_state": "active",
+      "record_source": "read_tool",
+      "cline_read_date": 1761319078756,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/GameStateMachine.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761319104551,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/InventoryManager.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761319135835,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Engine/CommandRouterIntegrationTests.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761319156712,
+      "cline_edit_date": 1761319156712,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_16_SUMMARY.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761319283701,
+      "cline_edit_date": 1761319283701,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/11-future-roadmap.md",
+      "record_state": "active",
+      "record_source": "read_tool",
+      "cline_read_date": 1761319800666,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_17_PLAN.md",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761319856863,
+      "cline_edit_date": 1761319856863,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/Achievement.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761319898332,
+      "cline_edit_date": 1761319898332,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/StoryPack.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761319910061,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/StoryPack.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761319960386,
+      "cline_edit_date": 1761319960386,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/Enums.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761319992271,
+      "cline_edit_date": 1761319992271,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Interfaces/IAchievementService.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761320018306,
+      "cline_edit_date": 1761320018306,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Services/AchievementService.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761320069932,
+      "cline_edit_date": 1761320069932,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/TheCabin.Core.csproj",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761320088566,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/TheCabin.Core.csproj",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761320107334,
+      "cline_edit_date": 1761320107334,
+      "user_edit_date": null
+    },
+    {
+      "path": "story_packs/classic_horror.json",
+      "record_state": "active",
+      "record_source": "read_tool",
+      "cline_read_date": 1761320143305,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "story_packs/achievements_classic_horror.json",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761320183168,
+      "cline_edit_date": 1761320183168,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Services/AchievementServiceTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761320256066,
+      "cline_edit_date": 1761320256066,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/TheCabin.Core.Tests.csproj",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761320266410,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/TheCabin.Core.Tests.csproj",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761320281535,
+      "cline_edit_date": 1761320281535,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Services/AchievementServiceTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761320322185,
+      "cline_edit_date": 1761320322185,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Services/AchievementService.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761320331897,
+      "cline_edit_date": 1761320069932,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Services/AchievementServiceTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761320351364,
+      "cline_edit_date": 1761320351364,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Services/AchievementServiceTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761320417591,
+      "cline_edit_date": 1761320417591,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Services/AchievementServiceTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761320445056,
+      "cline_edit_date": 1761320445056,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Services/AchievementServiceTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761320504161,
+      "cline_edit_date": 1761320504161,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Services/AchievementService.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761320555662,
+      "cline_edit_date": 1761320069932,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Services/AchievementService.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761320580955,
+      "cline_edit_date": 1761320580955,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Services/AchievementServiceTests.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761320615202,
+      "cline_edit_date": 1761320504161,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Services/AchievementServiceTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761320638004,
+      "cline_edit_date": 1761320638004,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Services/AchievementServiceTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761320683611,
+      "cline_edit_date": 1761320683611,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Services/AchievementServiceTests.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761320703275,
+      "cline_edit_date": 1761320703275,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_17A_SUMMARY.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761320791990,
+      "cline_edit_date": 1761320791990,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_17_PLAN.md",
+      "record_state": "active",
+      "record_source": "read_tool",
+      "cline_read_date": 1761335598861,
+      "cline_edit_date": 1761319856863,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/GameStateMachine.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761335613377,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/GameStateMachine.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761335631812,
+      "cline_edit_date": 1761335631812,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/GameStateMachine.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761335656936,
+      "cline_edit_date": 1761335656936,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/GameStateMachine.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761335685860,
+      "cline_edit_date": 1761335685860,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/GameStateMachine.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761335705554,
+      "cline_edit_date": 1761335705554,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandRouter.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761335721080,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandRouter.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761335739343,
+      "cline_edit_date": 1761335739343,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandRouter.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761335758092,
+      "cline_edit_date": 1761335758092,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/InventoryManager.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761335767912,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/InventoryManager.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761335783320,
+      "cline_edit_date": 1761335783320,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/InventoryManager.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761335806045,
+      "cline_edit_date": 1761335806045,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/Enums.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761335835316,
+      "cline_edit_date": 1761335835316,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_17B_PROGRESS.md",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761335963556,
+      "cline_edit_date": 1761335963556,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/PuzzleEngine.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761336019080,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/PuzzleEngine.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336040642,
+      "cline_edit_date": 1761336040642,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Services/StoryPackService.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336072897,
+      "cline_edit_date": 1761336072897,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/MauiProgram.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336104238,
+      "cline_edit_date": 1761336104238,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_17B_PROGRESS.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336177829,
+      "cline_edit_date": 1761336177829,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_17B_SUMMARY.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336230845,
+      "cline_edit_date": 1761336230845,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_17C_PLAN.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336299402,
+      "cline_edit_date": 1761336299402,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Models/AchievementViewModel.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336330528,
+      "cline_edit_date": 1761336330528,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/AchievementsPageViewModel.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336360736,
+      "cline_edit_date": 1761336360736,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Services/IAchievementNotificationService.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336379638,
+      "cline_edit_date": 1761336379638,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Services/AchievementToastService.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336402706,
+      "cline_edit_date": 1761336402706,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Views/AchievementsPage.xaml",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336441992,
+      "cline_edit_date": 1761336441992,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Views/AchievementsPage.xaml.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336457628,
+      "cline_edit_date": 1761336457628,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Converters/ValueConverters.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761336473498,
+      "cline_edit_date": 1761285391068,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Converters/ValueConverters.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336497197,
+      "cline_edit_date": 1761336497197,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/Converters/ValueConverters.cs",
+      "record_state": "active",
+      "record_source": "user_edited",
+      "cline_read_date": 1761336497197,
+      "cline_edit_date": 1761336497197,
+      "user_edit_date": 1761336497202
+    },
+    {
+      "path": "src/TheCabin.Maui/App.xaml",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761336507962,
+      "cline_edit_date": 1761285408440,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/App.xaml",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336528583,
+      "cline_edit_date": 1761336528583,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/MainViewModel.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761336538935,
+      "cline_edit_date": 1761286596668,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/MainViewModel.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336563983,
+      "cline_edit_date": 1761336563983,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/MainViewModel.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336752454,
+      "cline_edit_date": 1761336752454,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/MainViewModel.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336774091,
+      "cline_edit_date": 1761336774091,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/ViewModels/MainViewModel.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336791085,
+      "cline_edit_date": 1761336791085,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/AppShell.xaml",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761336802799,
+      "cline_edit_date": 1761318138645,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Maui/AppShell.xaml",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336819863,
+      "cline_edit_date": 1761336819863,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_17C_SUMMARY.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761336862326,
+      "cline_edit_date": 1761336862326,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_17D_PLAN.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337096621,
+      "cline_edit_date": 1761337096621,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/Puzzle.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337120987,
+      "cline_edit_date": 1761337120987,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/PuzzleStep.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337138528,
+      "cline_edit_date": 1761337138528,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/Hint.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337155566,
+      "cline_edit_date": 1761337155566,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/PuzzleState.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337174362,
+      "cline_edit_date": 1761337174362,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/Enums.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761337184934,
+      "cline_edit_date": 1761335835316,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/Enums.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337203657,
+      "cline_edit_date": 1761337203657,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/GameState.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761337217362,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/GameState.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337236477,
+      "cline_edit_date": 1761337236477,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/StoryPack.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761337248730,
+      "cline_edit_date": 1761319960386,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/StoryPack.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337263100,
+      "cline_edit_date": 1761337263100,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/PuzzleStepResult.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337285192,
+      "cline_edit_date": 1761337285192,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Interfaces/IPuzzleEngine.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761337297257,
+      "cline_edit_date": null,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Interfaces/IPuzzleEngine.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337316127,
+      "cline_edit_date": 1761337316127,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/PuzzleEngine.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761337327965,
+      "cline_edit_date": 1761336040642,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/PuzzleEngine.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337344178,
+      "cline_edit_date": 1761337344178,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/PuzzleEngine.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337380054,
+      "cline_edit_date": 1761337380054,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/PuzzleStep.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761337394223,
+      "cline_edit_date": 1761337138528,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/PuzzleStep.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337415448,
+      "cline_edit_date": 1761337415448,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/PuzzleState.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337446168,
+      "cline_edit_date": 1761337446168,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/PuzzleState.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337463321,
+      "cline_edit_date": 1761337463321,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/Puzzle.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337493141,
+      "cline_edit_date": 1761337493141,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/Hint.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337519659,
+      "cline_edit_date": 1761337519659,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_17D_PROGRESS.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761337633510,
+      "cline_edit_date": 1761337633510,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/PuzzleEngine.cs",
+      "record_state": "active",
+      "record_source": "read_tool",
+      "cline_read_date": 1761346759917,
+      "cline_edit_date": 1761337380054,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/Puzzle.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761346770179,
+      "cline_edit_date": 1761337493141,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/PuzzleStep.cs",
+      "record_state": "active",
+      "record_source": "read_tool",
+      "cline_read_date": 1761346779661,
+      "cline_edit_date": 1761337415448,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/Puzzle.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761346799858,
+      "cline_edit_date": 1761346799858,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Services/StoryPackService.cs",
+      "record_state": "active",
+      "record_source": "user_edited",
+      "cline_read_date": 1761336072897,
+      "cline_edit_date": 1761336072897,
+      "user_edit_date": 1761346815026
+    },
+    {
+      "path": "src/TheCabin.Core/Models/StoryPack.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761346856690,
+      "cline_edit_date": 1761337263100,
+      "user_edit_date": null
+    },
+    {
+      "path": "story_packs/puzzles_classic_horror.json",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761346910194,
+      "cline_edit_date": 1761346910194,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_17D_SUMMARY.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761346961104,
+      "cline_edit_date": 1761346961104,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_17E_PLAN.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761347537735,
+      "cline_edit_date": 1761347537735,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/UseCommandHandler.cs",
+      "record_state": "stale",
+      "record_source": "read_tool",
+      "cline_read_date": 1761347550413,
+      "cline_edit_date": 1761318622056,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Engine/CommandHandlers/UseCommandHandler.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761347578990,
+      "cline_edit_date": 1761347578990,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Integration/AchievementPuzzleIntegrationTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761347660973,
+      "cline_edit_date": 1761347660973,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Interfaces/IPuzzleEngine.cs",
+      "record_state": "active",
+      "record_source": "read_tool",
+      "cline_read_date": 1761347671897,
+      "cline_edit_date": 1761337316127,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/GameState.cs",
+      "record_state": "active",
+      "record_source": "read_tool",
+      "cline_read_date": 1761347686226,
+      "cline_edit_date": 1761337236477,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Integration/AchievementPuzzleIntegrationTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761347740274,
+      "cline_edit_date": 1761347740274,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Interfaces/IAchievementService.cs",
+      "record_state": "active",
+      "record_source": "read_tool",
+      "cline_read_date": 1761347750916,
+      "cline_edit_date": 1761320018306,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Integration/AchievementPuzzleIntegrationTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761347786088,
+      "cline_edit_date": 1761347786088,
+      "user_edit_date": null
+    },
+    {
+      "path": "src/TheCabin.Core/Models/StoryPack.cs",
+      "record_state": "active",
+      "record_source": "read_tool",
+      "cline_read_date": 1761347810538,
+      "cline_edit_date": 1761337263100,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Integration/AchievementPuzzleIntegrationTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761347836305,
+      "cline_edit_date": 1761347836305,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Integration/AchievementPuzzleIntegrationTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761347863459,
+      "cline_edit_date": 1761347863459,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Integration/AchievementPuzzleIntegrationTests.cs",
+      "record_state": "stale",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761347969723,
+      "cline_edit_date": 1761347969723,
+      "user_edit_date": null
+    },
+    {
+      "path": "tests/TheCabin.Core.Tests/Integration/AchievementPuzzleIntegrationTests.cs",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761348003336,
+      "cline_edit_date": 1761348003336,
+      "user_edit_date": null
+    },
+    {
+      "path": "docs/PHASE_17E_SUMMARY.md",
+      "record_state": "active",
+      "record_source": "cline_edited",
+      "cline_read_date": 1761348078116,
+      "cline_edit_date": 1761348078116,
+      "user_edit_date": null
+    }
+  ],
+  "model_usage": [
+    {
+      "ts": 1761285004115,
+      "model_id": "claude-sonnet-4.5",
+      "model_provider_id": "vscode-lm",
+      "mode": "act"
+    }
+  ]
+}
