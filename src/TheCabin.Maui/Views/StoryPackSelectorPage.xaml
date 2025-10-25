@@ -3,10 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:TheCabin.Maui.ViewModels"
              xmlns:models="clr-namespace:TheCabin.Maui.Models"
+             xmlns:converters="clr-namespace:TheCabin.Maui.Converters"
              x:Class="TheCabin.Maui.Views.StoryPackSelectorPage"
              x:DataType="vm:StoryPackSelectorViewModel"
              Title="{Binding Title}"
              BackgroundColor="#1a1a1a">
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:StringNotEmptyConverter x:Key="StringNotEmptyConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
     
     <Grid RowDefinitions="Auto,*,Auto" Padding="16">
         

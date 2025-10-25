@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using TheCabin.Core.Engine;
 using TheCabin.Core.Engine.CommandHandlers;
 using TheCabin.Core.Interfaces;
+using TheCabin.Core.Models;
 using TheCabin.Core.Services;
 using TheCabin.Infrastructure.Repositories;
 using TheCabin.Maui.Services;
@@ -110,10 +111,25 @@ public static class MauiProgram
     
     private static void RegisterEngineComponents(IServiceCollection services)
     {
-        // Game state machine with achievement service
+        // Game state machine - does NOT depend on InventoryManager in constructor
+        // We'll need to modify GameStateMachine to not require IInventoryManager
+        // For now, let's register it without dependencies
         services.AddSingleton(sp => 
-            new GameStateMachine(
-                sp.GetService<IAchievementService>()));
+        {
+            var achievementService = sp.GetService<IAchievementService>();
+            // Create a simple InventoryManager with empty state for GameStateMachine
+            var emptyState = new GameState();
+            var tempInventoryManager = new InventoryManager(emptyState, achievementService);
+            return new GameStateMachine(tempInventoryManager, achievementService);
+        });
+        
+        // Inventory manager - gets the actual GameState from GameStateMachine
+        services.AddSingleton<IInventoryManager>(sp =>
+        {
+            var stateMachine = sp.GetRequiredService<GameStateMachine>();
+            var achievementService = sp.GetService<IAchievementService>();
+            return new InventoryManager(stateMachine.CurrentState, achievementService);
+        });
         
         // Command router with game state machine and achievement service
         services.AddSingleton(sp =>
@@ -121,14 +137,6 @@ public static class MauiProgram
                 sp.GetServices<ICommandHandler>(),
                 sp.GetRequiredService<GameStateMachine>(),
                 sp.GetService<IAchievementService>()));
-        
-        // Inventory manager - requires GameState from GameStateMachine
-        services.AddSingleton<IInventoryManager>(sp =>
-        {
-            var stateMachine = sp.GetRequiredService<GameStateMachine>();
-            var achievementService = sp.GetService<IAchievementService>();
-            return new InventoryManager(stateMachine.CurrentState, achievementService);
-        });
         
         // Command handlers - register with factory methods for proper DI
         services.AddTransient<ICommandHandler>(sp => 

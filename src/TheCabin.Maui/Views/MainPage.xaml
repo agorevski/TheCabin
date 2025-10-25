@@ -3,10 +3,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:TheCabin.Maui.ViewModels"
              xmlns:models="clr-namespace:TheCabin.Maui.Models"
+             xmlns:converters="clr-namespace:TheCabin.Maui.Converters"
              x:Class="TheCabin.Maui.Views.MainPage"
              x:DataType="viewmodels:MainViewModel"
              BackgroundColor="#1a1a1a"
              Shell.NavBarIsVisible="False">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BoolToFontAttributesConverter x:Key="BoolToFontAttributesConverter"/>
+            <converters:BoolToRecordingColorConverter x:Key="BoolToRecordingColorConverter"/>
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
+            <converters:TtsIconConverter x:Key="TtsIconConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,*,Auto,Auto,Auto" Padding="16">
         
@@ -99,13 +109,16 @@
               Padding="0,16"
               HorizontalOptions="Center">
             <Button x:Name="VoiceButton"
+                    Text="🎙️"
                     Command="{Binding ToggleListeningCommand}"
                     HeightRequest="80"
                     WidthRequest="80"
                     CornerRadius="40"
+                    FontSize="32"
                     BackgroundColor="{Binding IsListening, Converter={StaticResource BoolToRecordingColorConverter}}"
                     BorderWidth="3"
                     BorderColor="#4A90E2"
+                    TextColor="White"
                     IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}">
                 <Button.Shadow>
                     <Shadow Brush="#4A90E2"
@@ -113,12 +126,6 @@
                             Radius="20"
                             Offset="0,0"/>
                 </Button.Shadow>
-                
-                <Label Text="🎙️" 
-                       FontSize="32"
-                       TextColor="White"
-                       HorizontalOptions="Center"
-                       VerticalOptions="Center"/>
             </Button>
             
             <!-- Processing Indicator -->
