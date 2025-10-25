@@ -38,7 +38,28 @@ public class StoryPackService : IStoryPackService
         {
             try
             {
+                var fileName = Path.GetFileName(file);
+                System.Diagnostics.Debug.WriteLine($"GetAvailablePacksAsync: Processing file: {fileName}");
+                
+                // Skip achievement and puzzle files - they're loaded separately
+                if (fileName.StartsWith("achievements_") || fileName.StartsWith("puzzles_"))
+                {
+                    System.Diagnostics.Debug.WriteLine($"GetAvailablePacksAsync: Skipping {fileName} (achievements/puzzles file)");
+                    continue;
+                }
+                
+                System.Diagnostics.Debug.WriteLine($"GetAvailablePacksAsync: Loading pack from {fileName}");
                 var pack = await LoadPackFromFileAsync(file);
+                
+                System.Diagnostics.Debug.WriteLine($"GetAvailablePacksAsync: Loaded pack - Id: {pack.Id}, Theme: {pack.Theme}");
+                
+                // Validate that pack has required fields
+                if (string.IsNullOrEmpty(pack.Id) || string.IsNullOrEmpty(pack.Theme))
+                {
+                    System.Diagnostics.Debug.WriteLine($"GetAvailablePacksAsync: Skipping {fileName} - missing Id or Theme");
+                    continue;
+                }
+                
                 packs.Add(new StoryPackInfo
                 {
                     Id = pack.Id,
@@ -48,10 +69,13 @@ public class StoryPackService : IStoryPackService
                     EstimatedPlayTime = pack.Metadata?.EstimatedPlayTime ?? 30,
                     Tags = pack.Metadata?.Tags ?? new List<string>()
                 });
+                
+                System.Diagnostics.Debug.WriteLine($"GetAvailablePacksAsync: Added pack: {pack.Id}");
             }
-            catch
+            catch (Exception ex)
             {
                 // Skip invalid files
+                System.Diagnostics.Debug.WriteLine($"GetAvailablePacksAsync: Error loading {Path.GetFileName(file)}: {ex.Message}");
                 continue;
             }
         }
@@ -125,6 +149,8 @@ public class StoryPackService : IStoryPackService
     {
         var json = await File.ReadAllTextAsync(filePath);
         
+        System.Diagnostics.Debug.WriteLine($"LoadPackFromFileAsync: JSON content preview: {json.Substring(0, Math.Min(200, json.Length))}");
+        
         var options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
@@ -138,6 +164,8 @@ public class StoryPackService : IStoryPackService
         {
             throw new InvalidDataException($"Failed to deserialize story pack from {filePath}");
         }
+        
+        System.Diagnostics.Debug.WriteLine($"LoadPackFromFileAsync: After deserialization - Id='{pack.Id}', Theme='{pack.Theme}', Description='{pack.Description}'");
         
         // Try to load achievements from separate file
         await LoadAchievementsAsync(pack, filePath);

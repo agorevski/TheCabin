@@ -29,15 +29,20 @@ public partial class MainPage : ContentPage, IQueryAttributable
     {
         if (query.ContainsKey("SelectedPackId"))
         {
+            // Set flag immediately to prevent OnAppearing from initializing
+            _isInitialized = true;
+            
             var packId = (string)query["SelectedPackId"];
             MainThread.BeginInvokeOnMainThread(async () =>
             {
                 await _viewModel.InitializeAsync(packId);
-                _isInitialized = true;
             });
         }
         else if (query.ContainsKey("LoadSaveId"))
         {
+            // Set flag immediately to prevent OnAppearing from initializing
+            _isInitialized = true;
+            
             var saveId = (int)query["LoadSaveId"];
             MainThread.BeginInvokeOnMainThread(async () =>
             {

@@ -1,0 +1,276 @@
+{
+  "achievements": [
+    {
+      "id": "first_steps",
+      "name": "First Steps",
+      "description": "Enter the cabin for the first time",
+      "category": "Exploration",
+      "points": 10,
+      "iconPath": "icons/first_steps.png",
+      "isSecret": false,
+      "requiredFlags": [],
+      "trigger": {
+        "type": "RoomVisited",
+        "targetId": "main_room",
+        "requiredCount": 1,
+        "conditions": {}
+      },
+      "reward": null
+    },
+    {
+      "id": "explorer",
+      "name": "Explorer",
+      "description": "Visit all rooms in the cabin",
+      "category": "Exploration",
+      "points": 25,
+      "iconPath": "icons/explorer.png",
+      "isSecret": false,
+      "requiredFlags": [
+        "visited_main_room",
+        "visited_attic",
+        "visited_basement"
+      ],
+      "trigger": {
+        "type": "RoomVisited",
+        "targetId": "",
+        "requiredCount": 3,
+        "conditions": {}
+      },
+      "reward": {
+        "type": "unlock",
+        "value": "bonus_room",
+        "description": "Unlocked secret room"
+      }
+    },
+    {
+      "id": "light_bringer",
+      "name": "Light Bringer",
+      "description": "Light the lantern in the darkness",
+      "category": "Progress",
+      "points": 15,
+      "iconPath": "icons/light.png",
+      "isSecret": false,
+      "requiredFlags": [],
+      "trigger": {
+        "type": "ItemCollected",
+        "targetId": "lantern",
+        "requiredCount": 1,
+        "conditions": {}
+      },
+      "reward": null
+    },
+    {
+      "id": "investigator",
+      "name": "Investigator",
+      "description": "Examine 10 different objects",
+      "category": "Curiosity",
+      "points": 20,
+      "iconPath": "icons/magnifying_glass.png",
+      "isSecret": false,
+      "requiredFlags": [],
+      "trigger": {
+        "type": "ObjectExamined",
+        "targetId": "",
+        "requiredCount": 10,
+        "conditions": {}
+      },
+      "reward": null
+    },
+    {
+      "id": "escape_artist",
+      "name": "Escape Artist",
+      "description": "Find your way out of the cabin",
+      "category": "Progress",
+      "points": 50,
+      "iconPath": "icons/escape.png",
+      "isSecret": false,
+      "requiredFlags": [
+        "door_unlocked",
+        "escaped"
+      ],
+      "trigger": {
+        "type": "FlagSet",
+        "targetId": "escaped",
+        "requiredCount": 1,
+        "conditions": {}
+      },
+      "reward": {
+        "type": "points",
+        "value": "100",
+        "description": "Bonus 100 points"
+      }
+    },
+    {
+      "id": "hoarder",
+      "name": "Hoarder",
+      "description": "Collect 5 items in your inventory",
+      "category": "Collection",
+      "points": 15,
+      "iconPath": "icons/backpack.png",
+      "isSecret": false,
+      "requiredFlags": [],
+      "trigger": {
+        "type": "ItemCollected",
+        "targetId": "",
+        "requiredCount": 5,
+        "conditions": {
+          "minInventory": 5
+        }
+      },
+      "reward": null
+    },
+    {
+      "id": "speed_runner",
+      "name": "Speed Runner",
+      "description": "Complete the story in under 15 minutes",
+      "category": "Challenge",
+      "points": 100,
+      "iconPath": "icons/stopwatch.png",
+      "isSecret": false,
+      "requiredFlags": [
+        "escaped"
+      ],
+      "trigger": {
+        "type": "StoryCompleted",
+        "targetId": "",
+        "requiredCount": 1,
+        "conditions": {
+          "maxPlayTime": 15
+        }
+      },
+      "reward": {
+        "type": "cosmetic",
+        "value": "golden_lantern",
+        "description": "Unlocked golden lantern skin"
+      }
+    },
+    {
+      "id": "pacifist",
+      "name": "Pacifist",
+      "description": "Complete the story without losing any health",
+      "category": "Challenge",
+      "points": 75,
+      "iconPath": "icons/heart.png",
+      "isSecret": false,
+      "requiredFlags": [
+        "escaped"
+      ],
+      "trigger": {
+        "type": "StoryCompleted",
+        "targetId": "",
+        "requiredCount": 1,
+        "conditions": {
+          "minHealth": 100
+        }
+      },
+      "reward": null
+    },
+    {
+      "id": "secret_finder",
+      "name": "Secret Finder",
+      "description": "Discover the hidden truth",
+      "category": "Secrets",
+      "points": 30,
+      "iconPath": "icons/secret.png",
+      "isSecret": true,
+      "requiredFlags": [
+        "read_note",
+        "examined_skeleton",
+        "opened_chest"
+      ],
+      "trigger": {
+        "type": "FlagSet",
+        "targetId": "truth_discovered",
+        "requiredCount": 1,
+        "conditions": {}
+      },
+      "reward": {
+        "type": "unlock",
+        "value": "secret_ending",
+        "description": "Unlocked secret ending"
+      }
+    },
+    {
+      "id": "night_owl",
+      "name": "Night Owl",
+      "description": "Play between midnight and 4 AM",
+      "category": "Meta",
+      "points": 10,
+      "iconPath": "icons/moon.png",
+      "isSecret": false,
+      "requiredFlags": [],
+      "trigger": {
+        "type": "CommandExecuted",
+        "targetId": "",
+        "requiredCount": 1,
+        "conditions": {
+          "timeOfDay": "0-4"
+        }
+      },
+      "reward": null
+    },
+    {
+      "id": "persistent",
+      "name": "Persistent",
+      "description": "Execute 100 commands in a single playthrough",
+      "category": "Meta",
+      "points": 25,
+      "iconPath": "icons/persistence.png",
+      "isSecret": false,
+      "requiredFlags": [],
+      "trigger": {
+        "type": "CommandExecuted",
+        "targetId": "",
+        "requiredCount": 100,
+        "conditions": {}
+      },
+      "reward": null
+    },
+    {
+      "id": "puzzle_master",
+      "name": "Puzzle Master",
+      "description": "Solve all puzzles in the cabin",
+      "category": "Progress",
+      "points": 40,
+      "iconPath": "icons/puzzle.png",
+      "isSecret": false,
+      "requiredFlags": [
+        "puzzle_door_solved",
+        "puzzle_chest_solved",
+        "puzzle_mirror_solved"
+      ],
+      "trigger": {
+        "type": "PuzzleSolved",
+        "targetId": "",
+        "requiredCount": 3,
+        "conditions": {}
+      },
+      "reward": {
+        "type": "unlock",
+        "value": "master_key",
+        "description": "Received the Master Key"
+      }
+    },
+    {
+      "id": "completionist",
+      "name": "Completionist",
+      "description": "Unlock all other achievements",
+      "category": "Meta",
+      "points": 200,
+      "iconPath": "icons/trophy.png",
+      "isSecret": false,
+      "requiredFlags": [],
+      "trigger": {
+        "type": "StatThreshold",
+        "targetId": "achievements_unlocked",
+        "requiredCount": 12,
+        "conditions": {}
+      },
+      "reward": {
+        "type": "cosmetic",
+        "value": "platinum_theme",
+        "description": "Unlocked Platinum theme"
+      }
+    }
+  ]
+}

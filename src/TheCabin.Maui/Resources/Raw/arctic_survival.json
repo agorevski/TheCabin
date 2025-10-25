@@ -1,11 +1,13 @@
 {
+  "id": "arctic_survival",
   "theme": "Arctic Survival",
-  "description": "You\u2019re stranded in an abandoned polar research cabin as the temperature plummets and wind howls outside.",
+  "description": "Youre stranded in an abandoned polar research cabin as the temperature plummets and wind howls outside.",
+  "startingRoomId": "main_lab",
   "rooms": [
     {
       "id": "main_lab",
       "description": "Metal desks covered in frost. A generator hums weakly in the corner.",
-      "objects": [
+      "objectIds": [
         "generator",
         "radio",
         "coat"
@@ -18,7 +20,7 @@
     {
       "id": "storage_room",
       "description": "Shelves hold frozen food cans and broken tools.",
-      "objects": [
+      "objectIds": [
         "can",
         "toolbox"
       ],
@@ -29,7 +31,7 @@
     {
       "id": "bunk_room",
       "description": "Empty cots and scattered notebooks. One bed has fresh footprints beside it.",
-      "objects": [
+      "objectIds": [
         "notebook",
         "thermos"
       ],
@@ -37,5 +39,65 @@
         "north": "main_lab"
       }
     }
-  ]
+  ],
+  "objects": {
+    "generator": {
+      "id": "generator",
+      "name": "Emergency Generator",
+      "description": "A backup generator running on its last reserves of fuel.",
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": true
+    },
+    "radio": {
+      "id": "radio",
+      "name": "Communication Radio",
+      "description": "A weather-beaten radio that might still reach someone.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": true
+    },
+    "coat": {
+      "id": "coat",
+      "name": "Insulated Coat",
+      "description": "A heavy winter coat that could save your life.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": false
+    },
+    "can": {
+      "id": "can",
+      "name": "Frozen Food Can",
+      "description": "A can of preserved food, frozen solid.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": true
+    },
+    "toolbox": {
+      "id": "toolbox",
+      "name": "Tool Box",
+      "description": "A metal box containing various repair tools.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": true
+    },
+    "notebook": {
+      "id": "notebook",
+      "name": "Research Notebook",
+      "description": "A notebook with logs from the previous research team.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": false
+    },
+    "thermos": {
+      "id": "thermos",
+      "name": "Steel Thermos",
+      "description": "An insulated thermos, still slightly warm.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": true
+    }
+  },
+  "puzzles": [],
+  "achievements": []
 }

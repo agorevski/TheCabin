@@ -26,18 +26,30 @@ public partial class StoryPackSelectorViewModel : BaseViewModel
     {
         await ExecuteAsync(async () =>
         {
+            System.Diagnostics.Debug.WriteLine("LoadPacksAsync: Starting to load packs...");
+            
             var packs = await _storyPackService.GetAvailablePacksAsync();
+            
+            System.Diagnostics.Debug.WriteLine($"LoadPacksAsync: Found {packs.Count} packs");
             
             AvailablePacks.Clear();
             foreach (var pack in packs)
             {
+                System.Diagnostics.Debug.WriteLine($"LoadPacksAsync: Adding pack: {pack.Id} - {pack.Theme}");
                 AvailablePacks.Add(new StoryPackInfoViewModel(pack));
             }
+            
+            System.Diagnostics.Debug.WriteLine($"LoadPacksAsync: Total packs in collection: {AvailablePacks.Count}");
             
             // Select first pack by default
             if (AvailablePacks.Count > 0)
             {
                 SelectedPack = AvailablePacks[0];
+                System.Diagnostics.Debug.WriteLine($"LoadPacksAsync: Selected default pack: {SelectedPack.Id}");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("LoadPacksAsync: No packs available to select");
             }
         }, "Failed to load story packs");
     }

@@ -24,7 +24,21 @@ public partial class BaseViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            ErrorMessage = errorMessage ?? ex.Message;
+            // Log the full exception details
+            System.Diagnostics.Debug.WriteLine($"ERROR in ExecuteAsync: {ex.GetType().Name}");
+            System.Diagnostics.Debug.WriteLine($"Message: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+            if (ex.InnerException != null)
+            {
+                System.Diagnostics.Debug.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                System.Diagnostics.Debug.WriteLine($"Inner stack trace: {ex.InnerException.StackTrace}");
+            }
+            
+            ErrorMessage = $"{errorMessage ?? "Error"}: {ex.Message}";
+            if (ex.InnerException != null)
+            {
+                ErrorMessage += $"\n\nInner: {ex.InnerException.Message}";
+            }
             await ShowErrorAsync(ErrorMessage);
         }
         finally

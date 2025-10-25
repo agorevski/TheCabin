@@ -97,6 +97,9 @@ public static class MauiProgram
                 Directory.CreateDirectory(storyPackPath);
             }
             
+            // Copy story pack files from Resources/Raw to AppDataDirectory synchronously
+            CopyStoryPacksFromResourcesSync(storyPackPath);
+            
             return new StoryPackService(storyPackPath);
         });
         
@@ -124,27 +127,29 @@ public static class MauiProgram
     
     private static void RegisterEngineComponents(IServiceCollection services)
     {
-        // Game state machine - does NOT depend on InventoryManager in constructor
-        // We'll need to modify GameStateMachine to not require IInventoryManager
-        // For now, let's register it without dependencies
-        services.AddSingleton(sp => 
+        // Register GameStateMachine and InventoryManager with empty initial state
+        // They will work with GameStateService which manages the actual game state
+        services.AddSingleton<GameStateMachine>(sp =>
         {
             var achievementService = sp.GetService<IAchievementService>();
-            // Create a simple InventoryManager with empty state for GameStateMachine
+            
+            // Create with empty state - the actual state comes from GameStateService
             var emptyState = new GameState();
-            var tempInventoryManager = new InventoryManager(emptyState, achievementService);
-            return new GameStateMachine(tempInventoryManager, achievementService);
+            var emptyInventoryManager = new InventoryManager(emptyState, achievementService);
+            
+            return new GameStateMachine(emptyInventoryManager, achievementService);
         });
         
-        // Inventory manager - gets the actual GameState from GameStateMachine
         services.AddSingleton<IInventoryManager>(sp =>
         {
-            var stateMachine = sp.GetRequiredService<GameStateMachine>();
             var achievementService = sp.GetService<IAchievementService>();
-            return new InventoryManager(stateMachine.CurrentState, achievementService);
+            
+            // Create with empty state - the actual state comes from GameStateService
+            var emptyState = new GameState();
+            return new InventoryManager(emptyState, achievementService);
         });
         
-        // Command router with game state machine and achievement service
+        // Command router
         services.AddSingleton(sp =>
             new CommandRouter(
                 sp.GetServices<ICommandHandler>(),
@@ -210,4 +215,58 @@ public static class MauiProgram
         services.AddTransient<Views.AchievementsPage>();
     }
     
+    private static void CopyStoryPacksFromResourcesSync(string targetDirectory)
+    {
+        System.Diagnostics.Debug.WriteLine($"Copying story packs to: {targetDirectory}");
+        
+        // List of story pack files to copy
+        var storyPackFiles = new[]
+        {
+            "achievements_classic_horror.json",
+            "arctic_survival.json",
+            "classic_horror.json",
+            "cozy_mystery.json",
+            "fantasy_magic.json",
+            "puzzles_classic_horror.json",
+            "sci_fi_isolation.json"
+        };
+        
+        foreach (var fileName in storyPackFiles)
+        {
+            var targetPath = Path.Combine(targetDirectory, fileName);
+            
+            // Always copy/overwrite to ensure we have the latest version
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"Copying {fileName}...");
+                
+                // Use Task.Run to avoid blocking and get the result synchronously
+                var stream = Task.Run(async () => await FileSystem.OpenAppPackageFileAsync(fileName)).Result;
+                using (stream)
+                using (var fileStream = File.Create(targetPath))
+                {
+                    stream.CopyTo(fileStream);
+                }
+                
+                System.Diagnostics.Debug.WriteLine($"Successfully copied {fileName}");
+            }
+            catch (Exception ex)
+            {
+                // Log error but don't crash - the file might not exist in resources
+                System.Diagnostics.Debug.WriteLine($"Failed to copy {fileName}: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Exception type: {ex.GetType().Name}");
+            }
+        }
+        
+        // Log what files actually exist in the target directory
+        if (Directory.Exists(targetDirectory))
+        {
+            var existingFiles = Directory.GetFiles(targetDirectory);
+            System.Diagnostics.Debug.WriteLine($"Files in target directory: {existingFiles.Length}");
+            foreach (var file in existingFiles)
+            {
+                System.Diagnostics.Debug.WriteLine($"  - {Path.GetFileName(file)}");
+            }
+        }
+    }
 }

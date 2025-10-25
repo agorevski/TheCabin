@@ -1,11 +1,13 @@
 {
+  "id": "sci_fi_isolation",
   "theme": "Sci-Fi Isolation",
   "description": "Trapped in a failing cabin aboard a derelict spacecraft orbiting a dead planet.",
+  "startingRoomId": "bridge",
   "rooms": [
     {
       "id": "bridge",
-      "description": "Broken panels flicker erratically. A viewport reveals the planet\u2019s red storms.",
-      "objects": [
+      "description": "Broken panels flicker erratically. A viewport reveals the planets red storms.",
+      "objectIds": [
         "panel",
         "helmet",
         "console"
@@ -17,7 +19,7 @@
     {
       "id": "quarters",
       "description": "Your cryopod lies shattered. A log recorder blinks with a red light.",
-      "objects": [
+      "objectIds": [
         "cryopod",
         "log_recorder"
       ],
@@ -29,7 +31,7 @@
     {
       "id": "engine_room",
       "description": "Pipes hiss steam. A reactor core pulses weakly in the gloom.",
-      "objects": [
+      "objectIds": [
         "reactor",
         "toolkit"
       ],
@@ -37,5 +39,65 @@
         "west": "quarters"
       }
     }
-  ]
+  ],
+  "objects": {
+    "panel": {
+      "id": "panel",
+      "name": "Control Panel",
+      "description": "A damaged control panel with flickering displays.",
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": true
+    },
+    "helmet": {
+      "id": "helmet",
+      "name": "Space Helmet",
+      "description": "A cracked but functional EVA helmet.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": false
+    },
+    "console": {
+      "id": "console",
+      "name": "Navigation Console",
+      "description": "The ship's navigation system, barely operational.",
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": true
+    },
+    "cryopod": {
+      "id": "cryopod",
+      "name": "Cryogenic Pod",
+      "description": "Your shattered sleeping pod, covered in frost.",
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": false
+    },
+    "log_recorder": {
+      "id": "log_recorder",
+      "name": "Audio Log Recorder",
+      "description": "A device holding audio logs from the crew.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": true
+    },
+    "reactor": {
+      "id": "reactor",
+      "name": "Reactor Core",
+      "description": "The ship's failing reactor, pulsing with unstable energy.",
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": true
+    },
+    "toolkit": {
+      "id": "toolkit",
+      "name": "Engineering Toolkit",
+      "description": "A set of tools for ship repairs.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": true
+    }
+  },
+  "puzzles": [],
+  "achievements": []
 }

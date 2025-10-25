@@ -1,11 +1,13 @@
 {
+  "id": "fantasy_magic",
   "theme": "Fantasy Magic",
-  "description": "You find yourself in a wizard\u2019s forest cabin filled with alchemical instruments and glowing runes.",
+  "description": "You find yourself in a wizards forest cabin filled with alchemical instruments and glowing runes.",
+  "startingRoomId": "study",
   "rooms": [
     {
       "id": "study",
       "description": "Scrolls and books lie open on a rune-etched desk. A cauldron bubbles mysteriously.",
-      "objects": [
+      "objectIds": [
         "cauldron",
         "scroll",
         "crystal"
@@ -18,7 +20,7 @@
     {
       "id": "garden",
       "description": "Glowing herbs sway in the moonlight. A stone arch leads deeper into the forest.",
-      "objects": [
+      "objectIds": [
         "herb",
         "archway"
       ],
@@ -29,7 +31,7 @@
     {
       "id": "library",
       "description": "Dusty tomes line every wall. A magical barrier shimmers near a hidden door.",
-      "objects": [
+      "objectIds": [
         "book",
         "barrier",
         "wand"
@@ -38,5 +40,73 @@
         "west": "study"
       }
     }
-  ]
+  ],
+  "objects": {
+    "cauldron": {
+      "id": "cauldron",
+      "name": "Bubbling Cauldron",
+      "description": "A large iron cauldron with a mysterious glowing liquid inside.",
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": true
+    },
+    "scroll": {
+      "id": "scroll",
+      "name": "Ancient Scroll",
+      "description": "A yellowed scroll covered in arcane symbols and spells.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": false
+    },
+    "crystal": {
+      "id": "crystal",
+      "name": "Glowing Crystal",
+      "description": "A crystal orb that pulses with magical energy.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": true
+    },
+    "herb": {
+      "id": "herb",
+      "name": "Luminescent Herb",
+      "description": "A magical herb that glows softly in the moonlight.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": true
+    },
+    "archway": {
+      "id": "archway",
+      "name": "Stone Archway",
+      "description": "An ancient archway covered in ivy and runes.",
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": true
+    },
+    "book": {
+      "id": "book",
+      "name": "Spell Book",
+      "description": "A leather-bound tome filled with powerful spells.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": false
+    },
+    "barrier": {
+      "id": "barrier",
+      "name": "Magical Barrier",
+      "description": "A shimmering magical barrier blocking a hidden passage.",
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": true
+    },
+    "wand": {
+      "id": "wand",
+      "name": "Wizard's Wand",
+      "description": "An ornate wooden wand that tingles with power.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": true
+    }
+  },
+  "puzzles": [],
+  "achievements": []
 }

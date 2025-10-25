@@ -80,25 +80,37 @@ public partial class MainViewModel : BaseViewModel
     {
         await ExecuteAsync(async () =>
         {
-            // Load a story pack (use provided packId or default to classic_horror)
-            var selectedPackId = packId ?? "classic_horror";
-            var storyPack = await _storyPackService.LoadPackAsync(selectedPackId);
-            
-            // Initialize game state
-            await _gameStateService.InitializeNewGameAsync(storyPack);
-            _currentGameState = _gameStateService.CurrentState;
-            
-            // Clear story feed for fresh start
-            StoryFeed.Clear();
-            
-            // Show initial room description
-            var initialRoom = _currentGameState.World.Rooms[_currentGameState.Player.CurrentLocationId];
-            AddNarrativeEntry(initialRoom.Description, NarrativeType.Description);
-            
-            // Update UI state
-            UpdateUIState();
-            
-            _logger.LogInformation("Game initialized with {Theme} (Pack: {PackId})", storyPack.Theme, selectedPackId);
+            try
+            {
+                // Load a story pack (use provided packId or default to classic_horror)
+                var selectedPackId = packId ?? "classic_horror";
+                _logger.LogInformation("Attempting to load story pack: {PackId}", selectedPackId);
+                
+                var storyPack = await _storyPackService.LoadPackAsync(selectedPackId);
+                _logger.LogInformation("Story pack loaded successfully: {Theme}", storyPack.Theme);
+                
+                // Initialize game state
+                await _gameStateService.InitializeNewGameAsync(storyPack);
+                _currentGameState = _gameStateService.CurrentState;
+                _logger.LogInformation("Game state initialized");
+                
+                // Clear story feed for fresh start
+                StoryFeed.Clear();
+                
+                // Show initial room description
+                var initialRoom = _currentGameState.World.Rooms[_currentGameState.Player.CurrentLocationId];
+                AddNarrativeEntry(initialRoom.Description, NarrativeType.Description);
+                
+                // Update UI state
+                UpdateUIState();
+                
+                _logger.LogInformation("Game initialized with {Theme} (Pack: {PackId})", storyPack.Theme, selectedPackId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to initialize game with packId: {PackId}", packId);
+                throw new InvalidOperationException($"Failed to initialize game: {ex.Message}", ex);
+            }
         }, "Failed to initialize game");
     }
 
