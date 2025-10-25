@@ -1,10 +1,13 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TheCabin.Core.Interfaces;
 
 namespace TheCabin.Maui.ViewModels;
 
 public partial class SettingsViewModel : BaseViewModel
 {
+    private readonly IPreferencesService _preferencesService;
+    
     [ObservableProperty]
     private bool voiceEnabled;
     
@@ -42,8 +45,9 @@ public partial class SettingsViewModel : BaseViewModel
         "High Contrast"
     };
     
-    public SettingsViewModel()
+    public SettingsViewModel(IPreferencesService preferencesService)
     {
+        _preferencesService = preferencesService ?? throw new ArgumentNullException(nameof(preferencesService));
         Title = "Settings";
         LoadSettings();
     }
@@ -51,64 +55,64 @@ public partial class SettingsViewModel : BaseViewModel
     private void LoadSettings()
     {
         // Load from preferences
-        VoiceEnabled = Preferences.Get(nameof(VoiceEnabled), true);
-        PushToTalk = Preferences.Get(nameof(PushToTalk), true);
-        ConfidenceThreshold = Preferences.Get(nameof(ConfidenceThreshold), 0.75);
-        OfflineMode = Preferences.Get(nameof(OfflineMode), false);
+        VoiceEnabled = _preferencesService.Get(nameof(VoiceEnabled), true);
+        PushToTalk = _preferencesService.Get(nameof(PushToTalk), true);
+        ConfidenceThreshold = _preferencesService.Get(nameof(ConfidenceThreshold), 0.75);
+        OfflineMode = _preferencesService.Get(nameof(OfflineMode), false);
         
-        TtsEnabled = Preferences.Get(nameof(TtsEnabled), false);
-        SpeechRate = Preferences.Get(nameof(SpeechRate), 1.0);
-        VoicePitch = Preferences.Get(nameof(VoicePitch), 1.0);
+        TtsEnabled = _preferencesService.Get(nameof(TtsEnabled), false);
+        SpeechRate = _preferencesService.Get(nameof(SpeechRate), 1.0);
+        VoicePitch = _preferencesService.Get(nameof(VoicePitch), 1.0);
         
-        FontSize = Preferences.Get(nameof(FontSize), 16.0);
-        SelectedTheme = Preferences.Get(nameof(SelectedTheme), "Dark");
+        FontSize = _preferencesService.Get(nameof(FontSize), 16.0);
+        SelectedTheme = _preferencesService.Get(nameof(SelectedTheme), "Dark");
         
         AppVersion = $"Version 1.0.0 (Build 1)";
     }
     
     partial void OnVoiceEnabledChanged(bool value)
     {
-        Preferences.Set(nameof(VoiceEnabled), value);
+        _preferencesService.Set(nameof(VoiceEnabled), value);
     }
     
     partial void OnPushToTalkChanged(bool value)
     {
-        Preferences.Set(nameof(PushToTalk), value);
+        _preferencesService.Set(nameof(PushToTalk), value);
     }
     
     partial void OnConfidenceThresholdChanged(double value)
     {
-        Preferences.Set(nameof(ConfidenceThreshold), value);
+        _preferencesService.Set(nameof(ConfidenceThreshold), value);
     }
     
     partial void OnOfflineModeChanged(bool value)
     {
-        Preferences.Set(nameof(OfflineMode), value);
+        _preferencesService.Set(nameof(OfflineMode), value);
     }
     
     partial void OnTtsEnabledChanged(bool value)
     {
-        Preferences.Set(nameof(TtsEnabled), value);
+        _preferencesService.Set(nameof(TtsEnabled), value);
     }
     
     partial void OnSpeechRateChanged(double value)
     {
-        Preferences.Set(nameof(SpeechRate), value);
+        _preferencesService.Set(nameof(SpeechRate), value);
     }
     
     partial void OnVoicePitchChanged(double value)
     {
-        Preferences.Set(nameof(VoicePitch), value);
+        _preferencesService.Set(nameof(VoicePitch), value);
     }
     
     partial void OnFontSizeChanged(double value)
     {
-        Preferences.Set(nameof(FontSize), value);
+        _preferencesService.Set(nameof(FontSize), value);
     }
     
     partial void OnSelectedThemeChanged(string value)
     {
-        Preferences.Set(nameof(SelectedTheme), value);
+        _preferencesService.Set(nameof(SelectedTheme), value);
         ApplyTheme(value);
     }
     
@@ -135,7 +139,7 @@ public partial class SettingsViewModel : BaseViewModel
         
         if (confirm)
         {
-            Preferences.Clear();
+            _preferencesService.Clear();
             LoadSettings();
         }
     }

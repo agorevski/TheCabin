@@ -33,6 +33,7 @@
     <Compile Include="..\..\src\TheCabin.Maui\ViewModels\*.cs" Link="ViewModels\%(Filename)%(Extension)" />
     <Compile Include="..\..\src\TheCabin.Maui\Models\*.cs" Link="Models\%(Filename)%(Extension)" />
     <Compile Include="..\..\src\TheCabin.Maui\Services\IAchievementNotificationService.cs" Link="Services\IAchievementNotificationService.cs" />
+    <Compile Include="..\..\src\TheCabin.Maui\Services\IMainThreadDispatcher.cs" Link="Services\IMainThreadDispatcher.cs" />
     <Compile Include="..\..\src\TheCabin.Maui\Extensions\*.cs" Link="Extensions\%(Filename)%(Extension)" />
   </ItemGroup>
 

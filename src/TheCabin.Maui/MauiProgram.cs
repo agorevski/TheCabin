@@ -78,6 +78,12 @@ public static class MauiProgram
         services.AddSingleton(TextToSpeech.Default);
         services.AddSingleton<ITextToSpeechService, MauiTextToSpeechService>();
         
+        // Preferences service
+        services.AddSingleton<IPreferencesService, MauiPreferencesService>();
+        
+        // Main thread dispatcher
+        services.AddSingleton<IMainThreadDispatcher, MauiMainThreadDispatcher>();
+        
         // Platform-specific services - register after logging is configured
 #if ANDROID
         services.AddSingleton<IVoiceRecognitionService, AndroidVoiceRecognitionService>();
@@ -127,9 +133,9 @@ public static class MauiProgram
     
     private static void RegisterEngineComponents(IServiceCollection services)
     {
-        // Register GameStateMachine and InventoryManager with empty initial state
+        // Register IGameStateMachine and GameStateMachine with empty initial state
         // They will work with GameStateService which manages the actual game state
-        services.AddSingleton<GameStateMachine>(sp =>
+        services.AddSingleton<IGameStateMachine>(sp =>
         {
             var achievementService = sp.GetService<IAchievementService>();
             
@@ -140,6 +146,10 @@ public static class MauiProgram
             return new GameStateMachine(emptyInventoryManager, achievementService);
         });
         
+        // Also register as concrete type for legacy code
+        services.AddSingleton<GameStateMachine>(sp =>
+            (GameStateMachine)sp.GetRequiredService<IGameStateMachine>());
+        
         services.AddSingleton<IInventoryManager>(sp =>
         {
             var achievementService = sp.GetService<IAchievementService>();
@@ -149,7 +159,7 @@ public static class MauiProgram
             return new InventoryManager(emptyState, achievementService);
         });
         
-        // Command router
+        // Command router - needs concrete GameStateMachine for now
         services.AddSingleton(sp =>
             new CommandRouter(
                 sp.GetServices<ICommandHandler>(),

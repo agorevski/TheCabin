@@ -6,7 +6,7 @@ namespace TheCabin.Core.Engine;
 /// <summary>
 /// Core game state machine that manages world state, room transitions, and game flow
 /// </summary>
-public class GameStateMachine
+public class GameStateMachine : IGameStateMachine
 {
     private readonly IInventoryManager _inventoryManager;
     private readonly IAchievementService? _achievementService;

@@ -21,6 +21,7 @@ public partial class MainViewModel : BaseViewModel
     private readonly IAchievementNotificationService _notificationService;
     private readonly ILogger<MainViewModel> _logger;
     private readonly CommandRouter _commandRouter;
+    private readonly IMainThreadDispatcher _mainThreadDispatcher;
     
     private GameState? _currentGameState;
     private CancellationTokenSource? _listeningCts;
@@ -61,7 +62,8 @@ public partial class MainViewModel : BaseViewModel
         IAchievementService achievementService,
         IAchievementNotificationService notificationService,
         ILogger<MainViewModel> logger,
-        CommandRouter commandRouter)
+        CommandRouter commandRouter,
+        IMainThreadDispatcher mainThreadDispatcher)
     {
         _voiceService = voiceService;
         _parserService = parserService;
@@ -72,6 +74,7 @@ public partial class MainViewModel : BaseViewModel
         _notificationService = notificationService;
         _logger = logger;
         _commandRouter = commandRouter;
+        _mainThreadDispatcher = mainThreadDispatcher;
 
         Title = "The Cabin";
     }
@@ -400,7 +403,7 @@ public partial class MainViewModel : BaseViewModel
             IsImportant = type == NarrativeType.Discovery
         };
 
-        MainThread.BeginInvokeOnMainThread(() =>
+        _mainThreadDispatcher.BeginInvokeOnMainThread(() =>
         {
             StoryFeed.Add(entry);
             

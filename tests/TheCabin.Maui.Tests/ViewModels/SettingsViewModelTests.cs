@@ -2,19 +2,20 @@ using Xunit;
 using Moq;
 using FluentAssertions;
 using TheCabin.Maui.ViewModels;
-using Microsoft.Maui.Storage;
+using TheCabin.Maui.Tests.Mocks;
 
 namespace TheCabin.Maui.Tests.ViewModels;
 
 public class SettingsViewModelTests
 {
+    private readonly MockPreferencesService _preferencesService;
     private readonly SettingsViewModel _viewModel;
 
     public SettingsViewModelTests()
     {
-        // Clear preferences before each test
-        Preferences.Clear();
-        _viewModel = new SettingsViewModel();
+        // Use mock preferences service
+        _preferencesService = new MockPreferencesService();
+        _viewModel = new SettingsViewModel(_preferencesService);
     }
 
     #region Initialization Tests (SE-01 to SE-04)
@@ -96,7 +97,7 @@ public class SettingsViewModelTests
         _viewModel.VoiceEnabled = false;
 
         // Assert
-        Preferences.Get(nameof(_viewModel.VoiceEnabled), true).Should().BeFalse();
+        _preferencesService.Get(nameof(_viewModel.VoiceEnabled), true).Should().BeFalse();
     }
 
     [Fact]
@@ -119,7 +120,7 @@ public class SettingsViewModelTests
         _viewModel.PushToTalk = false;
 
         // Assert
-        Preferences.Get(nameof(_viewModel.PushToTalk), true).Should().BeFalse();
+        _preferencesService.Get(nameof(_viewModel.PushToTalk), true).Should().BeFalse();
     }
 
     [Fact]
@@ -139,7 +140,7 @@ public class SettingsViewModelTests
         _viewModel.ConfidenceThreshold = 0.90;
 
         // Assert
-        Preferences.Get(nameof(_viewModel.ConfidenceThreshold), 0.75).Should().Be(0.90);
+        _preferencesService.Get(nameof(_viewModel.ConfidenceThreshold), 0.75).Should().Be(0.90);
     }
 
     [Fact]
@@ -159,7 +160,7 @@ public class SettingsViewModelTests
         _viewModel.OfflineMode = true;
 
         // Assert
-        Preferences.Get(nameof(_viewModel.OfflineMode), false).Should().BeTrue();
+        _preferencesService.Get(nameof(_viewModel.OfflineMode), false).Should().BeTrue();
     }
 
     [Fact]
@@ -190,7 +191,7 @@ public class SettingsViewModelTests
         _viewModel.TtsEnabled = true;
 
         // Assert
-        Preferences.Get(nameof(_viewModel.TtsEnabled), false).Should().BeTrue();
+        _preferencesService.Get(nameof(_viewModel.TtsEnabled), false).Should().BeTrue();
     }
 
     [Fact]
@@ -210,7 +211,7 @@ public class SettingsViewModelTests
         _viewModel.SpeechRate = 0.8;
 
         // Assert
-        Preferences.Get(nameof(_viewModel.SpeechRate), 1.0).Should().Be(0.8);
+        _preferencesService.Get(nameof(_viewModel.SpeechRate), 1.0).Should().Be(0.8);
     }
 
     [Fact]
@@ -230,7 +231,7 @@ public class SettingsViewModelTests
         _viewModel.VoicePitch = 0.9;
 
         // Assert
-        Preferences.Get(nameof(_viewModel.VoicePitch), 1.0).Should().Be(0.9);
+        _preferencesService.Get(nameof(_viewModel.VoicePitch), 1.0).Should().Be(0.9);
     }
 
     [Fact]
@@ -261,7 +262,7 @@ public class SettingsViewModelTests
         _viewModel.FontSize = 20.0;
 
         // Assert
-        Preferences.Get(nameof(_viewModel.FontSize), 16.0).Should().Be(20.0);
+        _preferencesService.Get(nameof(_viewModel.FontSize), 16.0).Should().Be(20.0);
     }
 
     [Fact]
@@ -281,7 +282,7 @@ public class SettingsViewModelTests
         _viewModel.SelectedTheme = "High Contrast";
 
         // Assert
-        Preferences.Get(nameof(_viewModel.SelectedTheme), "Dark").Should().Be("High Contrast");
+        _preferencesService.Get(nameof(_viewModel.SelectedTheme), "Dark").Should().Be("High Contrast");
     }
 
     [Fact]
@@ -319,8 +320,8 @@ public class SettingsViewModelTests
         _viewModel.SelectedTheme = "Light";
 
         // Act
-        Preferences.Clear();
-        var newViewModel = new SettingsViewModel();
+        _preferencesService.Clear();
+        var newViewModel = new SettingsViewModel(_preferencesService);
 
         // Assert
         newViewModel.VoiceEnabled.Should().BeTrue();
@@ -356,7 +357,7 @@ public class SettingsViewModelTests
         _viewModel.SelectedTheme = "Light";
 
         // Act
-        var newViewModel = new SettingsViewModel();
+        var newViewModel = new SettingsViewModel(_preferencesService);
 
         // Assert
         newViewModel.VoiceEnabled.Should().BeFalse();
@@ -371,12 +372,13 @@ public class SettingsViewModelTests
     public void Settings_LoadFromPreferencesOnConstruction()
     {
         // Arrange
-        Preferences.Set(nameof(SettingsViewModel.VoiceEnabled), false);
-        Preferences.Set(nameof(SettingsViewModel.PushToTalk), false);
-        Preferences.Set(nameof(SettingsViewModel.ConfidenceThreshold), 0.80);
+        var prefs = new MockPreferencesService();
+        prefs.Set(nameof(SettingsViewModel.VoiceEnabled), false);
+        prefs.Set(nameof(SettingsViewModel.PushToTalk), false);
+        prefs.Set(nameof(SettingsViewModel.ConfidenceThreshold), 0.80);
 
         // Act
-        var vm = new SettingsViewModel();
+        var vm = new SettingsViewModel(prefs);
 
         // Assert
         vm.VoiceEnabled.Should().BeFalse();
@@ -480,7 +482,7 @@ public class SettingsViewModelTests
         _viewModel.SelectedTheme = "Light";
 
         // Act
-        var newVm = new SettingsViewModel();
+        var newVm = new SettingsViewModel(_preferencesService);
 
         // Assert - All settings should be loaded from preferences
         newVm.VoiceEnabled.Should().BeFalse();

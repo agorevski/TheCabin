@@ -375,9 +375,12 @@ public class StoryPackSelectorViewModelTests
             .ThrowsAsync(new Exception("Failed to load packs"));
         var vm = new StoryPackSelectorViewModel(_mockStoryPackService.Object);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<Exception>(async () =>
-            await vm.LoadPacksAsync());
+        // Act
+        await vm.LoadPacksAsync();
+
+        // Assert - BaseViewModel catches exceptions and sets ErrorMessage instead of rethrowing
+        vm.ErrorMessage.Should().NotBeEmpty();
+        vm.ErrorMessage.Should().Contain("Failed to load story packs");
     }
 
     #endregion

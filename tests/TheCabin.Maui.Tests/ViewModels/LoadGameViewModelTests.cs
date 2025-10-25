@@ -421,9 +421,12 @@ public class LoadGameViewModelTests
             .ThrowsAsync(new Exception("Database error"));
         var vm = new LoadGameViewModel(_mockGameStateService.Object);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<Exception>(async () => 
-            await vm.LoadSavedGamesAsync());
+        // Act
+        await vm.LoadSavedGamesAsync();
+
+        // Assert - BaseViewModel catches exceptions and sets ErrorMessage instead of rethrowing
+        vm.ErrorMessage.Should().NotBeEmpty();
+        vm.ErrorMessage.Should().Contain("Failed to load saved games");
     }
 
     [Fact]

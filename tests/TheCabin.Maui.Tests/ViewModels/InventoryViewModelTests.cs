@@ -2,7 +2,7 @@ using Xunit;
 using Moq;
 using FluentAssertions;
 using TheCabin.Maui.ViewModels;
-using TheCabin.Core.Engine;
+using TheCabin.Core.Interfaces;
 using TheCabin.Core.Models;
 using System.Collections.ObjectModel;
 
@@ -10,13 +10,13 @@ namespace TheCabin.Maui.Tests.ViewModels;
 
 public class InventoryViewModelTests
 {
-    private readonly Mock<GameStateMachine> _mockStateMachine;
+    private readonly Mock<IGameStateMachine> _mockStateMachine;
     private readonly InventoryViewModel _viewModel;
     private readonly GameState _testGameState;
 
     public InventoryViewModelTests()
     {
-        _mockStateMachine = new Mock<GameStateMachine>(MockBehavior.Loose, null);
+        _mockStateMachine = new Mock<IGameStateMachine>();
         
         // Setup test game state with inventory
         _testGameState = new GameState();
@@ -342,7 +342,7 @@ public class InventoryViewModelTests
     public void Inventory_HandlesNullGameState()
     {
         // Arrange
-        var mockStateMachine = new Mock<GameStateMachine>(MockBehavior.Loose, null);
+        var mockStateMachine = new Mock<IGameStateMachine>();
         mockStateMachine.Setup(x => x.CurrentState).Returns((GameState?)null);
 
         // Act
@@ -356,7 +356,7 @@ public class InventoryViewModelTests
     public void Inventory_HandlesNullInventory()
     {
         // Arrange
-        var mockStateMachine = new Mock<GameStateMachine>(MockBehavior.Loose, null);
+        var mockStateMachine = new Mock<IGameStateMachine>();
         var state = new GameState();
         state.Player.Inventory = null!;
         mockStateMachine.Setup(x => x.CurrentState).Returns(state);

@@ -2,12 +2,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using TheCabin.Core.Models;
+using TheCabin.Core.Interfaces;
 
 namespace TheCabin.Maui.ViewModels;
 
 public partial class InventoryViewModel : BaseViewModel
 {
-    private readonly Core.Engine.GameStateMachine _stateMachine;
+    private readonly IGameStateMachine _stateMachine;
     
     [ObservableProperty]
     private ObservableCollection<GameObject> items;
@@ -21,9 +22,9 @@ public partial class InventoryViewModel : BaseViewModel
     [ObservableProperty]
     private string weightDisplay = string.Empty;
     
-    public InventoryViewModel(Core.Engine.GameStateMachine stateMachine)
+    public InventoryViewModel(IGameStateMachine stateMachine)
     {
-        _stateMachine = stateMachine;
+        _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
         Items = new ObservableCollection<GameObject>();
         Title = "Inventory";
         MaxCapacity = 20;
