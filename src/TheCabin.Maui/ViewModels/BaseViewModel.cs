@@ -35,26 +35,39 @@ public partial class BaseViewModel : ObservableObject
 
     protected async Task ShowErrorAsync(string message)
     {
-        if (Application.Current?.MainPage != null)
+        var page = GetCurrentPage();
+        if (page != null)
         {
-            await Application.Current.MainPage.DisplayAlert("Error", message, "OK");
+            await page.DisplayAlert("Error", message, "OK");
         }
     }
 
     protected async Task<bool> ShowConfirmAsync(string title, string message)
     {
-        if (Application.Current?.MainPage != null)
+        var page = GetCurrentPage();
+        if (page != null)
         {
-            return await Application.Current.MainPage.DisplayAlert(title, message, "Yes", "No");
+            return await page.DisplayAlert(title, message, "Yes", "No");
         }
         return false;
     }
 
     protected async Task ShowMessageAsync(string title, string message)
     {
-        if (Application.Current?.MainPage != null)
+        var page = GetCurrentPage();
+        if (page != null)
         {
-            await Application.Current.MainPage.DisplayAlert(title, message, "OK");
+            await page.DisplayAlert(title, message, "OK");
         }
+    }
+
+    private Page? GetCurrentPage()
+    {
+        // Use the recommended way to access the current page in MAUI
+        if (Application.Current?.Windows.Count > 0)
+        {
+            return Application.Current.Windows[0].Page;
+        }
+        return null;
     }
 }

@@ -76,16 +76,20 @@ public partial class MainViewModel : BaseViewModel
         Title = "The Cabin";
     }
 
-    public async Task InitializeAsync()
+    public async Task InitializeAsync(string? packId = null)
     {
         await ExecuteAsync(async () =>
         {
-            // Load a story pack (default to classic_horror)
-            var storyPack = await _storyPackService.LoadPackAsync("classic_horror");
+            // Load a story pack (use provided packId or default to classic_horror)
+            var selectedPackId = packId ?? "classic_horror";
+            var storyPack = await _storyPackService.LoadPackAsync(selectedPackId);
             
             // Initialize game state
             await _gameStateService.InitializeNewGameAsync(storyPack);
             _currentGameState = _gameStateService.CurrentState;
+            
+            // Clear story feed for fresh start
+            StoryFeed.Clear();
             
             // Show initial room description
             var initialRoom = _currentGameState.World.Rooms[_currentGameState.Player.CurrentLocationId];
@@ -94,7 +98,7 @@ public partial class MainViewModel : BaseViewModel
             // Update UI state
             UpdateUIState();
             
-            _logger.LogInformation("Game initialized with {Theme}", storyPack.Theme);
+            _logger.LogInformation("Game initialized with {Theme} (Pack: {PackId})", storyPack.Theme, selectedPackId);
         }, "Failed to initialize game");
     }
 

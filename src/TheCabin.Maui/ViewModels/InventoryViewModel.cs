@@ -19,7 +19,7 @@ public partial class InventoryViewModel : BaseViewModel
     private int maxCapacity;
     
     [ObservableProperty]
-    private string weightDisplay;
+    private string weightDisplay = string.Empty;
     
     public InventoryViewModel(Core.Engine.GameStateMachine stateMachine)
     {

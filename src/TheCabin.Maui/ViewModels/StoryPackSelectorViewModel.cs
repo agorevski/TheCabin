@@ -49,8 +49,8 @@ public partial class StoryPackSelectorViewModel : BaseViewModel
         
         SelectedPack = pack;
         
-        // Return to main page with selected pack ID
-        await Shell.Current.GoToAsync("..", new Dictionary<string, object>
+        // Navigate to main page with selected pack ID
+        await Shell.Current.GoToAsync("MainPage", new Dictionary<string, object>
         {
             { "SelectedPackId", pack.Id }
         });

@@ -53,24 +53,40 @@ public static class MauiProgram
         // Register Views
         RegisterViews(builder.Services);
 
-        return builder.Build();
+        var app = builder.Build();
+        
+        // Register routes with DI-aware factories after app is built
+        RegisterRoutesWithDI(app.Services);
+        
+        return app;
+    }
+    
+    private static void RegisterRoutesWithDI(IServiceProvider services)
+    {
+        // Register routes - just pass the type, Shell will handle creation
+        Routing.RegisterRoute(nameof(Views.StoryPackSelectorPage), typeof(Views.StoryPackSelectorPage));
+        Routing.RegisterRoute(nameof(Views.MainPage), typeof(Views.MainPage));
+        Routing.RegisterRoute(nameof(Views.InventoryPage), typeof(Views.InventoryPage));
+        Routing.RegisterRoute(nameof(Views.SettingsPage), typeof(Views.SettingsPage));
+        Routing.RegisterRoute(nameof(Views.LoadGamePage), typeof(Views.LoadGamePage));
+        Routing.RegisterRoute(nameof(Views.AchievementsPage), typeof(Views.AchievementsPage));
     }
     
     private static void RegisterPlatformServices(IServiceCollection services)
     {
-        // Platform-specific services
-#if ANDROID
-        services.AddSingleton<IVoiceRecognitionService, AndroidVoiceRecognitionService>();
-#endif
-        
         // MAUI built-in services
         services.AddSingleton(TextToSpeech.Default);
         services.AddSingleton<ITextToSpeechService, MauiTextToSpeechService>();
+        
+        // Platform-specific services - register after logging is configured
+#if ANDROID
+        services.AddSingleton<IVoiceRecognitionService, AndroidVoiceRecognitionService>();
+#endif
     }
     
     private static void RegisterCoreServices(IServiceCollection services)
     {
-        // Story pack service - copy from embedded resources to app data on first run
+        // Story pack service - will initialize story packs lazily on first access
         services.AddSingleton<IStoryPackService>(sp => 
         {
             var storyPackPath = Path.Combine(FileSystem.AppDataDirectory, "story_packs");
@@ -80,9 +96,6 @@ public static class MauiProgram
             {
                 Directory.CreateDirectory(storyPackPath);
             }
-            
-            // Copy story packs from embedded resources to AppDataDirectory
-            CopyEmbeddedStoryPacks(storyPackPath);
             
             return new StoryPackService(storyPackPath);
         });
@@ -188,45 +201,13 @@ public static class MauiProgram
     
     private static void RegisterViews(IServiceCollection services)
     {
+        services.AddSingleton<AppShell>();
         services.AddTransient<Views.MainPage>();
         services.AddTransient<Views.InventoryPage>();
         services.AddTransient<Views.SettingsPage>();
         services.AddTransient<Views.StoryPackSelectorPage>();
         services.AddTransient<Views.LoadGamePage>();
+        services.AddTransient<Views.AchievementsPage>();
     }
     
-    private static void CopyEmbeddedStoryPacks(string targetPath)
-    {
-        // Story pack files to copy from Resources/Raw
-        var storyPacks = new[]
-        {
-            "classic_horror.json",
-            "arctic_survival.json",
-            "fantasy_magic.json",
-            "sci_fi_isolation.json",
-            "cozy_mystery.json"
-        };
-        
-        foreach (var packFile in storyPacks)
-        {
-            var targetFile = Path.Combine(targetPath, packFile);
-            
-            // Only copy if doesn't exist (don't overwrite user modifications)
-            if (!File.Exists(targetFile))
-            {
-                try
-                {
-                    using var stream = FileSystem.OpenAppPackageFileAsync(packFile).Result;
-                    using var reader = new StreamReader(stream);
-                    var content = reader.ReadToEnd();
-                    File.WriteAllText(targetFile, content);
-                }
-                catch (Exception ex)
-                {
-                    // Log but don't fail - app can still work without story packs
-                    System.Diagnostics.Debug.WriteLine($"Failed to copy {packFile}: {ex.Message}");
-                }
-            }
-        }
-    }
 }

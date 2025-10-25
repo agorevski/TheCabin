@@ -1,4 +1,6 @@
-﻿namespace TheCabin.Maui;
+﻿using TheCabin.Maui.Views;
+
+namespace TheCabin.Maui;
 
 public partial class AppShell : Shell
 {
@@ -6,8 +8,7 @@ public partial class AppShell : Shell
     {
         InitializeComponent();
         
-        // Register routes for navigation
-        Routing.RegisterRoute(nameof(Views.InventoryPage), typeof(Views.InventoryPage));
-        Routing.RegisterRoute(nameof(Views.SettingsPage), typeof(Views.SettingsPage));
+        // Register MainPage route for navigation
+        Routing.RegisterRoute("MainPage", typeof(MainPage));
     }
 }

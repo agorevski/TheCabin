@@ -93,6 +93,11 @@ dotnet build
 # Run on Android (requires connected device/emulator)
 cd src/TheCabin.Maui
 dotnet build -t:Run -f net9.0-android
+
+# Look at device logs while running
+cd C:\android-sdk\platform-tools
+adb logcat -c && adb logcat | findstr "com.thecabin.voiceadventure"
+
 ```
 
 ### Alternative: Use PowerShell Script

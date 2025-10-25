@@ -27,7 +27,16 @@ public partial class MainPage : ContentPage, IQueryAttributable
     
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        if (query.ContainsKey("LoadSaveId"))
+        if (query.ContainsKey("SelectedPackId"))
+        {
+            var packId = (string)query["SelectedPackId"];
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                await _viewModel.InitializeAsync(packId);
+                _isInitialized = true;
+            });
+        }
+        else if (query.ContainsKey("LoadSaveId"))
         {
             var saveId = (int)query["LoadSaveId"];
             MainThread.BeginInvokeOnMainThread(async () =>

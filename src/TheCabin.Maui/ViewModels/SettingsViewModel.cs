@@ -30,10 +30,10 @@ public partial class SettingsViewModel : BaseViewModel
     private double fontSize;
     
     [ObservableProperty]
-    private string selectedTheme;
+    private string selectedTheme = string.Empty;
     
     [ObservableProperty]
-    private string appVersion;
+    private string appVersion = string.Empty;
     
     public List<string> AvailableThemes { get; } = new()
     {
@@ -115,12 +115,15 @@ public partial class SettingsViewModel : BaseViewModel
     private void ApplyTheme(string theme)
     {
         // Theme switching logic
-        Application.Current.UserAppTheme = theme switch
+        if (Application.Current != null)
         {
-            "Light" => AppTheme.Light,
-            "Dark" => AppTheme.Dark,
-            _ => AppTheme.Dark
-        };
+            Application.Current.UserAppTheme = theme switch
+        {
+                "Light" => AppTheme.Light,
+                "Dark" => AppTheme.Dark,
+                _ => AppTheme.Dark
+            };
+        }
     }
     
     [RelayCommand]
