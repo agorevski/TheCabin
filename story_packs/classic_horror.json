@@ -1,11 +1,13 @@
 {
+  "id": "classic_horror",
   "theme": "Classic Horror",
   "description": "You awaken in a decaying log cabin deep in the woods. A storm rages outside. The smell of mildew and something metallic fills the air.",
+  "startingRoomId": "main_room",
   "rooms": [
     {
       "id": "main_room",
       "description": "A flickering candle casts shadows across the warped floorboards. A locked door creaks in the wind.",
-      "objects": [
+      "objectIds": [
         "candle",
         "door",
         "note"
@@ -18,7 +20,7 @@
     {
       "id": "attic",
       "description": "Dust and cobwebs blanket old furniture. A cracked mirror reflects your pale face.",
-      "objects": [
+      "objectIds": [
         "mirror",
         "chest"
       ],
@@ -29,7 +31,7 @@
     {
       "id": "basement",
       "description": "Moisture drips from the ceiling. Rusted chains hang from the walls.",
-      "objects": [
+      "objectIds": [
         "lantern",
         "chains",
         "skeleton"
@@ -38,5 +40,73 @@
         "west": "main_room"
       }
     }
-  ]
+  ],
+  "objects": {
+    "candle": {
+      "id": "candle",
+      "name": "Flickering Candle",
+      "description": "A half-melted candle providing dim, wavering light.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": true
+    },
+    "door": {
+      "id": "door",
+      "name": "Locked Door",
+      "description": "A heavy wooden door with rusty hinges. It's locked tight.",
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": true
+    },
+    "note": {
+      "id": "note",
+      "name": "Crumpled Note",
+      "description": "A water-stained note with barely legible handwriting.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": false
+    },
+    "mirror": {
+      "id": "mirror",
+      "name": "Cracked Mirror",
+      "description": "An old mirror with a spider web of cracks across its surface.",
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": true
+    },
+    "chest": {
+      "id": "chest",
+      "name": "Wooden Chest",
+      "description": "A dusty old chest with a rusted lock.",
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": true
+    },
+    "lantern": {
+      "id": "lantern",
+      "name": "Old Lantern",
+      "description": "A rusted lantern that might still work.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": true
+    },
+    "chains": {
+      "id": "chains",
+      "name": "Rusted Chains",
+      "description": "Heavy chains hanging from the wall, covered in rust.",
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": false
+    },
+    "skeleton": {
+      "id": "skeleton",
+      "name": "Skeleton",
+      "description": "The skeletal remains of someone who wasn't so lucky.",
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": false
+    }
+  },
+  "puzzles": [],
+  "achievements": []
 }

@@ -1,11 +1,13 @@
 {
+  "id": "cozy_mystery",
   "theme": "Cozy Mystery",
-  "description": "A blizzard has stranded you in a warm mountain cabin. Something\u2019s off \u2014 and the truth hides in handwritten notes and old photos.",
+  "description": "A blizzard has stranded you in a warm mountain cabin. Somethings off  and the truth hides in handwritten notes and old photos.",
+  "startingRoomId": "living_room",
   "rooms": [
     {
       "id": "living_room",
       "description": "A crackling fire warms the cabin. A photo album rests on the coffee table.",
-      "objects": [
+      "objectIds": [
         "photo_album",
         "fireplace",
         "cup_of_tea"
@@ -18,7 +20,7 @@
     {
       "id": "bedroom",
       "description": "A quilt-covered bed and a half-open wardrobe. The window rattles in the wind.",
-      "objects": [
+      "objectIds": [
         "wardrobe",
         "letter"
       ],
@@ -29,7 +31,7 @@
     {
       "id": "study",
       "description": "Stacks of papers and old journals. A typewriter still holds a half-finished note.",
-      "objects": [
+      "objectIds": [
         "typewriter",
         "journal"
       ],
@@ -37,5 +39,65 @@
         "west": "living_room"
       }
     }
-  ]
+  ],
+  "objects": {
+    "photo_album": {
+      "id": "photo_album",
+      "name": "Photo Album",
+      "description": "A leather-bound album filled with old family photos.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": false
+    },
+    "fireplace": {
+      "id": "fireplace",
+      "name": "Stone Fireplace",
+      "description": "A cozy fireplace with crackling logs.",
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": true
+    },
+    "cup_of_tea": {
+      "id": "cup_of_tea",
+      "name": "Cup of Tea",
+      "description": "A warm cup of tea, still steaming.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": true
+    },
+    "wardrobe": {
+      "id": "wardrobe",
+      "name": "Antique Wardrobe",
+      "description": "An old wardrobe with ornate carvings, slightly ajar.",
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": true
+    },
+    "letter": {
+      "id": "letter",
+      "name": "Handwritten Letter",
+      "description": "A carefully folded letter with elegant handwriting.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": false
+    },
+    "typewriter": {
+      "id": "typewriter",
+      "name": "Vintage Typewriter",
+      "description": "An old typewriter with a half-finished note still in it.",
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": true
+    },
+    "journal": {
+      "id": "journal",
+      "name": "Leather Journal",
+      "description": "A personal journal filled with entries and sketches.",
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": false
+    }
+  },
+  "puzzles": [],
+  "achievements": []
 }

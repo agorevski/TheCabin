@@ -37,11 +37,8 @@ class Program
         services.AddSingleton<ICommandParserService, LocalCommandParserAdapter>();
         services.AddSingleton<IPuzzleEngine, PuzzleEngine>();
         
-        // Command handlers
-        services.AddTransient<ICommandHandler, MoveCommandHandler>();
-        services.AddTransient<ICommandHandler, TakeCommandHandler>();
-        services.AddTransient<ICommandHandler, LookCommandHandler>();
-        services.AddTransient<ICommandHandler, InventoryCommandHandler>();
+        // GameStateMachine and related dependencies will be registered per-game session
+        // Command handlers will be created manually with the GameStateMachine instance
 
         return services;
     }
@@ -82,14 +79,25 @@ class GameRunner
     
     private void InitializeGameComponents()
     {
+        // Get achievement service if available
+        var achievementService = _serviceProvider.GetService<IAchievementService>();
+        
         // Create inventory manager with current game state
-        _inventoryManager = new InventoryManager(_gameStateService.CurrentState);
+        _inventoryManager = new InventoryManager(_gameStateService.CurrentState, achievementService);
         
         // Create game state machine
         _stateMachine = new GameStateMachine(_inventoryManager);
         
+        // Create command handlers manually with the state machine instance
+        var handlers = new List<ICommandHandler>
+        {
+            new MoveCommandHandler(_stateMachine),
+            new TakeCommandHandler(_stateMachine, _inventoryManager),
+            new LookCommandHandler(_stateMachine),
+            new InventoryCommandHandler(_inventoryManager)
+        };
+        
         // Create command router with handlers and state machine
-        var handlers = _serviceProvider.GetServices<ICommandHandler>();
         _commandRouter = new CommandRouter(handlers, _stateMachine);
     }
 
