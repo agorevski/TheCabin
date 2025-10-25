@@ -159,19 +159,19 @@ jobs:
     
     - name: Build Debug APK
       if: github.event_name == 'pull_request'
-      run: dotnet build TheCabin.csproj -c Debug -f net8.0-android
+      run: dotnet build TheCabin.csproj -c Debug -f net9.0-android
     
     - name: Build Release APK
       if: github.ref == 'refs/heads/main'
       env:
         KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-      run: dotnet publish TheCabin.csproj -c Release -f net8.0-android
+      run: dotnet publish TheCabin.csproj -c Release -f net9.0-android
     
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v3
       with:
         name: android-apk
-        path: bin/Release/net8.0-android/publish/*.apk
+        path: bin/Release/net9.0-android/publish/*.apk
     
     - name: Run Tests
       run: dotnet test TheCabin.Tests/TheCabin.Tests.csproj
@@ -211,7 +211,7 @@ steps:
   inputs:
     command: 'publish'
     projects: 'TheCabin.csproj'
-    arguments: '-c $(buildConfiguration) -f net8.0-android'
+    arguments: '-c $(buildConfiguration) -f net9.0-android'
     
 - task: CopyFiles@2
   displayName: 'Copy APK to Staging'
@@ -297,10 +297,10 @@ For beta testers or regions without Play Store access:
 
 ```bash
 # Generate signed APK
-dotnet publish -c Release -f net8.0-android
+dotnet publish -c Release -f net9.0-android
 
 # APK location
-bin/Release/net8.0-android/publish/com.thecabin.voiceadventure-Signed.apk
+bin/Release/net9.0-android/publish/com.thecabin.voiceadventure-Signed.apk
 ```
 
 **Distribution Methods**:

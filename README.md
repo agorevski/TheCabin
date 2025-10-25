@@ -92,7 +92,7 @@ dotnet build
 
 # Run on Android (requires connected device/emulator)
 cd src/TheCabin.Maui
-dotnet build -t:Run -f net8.0-android
+dotnet build -t:Run -f net9.0-android
 ```
 
 ### Alternative: Use PowerShell Script

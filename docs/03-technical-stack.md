@@ -9,7 +9,7 @@ This document details the complete technology stack for The Cabin, including fra
 ### .NET MAUI (Multi-platform App UI)
 
 **Version**: .NET 8.0 or higher  
-**Target Frameworks**: `net8.0-android`
+**Target Frameworks**: `net9.0-android`
 
 **Key Features Utilized**:
 
@@ -54,7 +54,7 @@ This document details the complete technology stack for The Cabin, including fra
 <!-- .csproj settings -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net8.0-android</TargetFrameworks>
+    <TargetFrameworks>net9.0-android</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <RootNamespace>TheCabin</RootNamespace>
     <UseMaui>true</UseMaui>

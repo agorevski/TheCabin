@@ -8,6 +8,9 @@ public class MauiTextToSpeechService : ITextToSpeechService
     private readonly ILogger<MauiTextToSpeechService> _logger;
     private readonly ITextToSpeech _tts;
     private CancellationTokenSource? _cancellationTokenSource;
+    private bool _isSpeaking;
+
+    public bool IsSpeaking => _isSpeaking;
 
     public MauiTextToSpeechService(
         ILogger<MauiTextToSpeechService> logger,
@@ -30,6 +33,8 @@ public class MauiTextToSpeechService : ITextToSpeechService
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
+            _isSpeaking = true;
+
             var locales = await _tts.GetLocalesAsync();
             var locale = locales?.FirstOrDefault(l => l.Language.StartsWith("en"));
 
@@ -50,10 +55,16 @@ public class MauiTextToSpeechService : ITextToSpeechService
         {
             _logger.LogError(ex, "Text-to-speech failed");
         }
+        finally
+        {
+            _isSpeaking = false;
+        }
     }
 
-    public void Stop()
+    public async Task StopAsync()
     {
         _cancellationTokenSource?.Cancel();
+        _isSpeaking = false;
+        await Task.CompletedTask;
     }
 }

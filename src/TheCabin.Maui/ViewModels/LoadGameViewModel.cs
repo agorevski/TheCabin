@@ -32,17 +32,17 @@ public partial class LoadGameViewModel : BaseViewModel
             var saves = await _gameStateService.GetSavedGamesAsync();
             
             SavedGames.Clear();
-            foreach (var save in saves.OrderByDescending(s => s.SavedDate))
+            foreach (var save in saves.OrderByDescending(s => s.Timestamp))
             {
                 SavedGames.Add(new GameSaveInfoViewModel
                 {
                     Id = save.Id,
                     Name = save.Name,
-                    ThemeName = save.ThemeName,
-                    SavedDate = save.SavedDate,
+                    ThemeName = save.ThemeId,
+                    SavedDate = save.Timestamp,
                     PlayTime = save.PlayTime,
-                    PlayerLocation = save.PlayerLocation,
-                    PlayerHealth = save.PlayerHealth
+                    PlayerLocation = "Unknown", // This info is not in GameSaveInfo
+                    PlayerHealth = 100 // This info is not in GameSaveInfo
                 });
             }
             

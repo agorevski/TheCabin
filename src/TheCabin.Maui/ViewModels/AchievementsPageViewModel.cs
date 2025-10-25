@@ -54,12 +54,14 @@ public partial class AchievementsPageViewModel : BaseViewModel
     {
         await ExecuteAsync(async () =>
         {
-            var allAchievements = await _achievementService.GetAllAchievementsAsync();
+            var allAchievements = _achievementService.GetAllAchievements();
+            var allProgress = _achievementService.GetAllProgress();
 
             Achievements.Clear();
             foreach (var achievement in allAchievements)
             {
-                Achievements.Add(AchievementViewModel.FromModel(achievement));
+                var progress = allProgress.TryGetValue(achievement.Id, out var p) ? p : null;
+                Achievements.Add(AchievementViewModel.FromModel(achievement, progress));
             }
 
             UpdateStatistics();
@@ -134,53 +136,10 @@ public partial class AchievementsPageViewModel : BaseViewModel
     }
 
     /// <summary>
-    /// Subscribes to achievement unlock events for real-time updates
-    /// </summary>
-    public void SubscribeToUnlockEvents()
-    {
-        _achievementService.AchievementUnlocked += OnAchievementUnlocked;
-    }
-
-    /// <summary>
-    /// Unsubscribes from achievement unlock events
-    /// </summary>
-    public void UnsubscribeFromUnlockEvents()
-    {
-        _achievementService.AchievementUnlocked -= OnAchievementUnlocked;
-    }
-
-    /// <summary>
-    /// Handles achievement unlock events
-    /// </summary>
-    private void OnAchievementUnlocked(object? sender, Core.Models.Achievement unlockedAchievement)
-    {
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            // Find and update the achievement in the list
-            var viewModel = Achievements.FirstOrDefault(a => a.Id == unlockedAchievement.Id);
-            if (viewModel != null)
-            {
-                viewModel.UpdateFromModel(unlockedAchievement);
-                UpdateStatistics();
-                ApplyFilter(SelectedFilter);
-            }
-        });
-    }
-
-    /// <summary>
     /// Called when the page appears
     /// </summary>
     public async Task OnAppearingAsync()
     {
-        SubscribeToUnlockEvents();
         await LoadAchievementsAsync();
-    }
-
-    /// <summary>
-    /// Called when the page disappears
-    /// </summary>
-    public void OnDisappearing()
-    {
-        UnsubscribeFromUnlockEvents();
     }
 }

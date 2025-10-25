@@ -5,8 +5,8 @@ using Microsoft.Extensions.Logging;
 using TheCabin.Core.Engine;
 using TheCabin.Core.Interfaces;
 using TheCabin.Core.Models;
-using TheCabin.Maui.Models;
 using TheCabin.Maui.Services;
+using NarrativeEntry = TheCabin.Maui.Models.NarrativeEntry;
 
 namespace TheCabin.Maui.ViewModels;
 
@@ -81,10 +81,11 @@ public partial class MainViewModel : BaseViewModel
         await ExecuteAsync(async () =>
         {
             // Load a story pack (default to classic_horror)
-            var storyPack = await _storyPackService.LoadStoryPackAsync("classic_horror");
+            var storyPack = await _storyPackService.LoadPackAsync("classic_horror");
             
             // Initialize game state
-            _currentGameState = await _gameStateService.NewGameAsync(storyPack);
+            await _gameStateService.InitializeNewGameAsync(storyPack);
+            _currentGameState = _gameStateService.CurrentState;
             
             // Show initial room description
             var initialRoom = _currentGameState.World.Rooms[_currentGameState.Player.CurrentLocationId];
@@ -100,7 +101,7 @@ public partial class MainViewModel : BaseViewModel
     [RelayCommand]
     private async Task ShowSettingsAsync()
     {
-        await Shell.Current.GoToAsync(nameof(SettingsPage));
+        await Shell.Current.GoToAsync("//SettingsPage");
     }
     
     [RelayCommand]
@@ -173,7 +174,7 @@ public partial class MainViewModel : BaseViewModel
         
         await ExecuteAsync(async () =>
         {
-            await _gameStateService.SaveGameAsync(_currentGameState, saveName);
+            await _gameStateService.SaveGameAsync(saveName);
             AddNarrativeEntry($"Game saved as '{saveName}'", NarrativeType.SystemMessage);
             await Shell.Current.DisplayAlert("Success", "Game saved successfully!", "OK");
         }, "Failed to save game");
@@ -189,8 +190,8 @@ public partial class MainViewModel : BaseViewModel
     {
         await ExecuteAsync(async () =>
         {
-            var loadedState = await _gameStateService.LoadGameAsync(saveId);
-            _currentGameState = loadedState;
+            await _gameStateService.LoadGameAsync(saveId);
+            _currentGameState = _gameStateService.CurrentState;
             
             // Clear and reload story feed
             StoryFeed.Clear();
@@ -284,23 +285,14 @@ public partial class MainViewModel : BaseViewModel
             _logger.LogInformation("Parsed command: {Verb} {Object}", parsed.Verb, parsed.Object);
             
             // Execute command
-            var result = await _commandRouter.RouteAsync(parsed, _currentGameState);
+            var result = await _commandRouter.RouteAsync(parsed);
             
             // Add result to story feed
             var entryType = result.Success ? NarrativeType.Success : NarrativeType.Failure;
             AddNarrativeEntry(result.Message, entryType);
             
-            // Check for achievement unlocks
-            if (result.Success && _achievementService != null && _notificationService != null)
-            {
-                var unlockedAchievements = await _achievementService.CheckAchievementsAsync(_currentGameState);
-                foreach (var achievement in unlockedAchievements)
-                {
-                    _logger.LogInformation("Achievement unlocked: {Name}", achievement.Name);
-                    await _notificationService.ShowAchievementUnlockedAsync(achievement);
-                    AddNarrativeEntry($"🏆 Achievement Unlocked: {achievement.Name}", NarrativeType.Discovery);
-                }
-            }
+            // Check for achievement unlocks - the command router already handles this via TrackEventAsync
+            // No need to manually check achievements here
             
             // Update UI state
             UpdateUIState();

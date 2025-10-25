@@ -649,7 +649,7 @@ public class MainActivity : MauiAppCompatActivity
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net8.0-android</TargetFrameworks>
+        <TargetFrameworks>net9.0-android</TargetFrameworks>
         <OutputType>Exe</OutputType>
         <RootNamespace>TheCabin</RootNamespace>
         <UseMaui>true</UseMaui>

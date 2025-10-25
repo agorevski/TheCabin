@@ -4,7 +4,7 @@ namespace TheCabin.Maui.Converters;
 
 public class BoolToFontAttributesConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool isImportant && isImportant)
         {
@@ -13,7 +13,7 @@ public class BoolToFontAttributesConverter : IValueConverter
         return FontAttributes.None;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }
@@ -21,7 +21,7 @@ public class BoolToFontAttributesConverter : IValueConverter
 
 public class BoolToRecordingColorConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool isListening && isListening)
         {
@@ -30,7 +30,7 @@ public class BoolToRecordingColorConverter : IValueConverter
         return Color.FromArgb("#4A90E2"); // Blue when idle
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }
@@ -38,7 +38,7 @@ public class BoolToRecordingColorConverter : IValueConverter
 
 public class InvertedBoolConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool boolValue)
         {
@@ -47,7 +47,7 @@ public class InvertedBoolConverter : IValueConverter
         return true;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool boolValue)
         {
@@ -59,7 +59,7 @@ public class InvertedBoolConverter : IValueConverter
 
 public class TtsIconConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool ttsEnabled && ttsEnabled)
         {
@@ -68,7 +68,7 @@ public class TtsIconConverter : IValueConverter
         return "🔇"; // Speaker off
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }
@@ -78,7 +78,7 @@ public class TtsIconConverter : IValueConverter
 
 public class BoolToOpacityConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool isUnlocked && isUnlocked)
         {
@@ -87,7 +87,7 @@ public class BoolToOpacityConverter : IValueConverter
         return 0.5; // Dimmed when locked
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }
@@ -95,7 +95,7 @@ public class BoolToOpacityConverter : IValueConverter
 
 public class BoolToUnlockIconConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool isUnlocked && isUnlocked)
         {
@@ -104,7 +104,7 @@ public class BoolToUnlockIconConverter : IValueConverter
         return "🔒"; // Lock when locked
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }
@@ -112,7 +112,7 @@ public class BoolToUnlockIconConverter : IValueConverter
 
 public class BoolToUnlockColorConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is bool isUnlocked && isUnlocked)
         {
@@ -121,7 +121,7 @@ public class BoolToUnlockColorConverter : IValueConverter
         return Color.FromArgb("#9E9E9E"); // Gray when locked
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }
@@ -129,7 +129,7 @@ public class BoolToUnlockColorConverter : IValueConverter
 
 public class FilterToColorConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         var selectedFilter = value as string;
         var filterParameter = parameter as string;
@@ -141,7 +141,7 @@ public class FilterToColorConverter : IValueConverter
         return Color.FromArgb("#757575"); // Gray when not selected
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }
@@ -149,7 +149,7 @@ public class FilterToColorConverter : IValueConverter
 
 public class FilterToOpacityConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         var selectedFilter = value as string;
         var filterParameter = parameter as string;
@@ -161,7 +161,7 @@ public class FilterToOpacityConverter : IValueConverter
         return 0.7; // Slightly dimmed when not selected
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }

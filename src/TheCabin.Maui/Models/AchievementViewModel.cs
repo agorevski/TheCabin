@@ -45,9 +45,9 @@ public partial class AchievementViewModel : ObservableObject
     private string statusText = string.Empty;
 
     /// <summary>
-    /// Creates an AchievementViewModel from an Achievement model
+    /// Creates an AchievementViewModel from an Achievement model and progress
     /// </summary>
-    public static AchievementViewModel FromModel(Achievement achievement)
+    public static AchievementViewModel FromModel(Achievement achievement, AchievementProgress? progress = null)
     {
         var viewModel = new AchievementViewModel
         {
@@ -55,30 +55,30 @@ public partial class AchievementViewModel : ObservableObject
             Name = achievement.Name,
             Description = achievement.Description,
             Icon = GetIconForAchievement(achievement),
-            IsUnlocked = achievement.IsUnlocked,
-            UnlockDate = achievement.UnlockDate
+            IsUnlocked = progress?.IsUnlocked ?? false,
+            UnlockDate = progress?.UnlockedDate
         };
 
         // Calculate progress for count-based achievements
-        if (achievement.RequiredCount > 0)
+        if (progress != null && achievement.Trigger.RequiredCount > 1)
         {
             viewModel.HasProgress = true;
-            viewModel.CurrentProgress = achievement.CurrentCount;
-            viewModel.RequiredProgress = achievement.RequiredCount;
-            viewModel.ProgressPercentage = achievement.RequiredCount > 0
-                ? (double)achievement.CurrentCount / achievement.RequiredCount
+            viewModel.CurrentProgress = progress.CurrentProgress;
+            viewModel.RequiredProgress = progress.RequiredProgress;
+            viewModel.ProgressPercentage = progress.RequiredProgress > 0
+                ? (double)progress.CurrentProgress / progress.RequiredProgress
                 : 0;
-            viewModel.ProgressText = $"{achievement.CurrentCount}/{achievement.RequiredCount}";
+            viewModel.ProgressText = $"{progress.CurrentProgress}/{progress.RequiredProgress}";
         }
         else
         {
             viewModel.HasProgress = false;
-            viewModel.ProgressPercentage = achievement.IsUnlocked ? 1.0 : 0.0;
+            viewModel.ProgressPercentage = progress?.IsUnlocked ?? false ? 1.0 : 0.0;
         }
 
         // Set status text
-        viewModel.StatusText = achievement.IsUnlocked
-            ? $"Unlocked {achievement.UnlockDate:MMM d, yyyy}"
+        viewModel.StatusText = viewModel.IsUnlocked
+            ? $"Unlocked {viewModel.UnlockDate:MMM d, yyyy}"
             : viewModel.HasProgress
                 ? $"Progress: {viewModel.ProgressText}"
                 : "Locked";
@@ -87,29 +87,29 @@ public partial class AchievementViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Updates the view model from an Achievement model (for refresh scenarios)
+    /// Updates the view model from an Achievement model and progress (for refresh scenarios)
     /// </summary>
-    public void UpdateFromModel(Achievement achievement)
+    public void UpdateFromModel(Achievement achievement, AchievementProgress? progress = null)
     {
-        IsUnlocked = achievement.IsUnlocked;
-        UnlockDate = achievement.UnlockDate;
+        IsUnlocked = progress?.IsUnlocked ?? false;
+        UnlockDate = progress?.UnlockedDate;
 
-        if (achievement.RequiredCount > 0)
+        if (progress != null && achievement.Trigger.RequiredCount > 1)
         {
-            CurrentProgress = achievement.CurrentCount;
-            RequiredProgress = achievement.RequiredCount;
-            ProgressPercentage = achievement.RequiredCount > 0
-                ? (double)achievement.CurrentCount / achievement.RequiredCount
+            CurrentProgress = progress.CurrentProgress;
+            RequiredProgress = progress.RequiredProgress;
+            ProgressPercentage = progress.RequiredProgress > 0
+                ? (double)progress.CurrentProgress / progress.RequiredProgress
                 : 0;
-            ProgressText = $"{achievement.CurrentCount}/{achievement.RequiredCount}";
+            ProgressText = $"{progress.CurrentProgress}/{progress.RequiredProgress}";
         }
         else
         {
-            ProgressPercentage = achievement.IsUnlocked ? 1.0 : 0.0;
+            ProgressPercentage = IsUnlocked ? 1.0 : 0.0;
         }
 
-        StatusText = achievement.IsUnlocked
-            ? $"Unlocked {achievement.UnlockDate:MMM d, yyyy}"
+        StatusText = IsUnlocked
+            ? $"Unlocked {UnlockDate:MMM d, yyyy}"
             : HasProgress
                 ? $"Progress: {ProgressText}"
                 : "Locked";

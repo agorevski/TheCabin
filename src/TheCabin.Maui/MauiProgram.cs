@@ -88,10 +88,16 @@ public static class MauiProgram
         
         // Core services
         services.AddSingleton<IGameStateService, GameStateService>();
+        
+        // Use LocalCommandParser as the command parser (it implements the simpler interface)
+        // We'll create a wrapper to adapt it to ICommandParserService
         services.AddSingleton<ILocalCommandParser, LocalCommandParser>();
         services.AddSingleton<ICommandParserService>(sp =>
-            sp.GetRequiredService<ILocalCommandParser>() as ICommandParserService 
-            ?? new LocalCommandParser());
+        {
+            var localParser = sp.GetRequiredService<ILocalCommandParser>();
+            // Return a wrapper that adapts ILocalCommandParser to ICommandParserService
+            return new LocalCommandParserAdapter(localParser);
+        });
         
         // Achievement service (optional dependency for engine components)
         services.AddSingleton<IAchievementService, AchievementService>();
@@ -100,8 +106,6 @@ public static class MauiProgram
         services.AddSingleton<IPuzzleEngine>(sp =>
             new PuzzleEngine(sp.GetService<IAchievementService>()));
         
-        // Memory cache
-        services.AddMemoryCache();
     }
     
     private static void RegisterEngineComponents(IServiceCollection services)
@@ -111,32 +115,49 @@ public static class MauiProgram
             new GameStateMachine(
                 sp.GetService<IAchievementService>()));
         
-        // Command router with achievement service
+        // Command router with game state machine and achievement service
         services.AddSingleton(sp =>
             new CommandRouter(
                 sp.GetServices<ICommandHandler>(),
+                sp.GetRequiredService<GameStateMachine>(),
                 sp.GetService<IAchievementService>()));
         
-        // Inventory manager with achievement service
+        // Inventory manager - requires GameState from GameStateMachine
         services.AddSingleton<IInventoryManager>(sp =>
         {
-            var gameState = sp.GetRequiredService<GameStateMachine>().CurrentState;
-            return new InventoryManager(gameState, sp.GetService<IAchievementService>());
+            var stateMachine = sp.GetRequiredService<GameStateMachine>();
+            var achievementService = sp.GetService<IAchievementService>();
+            return new InventoryManager(stateMachine.CurrentState, achievementService);
         });
         
-        // Command handlers
-        services.AddTransient<ICommandHandler, MoveCommandHandler>();
-        services.AddTransient<ICommandHandler, TakeCommandHandler>();
+        // Command handlers - register with factory methods for proper DI
+        services.AddTransient<ICommandHandler>(sp => 
+            new MoveCommandHandler(sp.GetRequiredService<GameStateMachine>()));
+        services.AddTransient<ICommandHandler>(sp => 
+            new TakeCommandHandler(
+                sp.GetRequiredService<GameStateMachine>(),
+                sp.GetRequiredService<IInventoryManager>()));
         services.AddTransient<ICommandHandler>(sp =>
             new DropCommandHandler(
                 sp.GetRequiredService<IInventoryManager>(),
                 sp.GetRequiredService<GameStateMachine>()));
-        services.AddTransient<ICommandHandler, UseCommandHandler>();
-        services.AddTransient<ICommandHandler, ExamineCommandHandler>();
-        services.AddTransient<ICommandHandler, OpenCommandHandler>();
-        services.AddTransient<ICommandHandler, CloseCommandHandler>();
-        services.AddTransient<ICommandHandler, LookCommandHandler>();
-        services.AddTransient<ICommandHandler, InventoryCommandHandler>();
+        services.AddTransient<ICommandHandler>(sp => 
+            new UseCommandHandler(
+                sp.GetRequiredService<GameStateMachine>(),
+                sp.GetRequiredService<IInventoryManager>(),
+                sp.GetRequiredService<IPuzzleEngine>()));
+        services.AddTransient<ICommandHandler>(sp => 
+            new ExamineCommandHandler(
+                sp.GetRequiredService<GameStateMachine>(),
+                sp.GetRequiredService<IInventoryManager>()));
+        services.AddTransient<ICommandHandler>(sp => 
+            new OpenCommandHandler(sp.GetRequiredService<GameStateMachine>()));
+        services.AddTransient<ICommandHandler>(sp => 
+            new CloseCommandHandler(sp.GetRequiredService<GameStateMachine>()));
+        services.AddTransient<ICommandHandler>(sp => 
+            new LookCommandHandler(sp.GetRequiredService<GameStateMachine>()));
+        services.AddTransient<ICommandHandler>(sp => 
+            new InventoryCommandHandler(sp.GetRequiredService<IInventoryManager>()));
     }
     
     private static void RegisterDataAccess(IServiceCollection services)
@@ -151,6 +172,10 @@ public static class MauiProgram
         services.AddTransient<ViewModels.SettingsViewModel>();
         services.AddTransient<ViewModels.StoryPackSelectorViewModel>();
         services.AddTransient<ViewModels.LoadGameViewModel>();
+        services.AddTransient<ViewModels.AchievementsPageViewModel>();
+        
+        // Achievement notification service
+        services.AddSingleton<IAchievementNotificationService, AchievementToastService>();
     }
     
     private static void RegisterViews(IServiceCollection services)
