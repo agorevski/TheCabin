@@ -46,6 +46,8 @@
       "id": "cauldron",
       "name": "Bubbling Cauldron",
       "description": "A large iron cauldron with a mysterious glowing liquid inside.",
+      "type": "Furniture",
+      "weight": 50,
       "isVisible": true,
       "isCollectable": false,
       "isUsable": true
@@ -54,6 +56,8 @@
       "id": "scroll",
       "name": "Ancient Scroll",
       "description": "A yellowed scroll covered in arcane symbols and spells.",
+      "type": "Item",
+      "weight": 1,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": false
@@ -62,6 +66,8 @@
       "id": "crystal",
       "name": "Glowing Crystal",
       "description": "A crystal orb that pulses with magical energy.",
+      "type": "Tool",
+      "weight": 2,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": true
@@ -70,6 +76,8 @@
       "id": "herb",
       "name": "Luminescent Herb",
       "description": "A magical herb that glows softly in the moonlight.",
+      "type": "Item",
+      "weight": 1,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": true
@@ -78,6 +86,8 @@
       "id": "archway",
       "name": "Stone Archway",
       "description": "An ancient archway covered in ivy and runes.",
+      "type": "Door",
+      "weight": 100,
       "isVisible": true,
       "isCollectable": false,
       "isUsable": true
@@ -86,6 +96,8 @@
       "id": "book",
       "name": "Spell Book",
       "description": "A leather-bound tome filled with powerful spells.",
+      "type": "Item",
+      "weight": 2,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": false
@@ -94,6 +106,8 @@
       "id": "barrier",
       "name": "Magical Barrier",
       "description": "A shimmering magical barrier blocking a hidden passage.",
+      "type": "Puzzle",
+      "weight": 0,
       "isVisible": true,
       "isCollectable": false,
       "isUsable": true
@@ -102,6 +116,8 @@
       "id": "wand",
       "name": "Wizard's Wand",
       "description": "An ornate wooden wand that tingles with power.",
+      "type": "Tool",
+      "weight": 1,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": true

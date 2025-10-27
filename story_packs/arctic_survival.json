@@ -45,6 +45,8 @@
       "id": "generator",
       "name": "Emergency Generator",
       "description": "A backup generator running on its last reserves of fuel.",
+      "type": "Furniture",
+      "weight": 100,
       "isVisible": true,
       "isCollectable": false,
       "isUsable": true
@@ -53,6 +55,8 @@
       "id": "radio",
       "name": "Communication Radio",
       "description": "A weather-beaten radio that might still reach someone.",
+      "type": "Tool",
+      "weight": 5,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": true
@@ -61,6 +65,8 @@
       "id": "coat",
       "name": "Insulated Coat",
       "description": "A heavy winter coat that could save your life.",
+      "type": "Item",
+      "weight": 3,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": false
@@ -69,6 +75,8 @@
       "id": "can",
       "name": "Frozen Food Can",
       "description": "A can of preserved food, frozen solid.",
+      "type": "Item",
+      "weight": 2,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": true
@@ -77,6 +85,8 @@
       "id": "toolbox",
       "name": "Tool Box",
       "description": "A metal box containing various repair tools.",
+      "type": "Container",
+      "weight": 5,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": true
@@ -85,6 +95,8 @@
       "id": "notebook",
       "name": "Research Notebook",
       "description": "A notebook with logs from the previous research team.",
+      "type": "Item",
+      "weight": 1,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": false
@@ -93,6 +105,8 @@
       "id": "thermos",
       "name": "Steel Thermos",
       "description": "An insulated thermos, still slightly warm.",
+      "type": "Item",
+      "weight": 2,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": true

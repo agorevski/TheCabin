@@ -66,6 +66,13 @@ public class MoveCommandHandler : ICommandHandler
             message += $"\n\nYou can see: {objectNames}";
         }
         
+        // Add available exits
+        if (newRoom.Exits.Any())
+        {
+            var exits = string.Join(", ", newRoom.Exits.Keys);
+            message += $"\n\nExits: {exits}";
+        }
+        
         return Task.FromResult(new CommandResult
         {
             Success = true,

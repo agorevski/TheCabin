@@ -46,6 +46,8 @@
       "id": "candle",
       "name": "Flickering Candle",
       "description": "A half-melted candle providing dim, wavering light.",
+      "type": "Light",
+      "weight": 1,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": true
@@ -54,6 +56,8 @@
       "id": "door",
       "name": "Locked Door",
       "description": "A heavy wooden door with rusty hinges. It's locked tight.",
+      "type": "Door",
+      "weight": 50,
       "isVisible": true,
       "isCollectable": false,
       "isUsable": true
@@ -62,6 +66,8 @@
       "id": "note",
       "name": "Crumpled Note",
       "description": "A water-stained note with barely legible handwriting.",
+      "type": "Item",
+      "weight": 1,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": false
@@ -70,6 +76,8 @@
       "id": "mirror",
       "name": "Cracked Mirror",
       "description": "An old mirror with a spider web of cracks across its surface.",
+      "type": "Furniture",
+      "weight": 20,
       "isVisible": true,
       "isCollectable": false,
       "isUsable": true
@@ -78,6 +86,8 @@
       "id": "chest",
       "name": "Wooden Chest",
       "description": "A dusty old chest with a rusted lock.",
+      "type": "Container",
+      "weight": 30,
       "isVisible": true,
       "isCollectable": false,
       "isUsable": true
@@ -86,6 +96,8 @@
       "id": "lantern",
       "name": "Old Lantern",
       "description": "A rusted lantern that might still work.",
+      "type": "Light",
+      "weight": 3,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": true
@@ -94,6 +106,8 @@
       "id": "chains",
       "name": "Rusted Chains",
       "description": "Heavy chains hanging from the wall, covered in rust.",
+      "type": "Decoration",
+      "weight": 15,
       "isVisible": true,
       "isCollectable": false,
       "isUsable": false
@@ -102,6 +116,8 @@
       "id": "skeleton",
       "name": "Skeleton",
       "description": "The skeletal remains of someone who wasn't so lucky.",
+      "type": "Decoration",
+      "weight": 10,
       "isVisible": true,
       "isCollectable": false,
       "isUsable": false

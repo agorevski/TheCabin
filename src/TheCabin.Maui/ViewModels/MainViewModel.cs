@@ -22,6 +22,7 @@ public partial class MainViewModel : BaseViewModel
     private readonly ILogger<MainViewModel> _logger;
     private readonly CommandRouter _commandRouter;
     private readonly IMainThreadDispatcher _mainThreadDispatcher;
+    private readonly GameStateMachine _stateMachine;
     
     private GameState? _currentGameState;
     private CancellationTokenSource? _listeningCts;
@@ -63,7 +64,8 @@ public partial class MainViewModel : BaseViewModel
         IAchievementNotificationService notificationService,
         ILogger<MainViewModel> logger,
         CommandRouter commandRouter,
-        IMainThreadDispatcher mainThreadDispatcher)
+        IMainThreadDispatcher mainThreadDispatcher,
+        GameStateMachine stateMachine)
     {
         _voiceService = voiceService;
         _parserService = parserService;
@@ -75,6 +77,7 @@ public partial class MainViewModel : BaseViewModel
         _logger = logger;
         _commandRouter = commandRouter;
         _mainThreadDispatcher = mainThreadDispatcher;
+        _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
 
         Title = "The Cabin";
     }
@@ -92,17 +95,46 @@ public partial class MainViewModel : BaseViewModel
                 var storyPack = await _storyPackService.LoadPackAsync(selectedPackId);
                 _logger.LogInformation("Story pack loaded successfully: {Theme}", storyPack.Theme);
                 
-                // Initialize game state
+                // Initialize game state in both services
                 await _gameStateService.InitializeNewGameAsync(storyPack);
+                await _stateMachine.InitializeAsync(storyPack);
                 _currentGameState = _gameStateService.CurrentState;
                 _logger.LogInformation("Game state initialized");
                 
                 // Clear story feed for fresh start
                 StoryFeed.Clear();
                 
-                // Show initial room description
+                // Show initial room description with objects and exits (like "look around")
                 var initialRoom = _currentGameState.World.Rooms[_currentGameState.Player.CurrentLocationId];
-                AddNarrativeEntry(initialRoom.Description, NarrativeType.Description);
+                var message = initialRoom.Description;
+                
+                // Add visible objects
+                var visibleObjects = initialRoom.State.VisibleObjectIds
+                    .Where(id => _currentGameState.World.Objects.ContainsKey(id))
+                    .Select(id => _currentGameState.World.Objects[id])
+                    .Where(obj => obj.IsVisible)
+                    .ToList();
+                
+                if (visibleObjects.Any())
+                {
+                    var objectNames = string.Join(", ", visibleObjects.Select(o => o.Name));
+                    message += $"\n\nYou can see: {objectNames}";
+                }
+                
+                // Add available exits
+                if (initialRoom.Exits.Any())
+                {
+                    var exits = string.Join(", ", initialRoom.Exits.Keys);
+                    message += $"\n\nExits: {exits}";
+                }
+                
+                AddNarrativeEntry(message, NarrativeType.Success);
+                
+                // Play TTS for initial room description if enabled
+                if (TtsEnabled)
+                {
+                    await _ttsService.SpeakAsync(message);
+                }
                 
                 // Update UI state
                 UpdateUIState();
@@ -212,6 +244,16 @@ public partial class MainViewModel : BaseViewModel
             await _gameStateService.LoadGameAsync(saveId);
             _currentGameState = _gameStateService.CurrentState;
             
+            // Re-initialize GameStateMachine with loaded state
+            var storyPack = await _storyPackService.LoadPackAsync(_currentGameState.World.CurrentThemeId);
+            await _stateMachine.InitializeAsync(storyPack);
+            
+            // Restore the player's current location in the state machine
+            if (!string.IsNullOrEmpty(_currentGameState.Player.CurrentLocationId))
+            {
+                _stateMachine.CurrentState.Player.CurrentLocationId = _currentGameState.Player.CurrentLocationId;
+            }
+            
             // Clear and reload story feed
             StoryFeed.Clear();
             
@@ -284,9 +326,9 @@ public partial class MainViewModel : BaseViewModel
 
     private async Task ProcessCommandAsync(string input)
     {
-        if (_currentGameState == null)
+        if (_currentGameState == null || string.IsNullOrEmpty(_currentGameState.Player?.CurrentLocationId))
         {
-            await ShowErrorAsync("Game not initialized");
+            await ShowErrorAsync("Game not properly initialized. Please start a new game.");
             return;
         }
 

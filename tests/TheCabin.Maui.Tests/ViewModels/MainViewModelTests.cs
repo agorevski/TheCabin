@@ -92,7 +92,8 @@ public class MainViewModelTests
             _mockNotificationService.Object,
             _mockLogger.Object,
             _commandRouter,
-            _mainThreadDispatcher
+            _mainThreadDispatcher,
+            _gameStateMachine
         );
     }
 

@@ -155,7 +155,8 @@ public class StoryPackService : IStoryPackService
         {
             PropertyNameCaseInsensitive = true,
             ReadCommentHandling = JsonCommentHandling.Skip,
-            AllowTrailingCommas = true
+            AllowTrailingCommas = true,
+            Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() }
         };
         
         var pack = JsonSerializer.Deserialize<StoryPack>(json, options);

@@ -59,7 +59,15 @@ public class GameStateMachine : IGameStateMachine
             World = new WorldState
             {
                 CurrentThemeId = storyPack.Id,
-                Rooms = storyPack.Rooms.ToDictionary(r => r.Id, r => r),
+                Rooms = storyPack.Rooms.ToDictionary(r => r.Id, r => 
+                {
+                    // Initialize room state with visible objects from story pack
+                    if (r.State.VisibleObjectIds == null || !r.State.VisibleObjectIds.Any())
+                    {
+                        r.State.VisibleObjectIds = new List<string>(r.ObjectIds ?? new List<string>());
+                    }
+                    return r;
+                }),
                 Objects = new Dictionary<string, GameObject>(storyPack.Objects),
                 TurnNumber = 0
             },

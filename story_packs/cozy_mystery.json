@@ -45,6 +45,8 @@
       "id": "photo_album",
       "name": "Photo Album",
       "description": "A leather-bound album filled with old family photos.",
+      "type": "Item",
+      "weight": 2,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": false
@@ -53,6 +55,8 @@
       "id": "fireplace",
       "name": "Stone Fireplace",
       "description": "A cozy fireplace with crackling logs.",
+      "type": "Furniture",
+      "weight": 100,
       "isVisible": true,
       "isCollectable": false,
       "isUsable": true
@@ -61,6 +65,8 @@
       "id": "cup_of_tea",
       "name": "Cup of Tea",
       "description": "A warm cup of tea, still steaming.",
+      "type": "Item",
+      "weight": 1,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": true
@@ -69,6 +75,8 @@
       "id": "wardrobe",
       "name": "Antique Wardrobe",
       "description": "An old wardrobe with ornate carvings, slightly ajar.",
+      "type": "Container",
+      "weight": 80,
       "isVisible": true,
       "isCollectable": false,
       "isUsable": true
@@ -77,6 +85,8 @@
       "id": "letter",
       "name": "Handwritten Letter",
       "description": "A carefully folded letter with elegant handwriting.",
+      "type": "Item",
+      "weight": 1,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": false
@@ -85,6 +95,8 @@
       "id": "typewriter",
       "name": "Vintage Typewriter",
       "description": "An old typewriter with a half-finished note still in it.",
+      "type": "Furniture",
+      "weight": 15,
       "isVisible": true,
       "isCollectable": false,
       "isUsable": true
@@ -93,6 +105,8 @@
       "id": "journal",
       "name": "Leather Journal",
       "description": "A personal journal filled with entries and sketches.",
+      "type": "Item",
+      "weight": 1,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": false

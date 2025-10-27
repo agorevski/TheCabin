@@ -45,6 +45,8 @@
       "id": "panel",
       "name": "Control Panel",
       "description": "A damaged control panel with flickering displays.",
+      "type": "Furniture",
+      "weight": 30,
       "isVisible": true,
       "isCollectable": false,
       "isUsable": true
@@ -53,6 +55,8 @@
       "id": "helmet",
       "name": "Space Helmet",
       "description": "A cracked but functional EVA helmet.",
+      "type": "Item",
+      "weight": 3,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": false
@@ -61,6 +65,8 @@
       "id": "console",
       "name": "Navigation Console",
       "description": "The ship's navigation system, barely operational.",
+      "type": "Furniture",
+      "weight": 50,
       "isVisible": true,
       "isCollectable": false,
       "isUsable": true
@@ -69,6 +75,8 @@
       "id": "cryopod",
       "name": "Cryogenic Pod",
       "description": "Your shattered sleeping pod, covered in frost.",
+      "type": "Furniture",
+      "weight": 80,
       "isVisible": true,
       "isCollectable": false,
       "isUsable": false
@@ -77,6 +85,8 @@
       "id": "log_recorder",
       "name": "Audio Log Recorder",
       "description": "A device holding audio logs from the crew.",
+      "type": "Tool",
+      "weight": 2,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": true
@@ -85,6 +95,8 @@
       "id": "reactor",
       "name": "Reactor Core",
       "description": "The ship's failing reactor, pulsing with unstable energy.",
+      "type": "Furniture",
+      "weight": 100,
       "isVisible": true,
       "isCollectable": false,
       "isUsable": true
@@ -93,6 +105,8 @@
       "id": "toolkit",
       "name": "Engineering Toolkit",
       "description": "A set of tools for ship repairs.",
+      "type": "Container",
+      "weight": 5,
       "isVisible": true,
       "isCollectable": true,
       "isUsable": true
