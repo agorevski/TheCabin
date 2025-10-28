@@ -1,0 +1,149 @@
+[
+    {
+        "id": "solve_family_mystery",
+        "name": "Uncover the Family Secret",
+        "description": "Piece together clues hidden throughout the cabin to solve a decades-old family mystery.",
+        "type": "Sequential",
+        "steps": [
+            {
+                "id": "examine_photos",
+                "stepNumber": 1,
+                "description": "Examine the photo album for clues",
+                "action": "examine",
+                "targetObject": "photo_album",
+                "requiredFlags": [],
+                "requiredItems": [],
+                "requiredLocation": "living_room",
+                "completionFlag": "photos_examined",
+                "successMessage": "You carefully flip through the old photographs. A pattern emerges - in every family gathering photo, one person is always standing slightly apart, looking away. The same person who signed the letter you found.",
+                "failureMessage": "You should look at the photo album more carefully.",
+                "feedbackMessage": "Old photographs can reveal truths time tried to hide."
+            },
+            {
+                "id": "take_letter",
+                "stepNumber": 2,
+                "description": "Take the handwritten letter from the bedroom",
+                "action": "take",
+                "targetObject": "letter",
+                "requiredFlags": [],
+                "requiredItems": [],
+                "requiredLocation": "bedroom",
+                "completionFlag": "has_letter",
+                "successMessage": "You pick up the carefully folded letter. The paper is aged but well-preserved, as if someone treasured it. The elegant handwriting speaks of love, sacrifice, and a secret kept for generations.",
+                "failureMessage": "You haven't found the letter yet.",
+                "feedbackMessage": "This letter holds the key to understanding the family's past."
+            },
+            {
+                "id": "search_wardrobe",
+                "stepNumber": 3,
+                "description": "Search the antique wardrobe for hidden items",
+                "action": "use",
+                "targetObject": "wardrobe",
+                "requiredFlags": [
+                    "photos_examined"
+                ],
+                "requiredItems": [],
+                "requiredLocation": "bedroom",
+                "completionFlag": "wardrobe_searched",
+                "successMessage": "You push aside old coats and reach to the back of the wardrobe. Your fingers find a loose panel. Behind it, hidden away, you discover a small wooden box containing old jewelry and a faded photograph - the missing piece of the puzzle!",
+                "failureMessage": "You need to examine the photos first to know what you're looking for.",
+                "feedbackMessage": "Old wardrobes often hide family secrets."
+            },
+            {
+                "id": "take_journal",
+                "stepNumber": 4,
+                "description": "Take the leather journal from the study",
+                "action": "take",
+                "targetObject": "journal",
+                "requiredFlags": [
+                    "wardrobe_searched"
+                ],
+                "requiredItems": [],
+                "requiredLocation": "study",
+                "completionFlag": "has_journal",
+                "successMessage": "You pick up the worn leather journal. Its pages are filled with daily entries, hopes, dreams, and the true story of what happened all those years ago. This is the evidence you've been searching for.",
+                "failureMessage": "You need to search the wardrobe first to understand the journal's significance.",
+                "feedbackMessage": "Personal journals reveal truths no one else would dare speak."
+            },
+            {
+                "id": "examine_typewriter",
+                "stepNumber": 5,
+                "description": "Examine the vintage typewriter and its unfinished note",
+                "action": "use",
+                "targetObject": "typewriter",
+                "requiredFlags": [
+                    "has_journal",
+                    "has_letter"
+                ],
+                "requiredItems": [],
+                "requiredLocation": "study",
+                "completionFlag": "typewriter_examined",
+                "successMessage": "You read the half-finished note still in the typewriter. It's a confession, never sent, explaining everything. The dates match the journal entries. The handwriting on the letter matches the signature. Everything clicks into place. You finally understand the truth.",
+                "failureMessage": "You need both the journal and the letter to understand this final piece.",
+                "feedbackMessage": "The typewriter holds the final confession."
+            },
+            {
+                "id": "warm_by_fire",
+                "stepNumber": 6,
+                "description": "Use the fireplace to warm yourself while considering the evidence",
+                "action": "use",
+                "targetObject": "fireplace",
+                "requiredFlags": [
+                    "typewriter_examined"
+                ],
+                "requiredItems": [],
+                "requiredLocation": "living_room",
+                "completionFlag": "contemplated_truth",
+                "successMessage": "You stand before the warm fire, all the pieces finally fitting together. The photos, the letter, the hidden box, the journal, the unfinished confession - they tell a story of love, loss, and sacrifice. The family secret is no longer a mystery to you.",
+                "failureMessage": "You need to discover all the clues first before you can understand the full truth.",
+                "feedbackMessage": "Sometimes the warmth of truth is all we need."
+            },
+            {
+                "id": "drink_tea",
+                "stepNumber": 7,
+                "description": "Drink the cup of tea to celebrate solving the mystery",
+                "action": "use",
+                "targetObject": "cup_of_tea",
+                "requiredFlags": [
+                    "contemplated_truth"
+                ],
+                "requiredItems": [
+                    "journal",
+                    "letter"
+                ],
+                "requiredLocation": "living_room",
+                "completionFlag": "mystery_solved",
+                "successMessage": "You sip the warm tea, the mystery now solved. The family's secret - a tale of forbidden love and quiet sacrifice - will no longer be hidden. You've given voice to a story that deserved to be told. As the storm clears outside, you feel a sense of peace settle over the cabin, as if the house itself is grateful.",
+                "failureMessage": "You haven't solved the mystery yet. Keep investigating.",
+                "feedbackMessage": "Every mystery deserves a proper conclusion."
+            }
+        ],
+        "requiredItems": [],
+        "completionMessage": "MYSTERY SOLVED: You have uncovered the family secret! Through careful investigation and piecing together hidden clues, you've revealed a story of love and sacrifice that spanned generations. The truth has finally come to light, and the family can now find closure. Well done, detective!",
+        "completionAchievementId": "master_detective",
+        "achievementId": "master_detective",
+        "hints": [
+            {
+                "level": 1,
+                "text": "Start by examining the photo album in the living room. Old photographs often reveal patterns and anomalies.",
+                "cost": 0,
+                "order": 1,
+                "delayMinutes": 2
+            },
+            {
+                "level": 2,
+                "text": "Search the bedroom thoroughly - both the letter and the wardrobe hold important clues about the family's past.",
+                "cost": 0,
+                "order": 2,
+                "delayMinutes": 5
+            },
+            {
+                "level": 3,
+                "text": "The study contains the final pieces: the journal tells the full story, and the typewriter holds an unfinished confession. Gather all documents before drawing your conclusions.",
+                "cost": 1,
+                "order": 3,
+                "delayMinutes": 10
+            }
+        ]
+    }
+]

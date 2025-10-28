@@ -49,7 +49,16 @@
       "weight": 30,
       "isVisible": true,
       "isCollectable": false,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You use the control panel.",
+          "failureMessage": "The panel is too damaged. It needs repairs.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "helmet": {
       "id": "helmet",
@@ -69,7 +78,16 @@
       "weight": 50,
       "isVisible": true,
       "isCollectable": false,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You use the navigation console.",
+          "failureMessage": "The console needs power and proper authorization codes.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "cryopod": {
       "id": "cryopod",
@@ -79,7 +97,16 @@
       "weight": 80,
       "isVisible": true,
       "isCollectable": false,
-      "isUsable": false
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You use the cryopod.",
+          "failureMessage": "The cryopod is too damaged to use for sleep, but might serve another purpose.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "log_recorder": {
       "id": "log_recorder",
@@ -89,7 +116,16 @@
       "weight": 2,
       "isVisible": true,
       "isCollectable": true,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You use the log recorder.",
+          "failureMessage": "The log recorder needs power.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "reactor": {
       "id": "reactor",
@@ -99,7 +135,16 @@
       "weight": 100,
       "isVisible": true,
       "isCollectable": false,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You use the reactor.",
+          "failureMessage": "The reactor is critically unstable. You need tools to work on it safely.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "toolkit": {
       "id": "toolkit",
@@ -109,7 +154,16 @@
       "weight": 5,
       "isVisible": true,
       "isCollectable": true,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You open the toolkit and examine the repair tools inside. Everything you need for emergency repairs.",
+          "failureMessage": "The toolkit is ready for use.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     }
   },
   "puzzles": [],

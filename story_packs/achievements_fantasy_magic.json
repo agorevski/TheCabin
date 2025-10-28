@@ -1,0 +1,68 @@
+[
+    {
+        "id": "arcane_master",
+        "name": "Arcane Master",
+        "description": "Successfully broke the magical seal and mastered the wizard's challenges.",
+        "iconName": "trophy",
+        "triggerType": "PuzzleSolved",
+        "triggerValue": "break_magical_seal",
+        "requiredProgress": 1,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Arcane Master! You've mastered the magical arts."
+    },
+    {
+        "id": "potion_brewer",
+        "name": "Potion Brewer",
+        "description": "Successfully brewed a magical potion in the cauldron.",
+        "iconName": "flask",
+        "triggerType": "FlagSet",
+        "triggerValue": "potion_brewed",
+        "requiredProgress": 1,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Potion Brewer! Your alchemical skills are impressive."
+    },
+    {
+        "id": "spell_caster",
+        "name": "Spell Caster",
+        "description": "Used the wand to successfully dispel the magical barrier.",
+        "iconName": "wand",
+        "triggerType": "FlagSet",
+        "triggerValue": "barrier_dispelled",
+        "requiredProgress": 1,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Spell Caster! Your spellwork is magnificent."
+    },
+    {
+        "id": "herbalist",
+        "name": "Herbalist",
+        "description": "Collected the rare luminescent herb from the magical garden.",
+        "iconName": "leaf",
+        "triggerType": "FlagSet",
+        "triggerValue": "has_herb",
+        "requiredProgress": 1,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Herbalist! You know the value of magical ingredients."
+    },
+    {
+        "id": "room_explorer",
+        "name": "Thorough Explorer",
+        "description": "Explored all rooms in the wizard's cabin.",
+        "iconName": "map",
+        "triggerType": "RoomVisited",
+        "triggerValue": "",
+        "requiredProgress": 3,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Thorough Explorer! You've seen every magical corner."
+    },
+    {
+        "id": "speed_caster",
+        "name": "Speed Caster",
+        "description": "Broke the magical seal in under 35 turns.",
+        "iconName": "stopwatch",
+        "triggerType": "PuzzleSolved",
+        "triggerValue": "break_magical_seal",
+        "requiredProgress": 1,
+        "isSecret": true,
+        "unlockedMessage": "Achievement Unlocked: Speed Caster! Your magical prowess is unmatched!"
+    }
+]

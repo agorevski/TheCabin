@@ -1,0 +1,68 @@
+[
+    {
+        "id": "space_survivor",
+        "name": "Space Survivor",
+        "description": "Successfully escaped the derelict spacecraft before reactor failure.",
+        "iconName": "trophy",
+        "triggerType": "PuzzleSolved",
+        "triggerValue": "restore_and_escape",
+        "requiredProgress": 1,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Space Survivor! You escaped the dying ship."
+    },
+    {
+        "id": "engineer",
+        "name": "Engineer",
+        "description": "Stabilized the failing reactor core.",
+        "iconName": "construct",
+        "triggerType": "FlagSet",
+        "triggerValue": "reactor_stabilized",
+        "requiredProgress": 1,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Engineer! Your technical skills saved the day."
+    },
+    {
+        "id": "system_restore",
+        "name": "System Restore",
+        "description": "Repaired the damaged control panel and restored ship systems.",
+        "iconName": "settings",
+        "triggerType": "FlagSet",
+        "triggerValue": "panel_repaired",
+        "requiredProgress": 1,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: System Restore! The ship responds to your commands."
+    },
+    {
+        "id": "audio_archivist",
+        "name": "Audio Archivist",
+        "description": "Listened to the crew's final audio logs.",
+        "iconName": "headset",
+        "triggerType": "FlagSet",
+        "triggerValue": "logs_heard",
+        "requiredProgress": 1,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Audio Archivist! The crew's story is now known."
+    },
+    {
+        "id": "room_explorer",
+        "name": "Thorough Explorer",
+        "description": "Explored all sections of the derelict spacecraft.",
+        "iconName": "map",
+        "triggerType": "RoomVisited",
+        "triggerValue": "",
+        "requiredProgress": 3,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Thorough Explorer! You've seen every corner of the derelict."
+    },
+    {
+        "id": "speed_escape",
+        "name": "Emergency Evacuation",
+        "description": "Escaped the spacecraft in under 30 turns.",
+        "iconName": "stopwatch",
+        "triggerType": "PuzzleSolved",
+        "triggerValue": "restore_and_escape",
+        "requiredProgress": 1,
+        "isSecret": true,
+        "unlockedMessage": "Achievement Unlocked: Emergency Evacuation! Your quick thinking saved precious time!"
+    }
+]

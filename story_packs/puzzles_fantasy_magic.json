@@ -1,0 +1,154 @@
+[
+    {
+        "id": "break_magical_seal",
+        "name": "Break the Magical Seal",
+        "description": "Master the arcane arts to dispel the barrier and unlock ancient secrets hidden within the wizard's cabin.",
+        "type": "Sequential",
+        "steps": [
+            {
+                "id": "take_crystal",
+                "stepNumber": 1,
+                "description": "Take the glowing crystal for magical power",
+                "action": "take",
+                "targetObject": "crystal",
+                "requiredFlags": [],
+                "requiredItems": [],
+                "requiredLocation": "study",
+                "completionFlag": "has_crystal",
+                "successMessage": "You grasp the glowing crystal. Magical energy pulses through your fingers, filling you with arcane power. The crystal's light responds to your touch, growing brighter.",
+                "failureMessage": "You don't see the crystal here.",
+                "feedbackMessage": "The crystal thrums with barely contained magical energy."
+            },
+            {
+                "id": "collect_herb",
+                "stepNumber": 2,
+                "description": "Collect the luminescent herb from the garden",
+                "action": "take",
+                "targetObject": "herb",
+                "requiredFlags": [],
+                "requiredItems": [],
+                "requiredLocation": "garden",
+                "completionFlag": "has_herb",
+                "successMessage": "You carefully pluck the luminescent herb. It continues to glow softly in your hand, emanating a sweet, ethereal scent. This rare ingredient is essential for magical workings.",
+                "failureMessage": "The herb isn't here.",
+                "feedbackMessage": "The herb's glow intensifies in the moonlight."
+            },
+            {
+                "id": "brew_potion",
+                "stepNumber": 3,
+                "description": "Use the cauldron to brew a magical potion",
+                "action": "use",
+                "targetObject": "cauldron",
+                "requiredFlags": [
+                    "has_crystal",
+                    "has_herb"
+                ],
+                "requiredItems": [
+                    "crystal",
+                    "herb"
+                ],
+                "requiredLocation": "study",
+                "completionFlag": "potion_brewed",
+                "successMessage": "You drop the herb into the bubbling cauldron and channel energy through the crystal. The liquid transforms, swirling with iridescent colors. Mystical vapors rise as the potion completes. You've created a powerful elixir of unsealing!",
+                "failureMessage": "You need both the magical herb and the crystal to brew this potion.",
+                "feedbackMessage": "The cauldron bubbles with mysterious potential."
+            },
+            {
+                "id": "take_wand",
+                "stepNumber": 4,
+                "description": "Take the wizard's wand",
+                "action": "take",
+                "targetObject": "wand",
+                "requiredFlags": [
+                    "potion_brewed"
+                ],
+                "requiredItems": [],
+                "requiredLocation": "library",
+                "completionFlag": "has_wand",
+                "successMessage": "You take the ornate wand. It tingles in your grip, recognizing your magical prowess. The potion's power has attuned you to wielding this ancient artifact.",
+                "failureMessage": "The wand won't respond to you yet. You need more magical preparation.",
+                "feedbackMessage": "The wand awaits a worthy wielder."
+            },
+            {
+                "id": "read_scroll",
+                "stepNumber": 5,
+                "description": "Read the ancient scroll to learn the unsealing spell",
+                "action": "examine",
+                "targetObject": "scroll",
+                "requiredFlags": [
+                    "has_wand"
+                ],
+                "requiredItems": [],
+                "requiredLocation": "study",
+                "completionFlag": "spell_learned",
+                "successMessage": "You unroll the ancient scroll and study its arcane symbols. The unsealing incantation burns into your memory: 'By crystal's light and herb's pure might, dispel the seal, reveal the sight!' You now know the spell.",
+                "failureMessage": "The scroll's magic won't reveal itself until you hold the wand.",
+                "feedbackMessage": "Ancient knowledge awaits within the scroll."
+            },
+            {
+                "id": "dispel_barrier",
+                "stepNumber": 6,
+                "description": "Use the wand to dispel the magical barrier",
+                "action": "use",
+                "targetObject": "barrier",
+                "requiredFlags": [
+                    "spell_learned",
+                    "potion_brewed"
+                ],
+                "requiredItems": [
+                    "wand"
+                ],
+                "requiredLocation": "library",
+                "completionFlag": "barrier_dispelled",
+                "successMessage": "You raise the wand and speak the incantation. Power flows through you as the wand glows brilliant white. The shimmering barrier flickers, crackles with energy, and shatters like glass! The hidden passage beyond is now revealed.",
+                "failureMessage": "The barrier holds fast. You need the proper spell and preparation.",
+                "feedbackMessage": "The barrier awaits the right magical touch."
+            },
+            {
+                "id": "pass_archway",
+                "stepNumber": 7,
+                "description": "Pass through the stone archway to freedom",
+                "action": "use",
+                "targetObject": "archway",
+                "requiredFlags": [
+                    "barrier_dispelled"
+                ],
+                "requiredItems": [
+                    "wand"
+                ],
+                "requiredLocation": "garden",
+                "completionFlag": "escaped",
+                "successMessage": "You step through the ancient archway, wand in hand. The runes glow as you pass, acknowledging your magical mastery. Beyond lies the deep forest, but you're no longer trapped. You've broken the seal and claimed the wizard's legacy. The arcane arts are yours to command.",
+                "failureMessage": "The archway won't let you pass until the barrier is dispelled.",
+                "feedbackMessage": "The archway leads to freedom and adventure."
+            }
+        ],
+        "requiredItems": [],
+        "completionMessage": "ARCANE MASTERY ACHIEVED: You have broken the magical seal! Through study, preparation, and spellcraft, you've mastered the wizard's arcane challenges. The hidden knowledge is yours, and the path to magical adventure lies open before you. Your journey as a mage has only just begun!",
+        "completionAchievementId": "arcane_master",
+        "achievementId": "arcane_master",
+        "hints": [
+            {
+                "level": 1,
+                "text": "Gather magical components first - the glowing crystal from the study and the luminescent herb from the garden.",
+                "cost": 0,
+                "order": 1,
+                "delayMinutes": 2
+            },
+            {
+                "level": 2,
+                "text": "Use the cauldron in the study to brew a potion. You'll need both the crystal and the herb.",
+                "cost": 0,
+                "order": 2,
+                "delayMinutes": 5
+            },
+            {
+                "level": 3,
+                "text": "Once you've brewed the potion, take the wand from the library and read the scroll to learn the unsealing spell. Then use the wand on the barrier.",
+                "cost": 1,
+                "order": 3,
+                "delayMinutes": 10
+            }
+        ]
+    }
+]

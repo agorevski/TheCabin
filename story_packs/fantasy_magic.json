@@ -50,7 +50,16 @@
       "weight": 50,
       "isVisible": true,
       "isCollectable": false,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You use the cauldron.",
+          "failureMessage": "The cauldron needs magical ingredients.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "scroll": {
       "id": "scroll",
@@ -70,7 +79,16 @@
       "weight": 2,
       "isVisible": true,
       "isCollectable": true,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "The crystal glows brighter in your hand, channeling magical energy.",
+          "failureMessage": "The crystal's power needs to be directed at something.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "herb": {
       "id": "herb",
@@ -80,7 +98,16 @@
       "weight": 1,
       "isVisible": true,
       "isCollectable": true,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "The herb releases a sweet, magical fragrance as you crush it gently.",
+          "failureMessage": "The herb needs to be combined with other ingredients.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "archway": {
       "id": "archway",
@@ -90,7 +117,16 @@
       "weight": 100,
       "isVisible": true,
       "isCollectable": false,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You use the archway.",
+          "failureMessage": "The archway's runes prevent passage.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "book": {
       "id": "book",
@@ -110,7 +146,16 @@
       "weight": 0,
       "isVisible": true,
       "isCollectable": false,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You use the barrier.",
+          "failureMessage": "The barrier resists your attempts. You need magical power to dispel it.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "wand": {
       "id": "wand",
@@ -120,7 +165,16 @@
       "weight": 1,
       "isVisible": true,
       "isCollectable": true,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "The wand responds to your will, crackling with arcane energy.",
+          "failureMessage": "The wand needs a target for its magic.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     }
   },
   "puzzles": [],

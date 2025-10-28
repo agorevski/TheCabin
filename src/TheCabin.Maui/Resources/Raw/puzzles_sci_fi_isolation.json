@@ -1,0 +1,137 @@
+[
+    {
+        "id": "restore_and_escape",
+        "name": "Restore Ship Systems and Escape",
+        "description": "Repair critical systems on the failing spacecraft and escape before the reactor core fails completely.",
+        "type": "Sequential",
+        "steps": [
+            {
+                "id": "take_toolkit",
+                "stepNumber": 1,
+                "description": "Take the engineering toolkit",
+                "action": "take",
+                "targetObject": "toolkit",
+                "requiredFlags": [],
+                "requiredItems": [],
+                "requiredLocation": "engine_room",
+                "completionFlag": "has_toolkit",
+                "successMessage": "You grab the engineering toolkit. Its familiar weight brings a sense of purpose. With these tools, you might be able to repair the failing systems and get off this derelict.",
+                "failureMessage": "You don't see the toolkit here.",
+                "feedbackMessage": "Essential tools for any spacecraft repair."
+            },
+            {
+                "id": "listen_logs",
+                "stepNumber": 2,
+                "description": "Listen to the audio log recorder for crucial information",
+                "action": "use",
+                "targetObject": "log_recorder",
+                "requiredFlags": [],
+                "requiredItems": [],
+                "requiredLocation": "quarters",
+                "completionFlag": "logs_heard",
+                "successMessage": "You activate the log recorder. The captain's voice, strained and desperate: 'Day 47... reactor instability increasing. We've initiated emergency protocols. If anyone finds this... the override code is Delta-Seven-Niner. Use it on the bridge console. May God have mercy on us all.' The recording ends with static.",
+                "failureMessage": "The log recorder won't play without power.",
+                "feedbackMessage": "The crew's final messages hold vital information."
+            },
+            {
+                "id": "stabilize_reactor",
+                "stepNumber": 3,
+                "description": "Use the toolkit to stabilize the reactor core",
+                "action": "use",
+                "targetObject": "reactor",
+                "requiredFlags": [
+                    "has_toolkit"
+                ],
+                "requiredItems": [
+                    "toolkit"
+                ],
+                "requiredLocation": "engine_room",
+                "completionFlag": "reactor_stabilized",
+                "successMessage": "You work quickly, bypassing damaged conduits and rerouting power flow. The reactor's ominous pulsing slows to a steadier rhythm. Red warning lights shift to amber. It's still failing, but you've bought yourself time. The ship's systems hum back to partial life.",
+                "failureMessage": "You need the engineering toolkit to repair the reactor.",
+                "feedbackMessage": "The reactor core requires immediate attention."
+            },
+            {
+                "id": "repair_panel",
+                "stepNumber": 4,
+                "description": "Repair the damaged control panel on the bridge",
+                "action": "use",
+                "targetObject": "panel",
+                "requiredFlags": [
+                    "reactor_stabilized",
+                    "has_toolkit"
+                ],
+                "requiredItems": [
+                    "toolkit"
+                ],
+                "requiredLocation": "bridge",
+                "completionFlag": "panel_repaired",
+                "successMessage": "You splice wiring and replace blown circuits. The control panel flickers, then springs to life with a cascade of lights and data. Navigation systems online. Life support stabilized. You can finally see what systems are still operational.",
+                "failureMessage": "The panel needs power from the reactor and proper tools to repair.",
+                "feedbackMessage": "The control panel is the key to operating the ship."
+            },
+            {
+                "id": "access_console",
+                "stepNumber": 5,
+                "description": "Use the navigation console with the override code",
+                "action": "use",
+                "targetObject": "console",
+                "requiredFlags": [
+                    "logs_heard",
+                    "panel_repaired"
+                ],
+                "requiredItems": [],
+                "requiredLocation": "bridge",
+                "completionFlag": "console_accessed",
+                "successMessage": "You enter the override code: Delta-Seven-Niner. The console beeps in acknowledgment. Emergency protocols activate. The navigation system plots an escape trajectory. An escape pod near the quarters is now operational and ready for launch!",
+                "failureMessage": "You need the override code from the logs and a functioning control panel.",
+                "feedbackMessage": "The navigation console can plot your escape route."
+            },
+            {
+                "id": "launch_pod",
+                "stepNumber": 6,
+                "description": "Enter and launch the escape pod",
+                "action": "use",
+                "targetObject": "cryopod",
+                "requiredFlags": [
+                    "console_accessed"
+                ],
+                "requiredItems": [
+                    "helmet"
+                ],
+                "requiredLocation": "quarters",
+                "completionFlag": "escaped",
+                "successMessage": "You seal yourself in the escape pod and initiate launch sequence. Warning klaxons blare throughout the dying ship. The pod detaches with a violent jolt. Through the viewport, you watch the derelict spacecraft recede into the red storms of the planet below. Behind you, the reactor finally fails in a brilliant flash. You're adrift, but alive. A rescue beacon pulses steadily. You survived.",
+                "failureMessage": "The escape pod won't launch without proper authorization and your helmet for safety.",
+                "feedbackMessage": "The escape pod is your only way off this dying ship."
+            }
+        ],
+        "requiredItems": [],
+        "completionMessage": "MISSION COMPLETE: You have escaped the derelict spacecraft! Against impossible odds, you repaired critical systems, retrieved vital information, and launched to safety before the reactor failed. The void of space is dangerous, but you survived through skill and determination. A rescue beacon guides you home.",
+        "completionAchievementId": "space_survivor",
+        "achievementId": "space_survivor",
+        "hints": [
+            {
+                "level": 1,
+                "text": "Start in the engine room - take the toolkit and use it to stabilize the failing reactor core.",
+                "cost": 0,
+                "order": 1,
+                "delayMinutes": 2
+            },
+            {
+                "level": 2,
+                "text": "Listen to the audio logs in your quarters to get the override code. Then repair the control panel on the bridge.",
+                "cost": 0,
+                "order": 2,
+                "delayMinutes": 5
+            },
+            {
+                "level": 3,
+                "text": "Use the navigation console with the override code to activate emergency protocols. Don't forget your helmet before launching the escape pod!",
+                "cost": 1,
+                "order": 3,
+                "delayMinutes": 10
+            }
+        ]
+    }
+]

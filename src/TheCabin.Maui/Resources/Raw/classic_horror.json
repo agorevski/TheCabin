@@ -22,7 +22,8 @@
       "description": "Dust and cobwebs blanket old furniture. A cracked mirror reflects your pale face.",
       "objectIds": [
         "mirror",
-        "chest"
+        "chest",
+        "key"
       ],
       "exits": {
         "south": "main_room"
@@ -50,7 +51,16 @@
       "weight": 1,
       "isVisible": true,
       "isCollectable": true,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "The candle flickers, casting eerie shadows on the walls. Its light is weak but comforting.",
+          "failureMessage": "The candle is already lit.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "door": {
       "id": "door",
@@ -60,7 +70,16 @@
       "weight": 50,
       "isVisible": true,
       "isCollectable": false,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You use the door.",
+          "failureMessage": "The door is locked. You need a key.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "note": {
       "id": "note",
@@ -80,7 +99,16 @@
       "weight": 20,
       "isVisible": true,
       "isCollectable": false,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You use the cracked mirror.",
+          "failureMessage": "The mirror shows nothing in the darkness.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "chest": {
       "id": "chest",
@@ -90,7 +118,16 @@
       "weight": 30,
       "isVisible": true,
       "isCollectable": false,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You use the chest.",
+          "failureMessage": "The chest won't open yet.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "lantern": {
       "id": "lantern",
@@ -100,7 +137,26 @@
       "weight": 3,
       "isVisible": true,
       "isCollectable": true,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You use the lantern.",
+          "failureMessage": "The lantern needs to be lit first.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
+    },
+    "key": {
+      "id": "key",
+      "name": "Iron Key",
+      "description": "An ornate iron key covered in strange engravings.",
+      "type": "Item",
+      "weight": 1,
+      "isVisible": false,
+      "isCollectable": true,
+      "isUsable": false
     },
     "chains": {
       "id": "chains",

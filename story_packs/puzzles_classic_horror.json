@@ -1,253 +1,152 @@
 [
     {
-        "id": "lantern_lighting_puzzle",
-        "name": "Light the Way",
-        "description": "Find a way to light the rusty lantern in the dark cabin.",
+        "id": "escape_cursed_cabin",
+        "name": "Escape the Cursed Cabin",
+        "description": "You must uncover the cabin's dark secrets, break the curse, and escape before the entity awakens at dawn.",
         "type": "Sequential",
         "steps": [
             {
-                "id": "find_matches",
+                "id": "light_lantern",
                 "stepNumber": 1,
-                "description": "Find matches to light the lantern",
-                "action": "take",
-                "targetObject": "matches",
-                "requiredFlags": [],
-                "requiredItems": [],
-                "requiredLocation": "",
-                "completionFlag": "has_matches",
-                "successMessage": "You pick up the box of matches. They rattle slightly - hopefully some are still dry.",
-                "failureMessage": "You don't see any matches here.",
-                "feedbackMessage": "You need something to create fire."
-            },
-            {
-                "id": "take_lantern",
-                "stepNumber": 2,
-                "description": "Take the lantern from its hook",
-                "action": "take",
+                "description": "Light the old lantern to see in the darkness",
+                "action": "use",
                 "targetObject": "lantern",
                 "requiredFlags": [],
                 "requiredItems": [],
-                "requiredLocation": "cabin_main",
-                "completionFlag": "has_lantern",
-                "successMessage": "You carefully lift the lantern off its rusty hook. Oil sloshes inside.",
-                "failureMessage": "The lantern is stuck on the hook.",
-                "feedbackMessage": "The lantern hangs within reach."
+                "requiredLocation": "basement",
+                "completionFlag": "lantern_lit",
+                "successMessage": "You light the lantern. Its warm glow pushes back the oppressive darkness, revealing details you couldn't see before. The shadows seem to recoil from its light.",
+                "failureMessage": "The lantern won't light. You need to find it first.",
+                "feedbackMessage": "The flickering flame provides comfort in this haunted place."
             },
             {
-                "id": "light_lantern",
-                "stepNumber": 3,
-                "description": "Light the lantern using the matches",
+                "id": "examine_mirror",
+                "stepNumber": 2,
+                "description": "Use the cracked mirror to reveal hidden truths",
                 "action": "use",
-                "targetObject": "matches",
+                "targetObject": "mirror",
                 "requiredFlags": [
-                    "has_matches",
-                    "has_lantern"
+                    "lantern_lit"
+                ],
+                "requiredItems": [],
+                "requiredLocation": "attic",
+                "completionFlag": "mirror_used",
+                "successMessage": "You hold the lantern up to the cracked mirror. Through the web of fractures, you see not your reflection, but ancient symbols glowing faintly on the walls around you. They weren't visible before!",
+                "failureMessage": "The mirror shows nothing but darkness without proper light.",
+                "feedbackMessage": "The mirror holds secrets that only light can reveal."
+            },
+            {
+                "id": "open_chest",
+                "stepNumber": 3,
+                "description": "Open the wooden chest to find what's hidden inside",
+                "action": "use",
+                "targetObject": "chest",
+                "requiredFlags": [
+                    "mirror_used"
+                ],
+                "requiredItems": [],
+                "requiredLocation": "attic",
+                "completionFlag": "chest_opened",
+                "successMessage": "The chest creaks open, releasing a puff of ancient dust. Inside, you find an ornate iron key covered in strange engravings. This must unlock the main door!",
+                "failureMessage": "The chest won't budge. Perhaps you need to discover its secret first.",
+                "feedbackMessage": "The chest contains something important for your escape."
+            },
+            {
+                "id": "take_key",
+                "stepNumber": 4,
+                "description": "Take the mysterious key from the chest",
+                "action": "take",
+                "targetObject": "key",
+                "requiredFlags": [
+                    "chest_opened"
+                ],
+                "requiredItems": [],
+                "requiredLocation": "attic",
+                "completionFlag": "has_key",
+                "successMessage": "You take the heavy iron key. Its surface is cold to the touch, and the engravings seem to shift in the lantern light. This is your ticket to freedom.",
+                "failureMessage": "You need to open the chest first to find the key.",
+                "feedbackMessage": "The key's weight feels significant in your hand."
+            },
+            {
+                "id": "read_note",
+                "stepNumber": 5,
+                "description": "Read the crumpled note to understand the curse",
+                "action": "examine",
+                "targetObject": "note",
+                "requiredFlags": [
+                    "lantern_lit"
+                ],
+                "requiredItems": [],
+                "requiredLocation": "main_room",
+                "completionFlag": "note_read",
+                "successMessage": "You carefully unfold the water-stained note. In shaky handwriting: 'The entity feeds on fear and darkness. Light keeps it at bay. The key was hidden where truth reflects. Leave before the candle dies, or become like us - chained forever.'",
+                "failureMessage": "It's too dark to read the faded writing.",
+                "feedbackMessage": "The note contains a warning from those who came before."
+            },
+            {
+                "id": "unlock_door",
+                "stepNumber": 6,
+                "description": "Use the key to unlock the cabin's main door",
+                "action": "use",
+                "targetObject": "door",
+                "requiredFlags": [
+                    "has_key",
+                    "note_read"
                 ],
                 "requiredItems": [
-                    "matches",
+                    "key",
                     "lantern"
                 ],
-                "requiredLocation": "",
-                "completionFlag": "lantern_lit",
-                "successMessage": "You strike a match and touch it to the lantern's wick. Golden light floods the room, revealing details hidden in shadow.",
-                "failureMessage": "You need both matches and the lantern.",
-                "feedbackMessage": "The match flares to life with a satisfying scratch."
+                "requiredLocation": "main_room",
+                "completionFlag": "door_unlocked",
+                "successMessage": "You insert the key into the rusted lock. It turns with a loud click that echoes through the cabin. The door swings open, revealing the storm-swept forest beyond. Fresh air rushes in. You're almost free!",
+                "failureMessage": "The door remains sealed. You need the right key and understanding of what you're escaping.",
+                "feedbackMessage": "The door stands between you and freedom."
+            },
+            {
+                "id": "escape",
+                "stepNumber": 7,
+                "description": "Escape through the unlocked door before the entity awakens",
+                "action": "use",
+                "targetObject": "door",
+                "requiredFlags": [
+                    "door_unlocked"
+                ],
+                "requiredItems": [
+                    "lantern"
+                ],
+                "requiredLocation": "main_room",
+                "completionFlag": "escaped",
+                "successMessage": "You rush through the open door into the stormy night. Behind you, the cabin's candle flickers and dies. A terrible shriek erupts from within, but you're already running into the forest. The trees close around you protectively. You've escaped the cursed cabin. The nightmare is over.",
+                "failureMessage": "You must unlock the door first, and keep your light burning.",
+                "feedbackMessage": "Freedom lies just beyond this threshold."
             }
         ],
         "requiredItems": [],
-        "completionMessage": "The lantern's warm glow pushes back the darkness. You can now see clearly!",
-        "completionAchievementId": "light_bringer",
-        "achievementId": "light_bringer",
+        "completionMessage": "ESCAPE COMPLETE: You have survived the cursed cabin! Through courage and wit, you uncovered its dark secrets and escaped before becoming another victim. The entity remains trapped, but you are free. The horror is behind you now.",
+        "completionAchievementId": "horror_survivor",
+        "achievementId": "horror_survivor",
         "hints": [
             {
                 "level": 1,
-                "text": "The lantern hangs from a hook on the wall. You'll need something to light it with.",
+                "text": "Explore the basement to find a source of light. Darkness hides many secrets.",
                 "cost": 0,
                 "order": 1,
                 "delayMinutes": 2
             },
             {
                 "level": 2,
-                "text": "Search the cabin thoroughly. Matches are often kept near fireplaces or on tables.",
+                "text": "The cracked mirror in the attic can reveal hidden truths when properly illuminated.",
                 "cost": 0,
                 "order": 2,
                 "delayMinutes": 5
             },
             {
                 "level": 3,
-                "text": "Try: 'take matches', then 'take lantern', then 'use matches'",
+                "text": "Read the note carefully - it contains clues about what you need to escape. The chest holds the key to your freedom.",
                 "cost": 1,
                 "order": 3,
                 "delayMinutes": 10
-            }
-        ]
-    },
-    {
-        "id": "locked_door_puzzle",
-        "name": "The Locked Study",
-        "description": "Gain access to the locked study by finding the key.",
-        "type": "Combinatorial",
-        "steps": [
-            {
-                "id": "find_key",
-                "stepNumber": 1,
-                "description": "Locate the rusty key",
-                "action": "take",
-                "targetObject": "rusty_key",
-                "requiredFlags": [],
-                "requiredItems": [],
-                "requiredLocation": "cabin_loft",
-                "completionFlag": "has_study_key",
-                "successMessage": "You find a rusty key hidden beneath a loose floorboard.",
-                "failureMessage": "You don't see a key here.",
-                "feedbackMessage": "The floorboards creak beneath your feet."
-            },
-            {
-                "id": "unlock_door",
-                "stepNumber": 2,
-                "description": "Use the key to unlock the study door",
-                "action": "use",
-                "targetObject": "rusty_key",
-                "requiredFlags": [
-                    "has_study_key"
-                ],
-                "requiredItems": [
-                    "rusty_key"
-                ],
-                "requiredLocation": "cabin_main",
-                "completionFlag": "study_unlocked",
-                "successMessage": "The key turns with a grinding screech. The lock clicks open.",
-                "failureMessage": "You need the key to unlock this door.",
-                "feedbackMessage": "The rusty key fits perfectly in the lock."
-            }
-        ],
-        "requiredItems": [],
-        "completionMessage": "The study door swings open with a prolonged creak, revealing a room frozen in time.",
-        "completionAchievementId": "secret_seeker",
-        "achievementId": "secret_seeker",
-        "hints": [
-            {
-                "level": 1,
-                "text": "The study door is locked. You'll need to find a key somewhere in the cabin.",
-                "cost": 0,
-                "order": 1,
-                "delayMinutes": 3
-            },
-            {
-                "level": 2,
-                "text": "Try exploring the loft above the main room. Old cabins often have hidden items in the upper floors.",
-                "cost": 0,
-                "order": 2,
-                "delayMinutes": 7
-            },
-            {
-                "level": 3,
-                "text": "Look for loose floorboards in the loft. Try 'examine floor' when you're up there.",
-                "cost": 1,
-                "order": 3,
-                "delayMinutes": 12
-            }
-        ]
-    },
-    {
-        "id": "diary_puzzle",
-        "name": "The Diary's Secret",
-        "description": "Decipher the cryptic diary entries to reveal the cabin's dark history.",
-        "type": "Sequential",
-        "steps": [
-            {
-                "id": "find_diary",
-                "stepNumber": 1,
-                "description": "Find the old diary",
-                "action": "take",
-                "targetObject": "diary",
-                "requiredFlags": [
-                    "study_unlocked"
-                ],
-                "requiredItems": [],
-                "requiredLocation": "study",
-                "completionFlag": "has_diary",
-                "successMessage": "You pick up the leather-bound diary. Its pages are yellowed with age.",
-                "failureMessage": "You need to unlock the study first.",
-                "feedbackMessage": "The diary lies on the desk, waiting to reveal its secrets."
-            },
-            {
-                "id": "read_diary",
-                "stepNumber": 2,
-                "description": "Read the diary carefully",
-                "action": "read",
-                "targetObject": "diary",
-                "requiredFlags": [
-                    "has_diary",
-                    "lantern_lit"
-                ],
-                "requiredItems": [
-                    "diary"
-                ],
-                "requiredLocation": "",
-                "completionFlag": "diary_read",
-                "successMessage": "You read the diary by lantern light. The entries speak of strange occurrences and mounting dread. The final entry mentions a hidden compartment behind the fireplace.",
-                "failureMessage": "You need light to read the faded text.",
-                "feedbackMessage": "The handwriting is shaky and difficult to decipher."
-            },
-            {
-                "id": "examine_fireplace",
-                "stepNumber": 3,
-                "description": "Investigate the fireplace",
-                "action": "examine",
-                "targetObject": "fireplace",
-                "requiredFlags": [
-                    "diary_read"
-                ],
-                "requiredItems": [],
-                "requiredLocation": "cabin_main",
-                "completionFlag": "fireplace_secret_found",
-                "successMessage": "You run your hands along the fireplace stones. One brick moves! Behind it, you find a small wooden box.",
-                "failureMessage": "Nothing seems unusual about the fireplace.",
-                "feedbackMessage": "The cold stones of the fireplace hold their secrets well."
-            },
-            {
-                "id": "open_box",
-                "stepNumber": 4,
-                "description": "Open the hidden box",
-                "action": "open",
-                "targetObject": "wooden_box",
-                "requiredFlags": [
-                    "fireplace_secret_found"
-                ],
-                "requiredItems": [],
-                "requiredLocation": "cabin_main",
-                "completionFlag": "box_opened",
-                "successMessage": "Inside the box, you find an old photograph and a cryptic note that begins to explain everything...",
-                "failureMessage": "You haven't found the hidden box yet.",
-                "feedbackMessage": "The box's hinges protest as you lift the lid."
-            }
-        ],
-        "requiredItems": [],
-        "completionMessage": "The cabin's dark history is finally revealed. You understand now why this place was abandoned.",
-        "completionAchievementId": "truth_seeker",
-        "achievementId": "truth_seeker",
-        "hints": [
-            {
-                "level": 1,
-                "text": "The study might contain clues about the cabin's past. Have you explored it thoroughly?",
-                "cost": 0,
-                "order": 1,
-                "delayMinutes": 5
-            },
-            {
-                "level": 2,
-                "text": "That diary on the desk looks promising. You'll need light to read it properly.",
-                "cost": 0,
-                "order": 2,
-                "delayMinutes": 8
-            },
-            {
-                "level": 3,
-                "text": "The diary mentions the fireplace. Try examining it after you've read the diary.",
-                "cost": 1,
-                "order": 3,
-                "delayMinutes": 15
             }
         ]
     }

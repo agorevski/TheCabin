@@ -1,0 +1,68 @@
+[
+    {
+        "id": "master_detective",
+        "name": "Master Detective",
+        "description": "Successfully uncovered the family secret and solved the mystery.",
+        "iconName": "trophy",
+        "triggerType": "PuzzleSolved",
+        "triggerValue": "solve_family_mystery",
+        "requiredProgress": 1,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Master Detective! The truth has been revealed."
+    },
+    {
+        "id": "keen_observer",
+        "name": "Keen Observer",
+        "description": "Carefully examined all photographic evidence.",
+        "iconName": "eye",
+        "triggerType": "FlagSet",
+        "triggerValue": "photos_examined",
+        "requiredProgress": 1,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Keen Observer! Nothing escapes your notice."
+    },
+    {
+        "id": "paper_trail",
+        "name": "Paper Trail",
+        "description": "Found and read all written documents in the cabin.",
+        "iconName": "document",
+        "triggerType": "FlagSet",
+        "triggerValue": "typewriter_examined",
+        "requiredProgress": 1,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Paper Trail! Every document tells part of the story."
+    },
+    {
+        "id": "secret_finder",
+        "name": "Secret Finder",
+        "description": "Discovered the hidden compartment in the wardrobe.",
+        "iconName": "search",
+        "triggerType": "FlagSet",
+        "triggerValue": "wardrobe_searched",
+        "requiredProgress": 1,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Secret Finder! The best clues are always hidden."
+    },
+    {
+        "id": "room_explorer",
+        "name": "Thorough Investigator",
+        "description": "Explored all rooms in the cozy cabin.",
+        "iconName": "map",
+        "triggerType": "RoomVisited",
+        "triggerValue": "",
+        "requiredProgress": 3,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Thorough Investigator! No room left unexplored."
+    },
+    {
+        "id": "quick_thinker",
+        "name": "Quick Thinker",
+        "description": "Solved the mystery in under 35 turns.",
+        "iconName": "stopwatch",
+        "triggerType": "PuzzleSolved",
+        "triggerValue": "solve_family_mystery",
+        "requiredProgress": 1,
+        "isSecret": true,
+        "unlockedMessage": "Achievement Unlocked: Quick Thinker! Your deductive skills are exceptional!"
+    }
+]

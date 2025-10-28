@@ -59,7 +59,16 @@
       "weight": 100,
       "isVisible": true,
       "isCollectable": false,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You use the fireplace.",
+          "failureMessage": "The fire provides warmth and comfort.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "cup_of_tea": {
       "id": "cup_of_tea",
@@ -69,7 +78,16 @@
       "weight": 1,
       "isVisible": true,
       "isCollectable": true,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You use the cup of tea.",
+          "failureMessage": "The tea is already gone.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "wardrobe": {
       "id": "wardrobe",
@@ -79,7 +97,16 @@
       "weight": 80,
       "isVisible": true,
       "isCollectable": false,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You use the wardrobe.",
+          "failureMessage": "The wardrobe contains old coats and memories.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "letter": {
       "id": "letter",
@@ -99,7 +126,16 @@
       "weight": 15,
       "isVisible": true,
       "isCollectable": false,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You use the typewriter.",
+          "failureMessage": "The typewriter keys stick but still function.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "journal": {
       "id": "journal",
