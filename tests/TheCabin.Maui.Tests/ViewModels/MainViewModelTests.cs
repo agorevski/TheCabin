@@ -23,6 +23,7 @@ public class MainViewModelTests
     private readonly Mock<IAchievementNotificationService> _mockNotificationService;
     private readonly Mock<ILogger<MainViewModel>> _mockLogger;
     private readonly Mock<IInventoryManager> _mockInventoryManager;
+    private readonly Mock<IPuzzleEngine> _mockPuzzleEngine;
     private readonly SynchronousMainThreadDispatcher _mainThreadDispatcher;
     private readonly CommandRouter _commandRouter;
     private readonly GameStateMachine _gameStateMachine;
@@ -41,6 +42,7 @@ public class MainViewModelTests
         _mockNotificationService = new Mock<IAchievementNotificationService>();
         _mockLogger = new Mock<ILogger<MainViewModel>>();
         _mockInventoryManager = new Mock<IInventoryManager>();
+        _mockPuzzleEngine = new Mock<IPuzzleEngine>();
         
         // Create synchronous main thread dispatcher for tests
         _mainThreadDispatcher = new SynchronousMainThreadDispatcher();
@@ -93,7 +95,8 @@ public class MainViewModelTests
             _mockLogger.Object,
             _commandRouter,
             _mainThreadDispatcher,
-            _gameStateMachine
+            _gameStateMachine,
+            _mockPuzzleEngine.Object
         );
     }
 

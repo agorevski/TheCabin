@@ -1,0 +1,68 @@
+[
+    {
+        "id": "arctic_survivor",
+        "name": "Arctic Survivor",
+        "description": "Successfully escaped the Arctic research station by signaling for rescue and surviving the blizzard.",
+        "iconName": "trophy",
+        "triggerType": "PuzzleSolved",
+        "triggerValue": "arctic_escape",
+        "requiredProgress": 1,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Arctic Survivor! You survived against all odds and made it home safely."
+    },
+    {
+        "id": "power_restored",
+        "name": "Power to the People",
+        "description": "Refueled the generator and restored full power to the research station.",
+        "iconName": "flash",
+        "triggerType": "FlagSet",
+        "triggerValue": "generator_refueled",
+        "requiredProgress": 1,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Power to the People! The lights are back on."
+    },
+    {
+        "id": "distress_signal",
+        "name": "SOS",
+        "description": "Activated the emergency beacon and called for rescue.",
+        "iconName": "radio",
+        "triggerType": "FlagSet",
+        "triggerValue": "beacon_activated",
+        "requiredProgress": 1,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: SOS! Help is on the way."
+    },
+    {
+        "id": "prepared_explorer",
+        "name": "Prepared Explorer",
+        "description": "Gathered all essential survival gear before attempting escape.",
+        "iconName": "backpack",
+        "triggerType": "FlagSet",
+        "triggerValue": "has_survival_pack",
+        "requiredProgress": 1,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Prepared Explorer! Always ready for the worst."
+    },
+    {
+        "id": "room_explorer",
+        "name": "Thorough Investigator",
+        "description": "Explored all rooms in the Arctic research station.",
+        "iconName": "map",
+        "triggerType": "RoomVisited",
+        "triggerValue": "",
+        "requiredProgress": 6,
+        "isSecret": false,
+        "unlockedMessage": "Achievement Unlocked: Thorough Investigator! No stone left unturned."
+    },
+    {
+        "id": "quick_escape",
+        "name": "Speed Runner",
+        "description": "Completed the escape sequence in under 50 turns.",
+        "iconName": "stopwatch",
+        "triggerType": "PuzzleSolved",
+        "triggerValue": "arctic_escape",
+        "requiredProgress": 1,
+        "isSecret": true,
+        "unlockedMessage": "Achievement Unlocked: Speed Runner! You escaped with incredible efficiency!"
+    }
+]

@@ -172,11 +172,13 @@ public static class MauiProgram
         services.AddTransient<ICommandHandler>(sp => 
             new TakeCommandHandler(
                 sp.GetRequiredService<GameStateMachine>(),
-                sp.GetRequiredService<IInventoryManager>()));
+                sp.GetRequiredService<IInventoryManager>(),
+                sp.GetRequiredService<IPuzzleEngine>()));
         services.AddTransient<ICommandHandler>(sp =>
             new DropCommandHandler(
                 sp.GetRequiredService<IInventoryManager>(),
-                sp.GetRequiredService<GameStateMachine>()));
+                sp.GetRequiredService<GameStateMachine>(),
+                sp.GetRequiredService<IPuzzleEngine>()));
         services.AddTransient<ICommandHandler>(sp => 
             new UseCommandHandler(
                 sp.GetRequiredService<GameStateMachine>(),
@@ -185,11 +187,16 @@ public static class MauiProgram
         services.AddTransient<ICommandHandler>(sp => 
             new ExamineCommandHandler(
                 sp.GetRequiredService<GameStateMachine>(),
-                sp.GetRequiredService<IInventoryManager>()));
+                sp.GetRequiredService<IInventoryManager>(),
+                sp.GetRequiredService<IPuzzleEngine>()));
         services.AddTransient<ICommandHandler>(sp => 
-            new OpenCommandHandler(sp.GetRequiredService<GameStateMachine>()));
+            new OpenCommandHandler(
+                sp.GetRequiredService<GameStateMachine>(),
+                sp.GetRequiredService<IPuzzleEngine>()));
         services.AddTransient<ICommandHandler>(sp => 
-            new CloseCommandHandler(sp.GetRequiredService<GameStateMachine>()));
+            new CloseCommandHandler(
+                sp.GetRequiredService<GameStateMachine>(),
+                sp.GetRequiredService<IPuzzleEngine>()));
         services.AddTransient<ICommandHandler>(sp => 
             new LookCommandHandler(sp.GetRequiredService<GameStateMachine>()));
         services.AddTransient<ICommandHandler>(sp => 
@@ -232,11 +239,13 @@ public static class MauiProgram
         // List of story pack files to copy
         var storyPackFiles = new[]
         {
+            "achievements_arctic_survival.json",
             "achievements_classic_horror.json",
             "arctic_survival.json",
             "classic_horror.json",
             "cozy_mystery.json",
             "fantasy_magic.json",
+            "puzzles_arctic_survival.json",
             "puzzles_classic_horror.json",
             "sci_fi_isolation.json"
         };

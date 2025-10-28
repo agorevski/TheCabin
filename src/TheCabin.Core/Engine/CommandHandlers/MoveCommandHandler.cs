@@ -56,28 +56,24 @@ public class MoveCommandHandler : ICommandHandler
         _stateMachine.TransitionTo(targetRoomId);
         
         var newRoom = _stateMachine.GetCurrentRoom();
-        var message = $"You move {direction}.\n\n{newRoom.Description}";
         
-        // Add visible objects description if any
-        var visibleObjects = _stateMachine.GetVisibleObjects();
-        if (visibleObjects.Any())
-        {
-            var objectNames = string.Join(", ", visibleObjects.Select(o => o.Name));
-            message += $"\n\nYou can see: {objectNames}";
-        }
+        // Get visible objects and exits
+        var visibleObjects = _stateMachine.GetVisibleObjects().Select(o => o.Name);
+        var exits = newRoom.Exits.Keys;
         
-        // Add available exits
-        if (newRoom.Exits.Any())
-        {
-            var exits = string.Join(", ", newRoom.Exits.Keys);
-            message += $"\n\nExits: {exits}";
-        }
+        // Format with separate display and TTS messages
+        var (displayMessage, ttsMessage) = RoomDescriptionFormatter.FormatMovementDescription(
+            direction,
+            newRoom.Description,
+            visibleObjects,
+            exits);
         
         return Task.FromResult(new CommandResult
         {
             Success = true,
             Type = CommandResultType.Success,
-            Message = message,
+            Message = displayMessage,
+            TtsMessage = ttsMessage,
             StateChange = new GameStateChange
             {
                 LocationChanged = targetRoomId

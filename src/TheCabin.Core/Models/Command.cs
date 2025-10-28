@@ -57,6 +57,11 @@ public class CommandResult
     public string Message { get; set; } = string.Empty;
     
     /// <summary>
+    /// Optional separate message for text-to-speech (if null, uses Message)
+    /// </summary>
+    public string? TtsMessage { get; set; }
+    
+    /// <summary>
     /// Additional messages (for multi-part responses)
     /// </summary>
     public List<string> AdditionalMessages { get; set; } = new();

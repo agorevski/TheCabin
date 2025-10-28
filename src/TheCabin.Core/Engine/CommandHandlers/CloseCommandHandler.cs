@@ -9,12 +9,14 @@ namespace TheCabin.Core.Engine.CommandHandlers;
 public class CloseCommandHandler : ICommandHandler
 {
     private readonly GameStateMachine _stateMachine;
+    private readonly IPuzzleEngine? _puzzleEngine;
 
     public string Verb => "close";
 
-    public CloseCommandHandler(GameStateMachine stateMachine)
+    public CloseCommandHandler(GameStateMachine stateMachine, IPuzzleEngine? puzzleEngine = null)
     {
         _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
+        _puzzleEngine = puzzleEngine;
     }
 
     public Task<CommandValidationResult> ValidateAsync(ParsedCommand command, GameState gameState)
@@ -51,9 +53,81 @@ public class CloseCommandHandler : ICommandHandler
         return Task.FromResult(CommandValidationResult.Valid());
     }
 
-    public Task<CommandResult> ExecuteAsync(ParsedCommand command, GameState gameState)
+    public async Task<CommandResult> ExecuteAsync(ParsedCommand command, GameState gameState)
     {
         var targetObject = _stateMachine.FindVisibleObject(command.Object!)!;
+        
+        // Check if this action matches any active puzzle steps
+        if (_puzzleEngine != null)
+        {
+            // Log current game state
+            var currentRoom = _stateMachine.GetCurrentRoom();
+            var inventoryItems = string.Join(", ", gameState.Player.Inventory.Items.Select(i => i.Id));
+            var storyFlags = string.Join(", ", gameState.Progress.StoryFlags.Where(f => f.Value).Select(f => f.Key));
+            
+            System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] === Current State ===");
+            System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] Current Room: {currentRoom.Id}");
+            System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] Inventory: [{inventoryItems}]");
+            System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] Story Flags: [{storyFlags}]");
+            System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] Target Object: {targetObject.Id} ({targetObject.Name})");
+            
+            var activePuzzles = _puzzleEngine.GetActivePuzzles(gameState);
+            System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] Checking {activePuzzles.Count} active puzzles for command: close {command.Object}");
+            
+            foreach (var puzzle in activePuzzles)
+            {
+                System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] Attempting puzzle '{puzzle.Id}' with {puzzle.Steps.Count} steps");
+                var puzzleResult = await _puzzleEngine.AttemptStepAsync(puzzle.Id, command, gameState);
+                System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] Puzzle '{puzzle.Id}' attempt result: Success={puzzleResult.Success}, Message='{puzzleResult.Message}'");
+                
+                if (puzzleResult.Success)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] ✓ Puzzle step matched! Using puzzle messages.");
+                    
+                    // Check if already closed
+                    if (targetObject.State?.Flags.ContainsKey("is_open") == true)
+                    {
+                        var isOpen = (bool)targetObject.State.Flags["is_open"];
+                        if (isOpen)
+                        {
+                            // Close the object
+                            targetObject.State.Flags["is_open"] = false;
+                        }
+                    }
+                    
+                    // Set completion flag if specified
+                    if (puzzleResult.AttemptedStep != null && 
+                        !string.IsNullOrEmpty(puzzleResult.AttemptedStep.CompletionFlag))
+                    {
+                        _stateMachine.SetStoryFlag(puzzleResult.AttemptedStep.CompletionFlag, true);
+                    }
+                    
+                    // Build result message
+                    var puzzleMessages = new List<string> { puzzleResult.Message };
+                    
+                    if (puzzleResult.PuzzleCompleted && !string.IsNullOrEmpty(puzzle.CompletionMessage))
+                    {
+                        puzzleMessages.Add(puzzle.CompletionMessage);
+                    }
+                    
+                    System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] Returning puzzle result with {puzzleMessages.Count} messages");
+                    return new CommandResult
+                    {
+                        Success = true,
+                        Type = CommandResultType.Success,
+                        Message = string.Join("\n\n", puzzleMessages)
+                    };
+                }
+            }
+            
+            System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] No puzzle steps matched, using standard close behavior");
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] PuzzleEngine is null, using standard close behavior");
+        }
+        
+        // No puzzle step matched, use standard close behavior
         var closeAction = targetObject.Actions["close"];
 
         // Check if already closed
@@ -62,23 +136,23 @@ public class CloseCommandHandler : ICommandHandler
             var isOpen = (bool)targetObject.State.Flags["is_open"];
             if (!isOpen)
             {
-                return Task.FromResult(new CommandResult
+                return new CommandResult
                 {
                     Success = false,
                     Type = CommandResultType.Failure,
                     Message = $"The {targetObject.Name} is already closed."
-                });
+                };
             }
         }
         else
         {
             // If no flag, assume it's already closed
-            return Task.FromResult(new CommandResult
+            return new CommandResult
             {
                 Success = false,
                 Type = CommandResultType.Failure,
                 Message = $"The {targetObject.Name} is already closed."
-            });
+            };
         }
 
         // Close the object
@@ -90,12 +164,12 @@ public class CloseCommandHandler : ICommandHandler
             ApplyStateChange(stateChange, targetObject, gameState);
         }
 
-        return Task.FromResult(new CommandResult
+        return new CommandResult
         {
             Success = true,
             Type = CommandResultType.Success,
             Message = closeAction.SuccessMessage
-        });
+        };
     }
 
     private void ApplyStateChange(StateChange change, GameObject targetObject, GameState gameState)

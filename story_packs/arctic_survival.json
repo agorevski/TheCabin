@@ -1,12 +1,12 @@
 {
   "id": "arctic_survival",
   "theme": "Arctic Survival",
-  "description": "Youre stranded in an abandoned polar research cabin as the temperature plummets and wind howls outside.",
+  "description": "You're stranded in an abandoned polar research cabin as the temperature plummets and wind howls outside. You must find a way to signal for rescue and escape before it's too late.",
   "startingRoomId": "main_lab",
   "rooms": [
     {
       "id": "main_lab",
-      "description": "Metal desks covered in frost. A generator hums weakly in the corner.",
+      "description": "Metal desks covered in frost. A generator hums weakly in the corner. The radio crackles with static.",
       "objectIds": [
         "generator",
         "radio",
@@ -14,29 +14,70 @@
       ],
       "exits": {
         "north": "storage_room",
-        "south": "bunk_room"
+        "south": "bunk_room",
+        "east": "communications_tower",
+        "down": "generator_room"
       }
     },
     {
       "id": "storage_room",
-      "description": "Shelves hold frozen food cans and broken tools.",
+      "description": "Shelves hold frozen food cans and broken tools. A faint draft comes from the west.",
       "objectIds": [
         "can",
-        "toolbox"
+        "toolbox",
+        "flare_gun"
       ],
       "exits": {
-        "south": "main_lab"
+        "south": "main_lab",
+        "west": "emergency_exit"
       }
     },
     {
       "id": "bunk_room",
-      "description": "Empty cots and scattered notebooks. One bed has fresh footprints beside it.",
+      "description": "Empty cots and scattered notebooks. One bed has fresh footprints beside it. A survival pack sits ready.",
       "objectIds": [
         "notebook",
-        "thermos"
+        "thermos",
+        "survival_pack"
       ],
       "exits": {
         "north": "main_lab"
+      }
+    },
+    {
+      "id": "communications_tower",
+      "description": "A cramped room with communications equipment. The emergency beacon blinks amber, waiting to be activated.",
+      "objectIds": [
+        "emergency_beacon",
+        "weather_radio",
+        "antenna"
+      ],
+      "exits": {
+        "west": "main_lab"
+      }
+    },
+    {
+      "id": "generator_room",
+      "description": "The main generator rumbles below. Fuel reserves are dangerously low. Emergency lights flicker overhead.",
+      "objectIds": [
+        "fuel_can",
+        "backup_generator",
+        "fuel_gauge"
+      ],
+      "exits": {
+        "up": "main_lab"
+      }
+    },
+    {
+      "id": "emergency_exit",
+      "description": "A heavy reinforced door leads outside into the blizzard. Warning lights flash above it. This is your way out, but only when rescue arrives.",
+      "objectIds": [
+        "exit_door",
+        "warning_sign",
+        "emergency_kit"
+      ],
+      "exits": {
+        "east": "storage_room"
       }
     }
   ],
@@ -44,7 +85,7 @@
     "generator": {
       "id": "generator",
       "name": "Emergency Generator",
-      "description": "A backup generator running on its last reserves of fuel.",
+      "description": "A backup generator running on its last reserves of fuel. It needs refueling to maintain power.",
       "type": "Furniture",
       "weight": 100,
       "isVisible": true,
@@ -54,7 +95,7 @@
     "radio": {
       "id": "radio",
       "name": "Communication Radio",
-      "description": "A weather-beaten radio that might still reach someone.",
+      "description": "A weather-beaten radio that might still reach someone if the power holds.",
       "type": "Tool",
       "weight": 5,
       "isVisible": true,
@@ -64,7 +105,7 @@
     "coat": {
       "id": "coat",
       "name": "Insulated Coat",
-      "description": "A heavy winter coat that could save your life.",
+      "description": "A heavy winter coat that could save your life in the blizzard.",
       "type": "Item",
       "weight": 3,
       "isVisible": true,
@@ -91,10 +132,20 @@
       "isCollectable": true,
       "isUsable": true
     },
+    "flare_gun": {
+      "id": "flare_gun",
+      "name": "Flare Gun",
+      "description": "A bright red flare gun with one flare loaded. Essential for signaling rescue.",
+      "type": "Tool",
+      "weight": 2,
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": true
+    },
     "notebook": {
       "id": "notebook",
       "name": "Research Notebook",
-      "description": "A notebook with logs from the previous research team.",
+      "description": "A notebook with logs from the previous research team. The final entry mentions emergency protocols.",
       "type": "Item",
       "weight": 1,
       "isVisible": true,
@@ -109,6 +160,106 @@
       "weight": 2,
       "isVisible": true,
       "isCollectable": true,
+      "isUsable": true
+    },
+    "survival_pack": {
+      "id": "survival_pack",
+      "name": "Survival Pack",
+      "description": "A backpack containing emergency rations, first aid supplies, and thermal blankets.",
+      "type": "Container",
+      "weight": 8,
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": false
+    },
+    "emergency_beacon": {
+      "id": "emergency_beacon",
+      "name": "Emergency Beacon",
+      "description": "A distress beacon that can signal for rescue. It blinks amber, waiting to be activated.",
+      "type": "Tool",
+      "weight": 3,
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": true
+    },
+    "weather_radio": {
+      "id": "weather_radio",
+      "name": "Weather Radio",
+      "description": "A specialized radio for monitoring weather conditions and rescue communications.",
+      "type": "Tool",
+      "weight": 2,
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": true
+    },
+    "antenna": {
+      "id": "antenna",
+      "name": "Radio Antenna",
+      "description": "A large antenna array connected to the communications equipment.",
+      "type": "Furniture",
+      "weight": 50,
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": false
+    },
+    "fuel_can": {
+      "id": "fuel_can",
+      "name": "Fuel Can",
+      "description": "A heavy can of diesel fuel. Enough for several more hours of generator power.",
+      "type": "Item",
+      "weight": 10,
+      "isVisible": true,
+      "isCollectable": true,
+      "isUsable": true
+    },
+    "backup_generator": {
+      "id": "backup_generator",
+      "name": "Backup Generator",
+      "description": "A secondary generator that's currently offline. Could provide emergency power if needed.",
+      "type": "Furniture",
+      "weight": 150,
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": true
+    },
+    "fuel_gauge": {
+      "id": "fuel_gauge",
+      "name": "Fuel Gauge",
+      "description": "Shows the fuel level is critically low and dropping.",
+      "type": "Decoration",
+      "weight": 1,
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": false
+    },
+    "exit_door": {
+      "id": "exit_door",
+      "name": "Emergency Exit Door",
+      "description": "A reinforced door leading outside. A red light indicates it's sealed until rescue protocols are completed.",
+      "type": "Door",
+      "weight": 200,
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": true
+    },
+    "warning_sign": {
+      "id": "warning_sign",
+      "name": "Warning Sign",
+      "description": "EMERGENCY EXIT - Do not open during blizzard conditions unless rescue is confirmed.",
+      "type": "Decoration",
+      "weight": 2,
+      "isVisible": true,
+      "isCollectable": false,
+      "isUsable": false
+    },
+    "emergency_kit": {
+      "id": "emergency_kit",
+      "name": "Emergency Kit",
+      "description": "A wall-mounted emergency kit with medical supplies and emergency instructions.",
+      "type": "Container",
+      "weight": 5,
+      "isVisible": true,
+      "isCollectable": false,
       "isUsable": true
     }
   },

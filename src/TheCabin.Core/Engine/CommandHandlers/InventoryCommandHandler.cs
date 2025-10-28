@@ -25,7 +25,19 @@ public class InventoryCommandHandler : ICommandHandler
     
     public Task<CommandResult> ExecuteAsync(ParsedCommand command, GameState gameState)
     {
-        var message = _inventoryManager.GetInventoryDescription();
+        // Use gameState inventory instead of inventory manager
+        var items = gameState.Player.Inventory.Items;
+        
+        string message;
+        if (!items.Any())
+        {
+            message = "You aren't carrying anything.";
+        }
+        else
+        {
+            var itemList = string.Join("\n", items.Select(i => $"- {i.Name}"));
+            message = $"You are carrying:\n{itemList}";
+        }
         
         return Task.FromResult(new CommandResult
         {

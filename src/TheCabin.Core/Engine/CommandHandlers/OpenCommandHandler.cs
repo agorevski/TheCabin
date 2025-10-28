@@ -9,12 +9,14 @@ namespace TheCabin.Core.Engine.CommandHandlers;
 public class OpenCommandHandler : ICommandHandler
 {
     private readonly GameStateMachine _stateMachine;
+    private readonly IPuzzleEngine? _puzzleEngine;
 
     public string Verb => "open";
 
-    public OpenCommandHandler(GameStateMachine stateMachine)
+    public OpenCommandHandler(GameStateMachine stateMachine, IPuzzleEngine? puzzleEngine = null)
     {
         _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
+        _puzzleEngine = puzzleEngine;
     }
 
     public Task<CommandValidationResult> ValidateAsync(ParsedCommand command, GameState gameState)
@@ -51,9 +53,92 @@ public class OpenCommandHandler : ICommandHandler
         return Task.FromResult(CommandValidationResult.Valid());
     }
 
-    public Task<CommandResult> ExecuteAsync(ParsedCommand command, GameState gameState)
+    public async Task<CommandResult> ExecuteAsync(ParsedCommand command, GameState gameState)
     {
         var targetObject = _stateMachine.FindVisibleObject(command.Object!)!;
+        
+        // Check if this action matches any active puzzle steps
+        if (_puzzleEngine != null)
+        {
+            // Log current game state
+            var currentRoom = _stateMachine.GetCurrentRoom();
+            var inventoryItems = string.Join(", ", gameState.Player.Inventory.Items.Select(i => i.Id));
+            var storyFlags = string.Join(", ", gameState.Progress.StoryFlags.Where(f => f.Value).Select(f => f.Key));
+            
+            System.Diagnostics.Debug.WriteLine($"[OpenCommandHandler] === Current State ===");
+            System.Diagnostics.Debug.WriteLine($"[OpenCommandHandler] Current Room: {currentRoom.Id}");
+            System.Diagnostics.Debug.WriteLine($"[OpenCommandHandler] Inventory: [{inventoryItems}]");
+            System.Diagnostics.Debug.WriteLine($"[OpenCommandHandler] Story Flags: [{storyFlags}]");
+            System.Diagnostics.Debug.WriteLine($"[OpenCommandHandler] Target Object: {targetObject.Id} ({targetObject.Name})");
+            
+            var activePuzzles = _puzzleEngine.GetActivePuzzles(gameState);
+            System.Diagnostics.Debug.WriteLine($"[OpenCommandHandler] Checking {activePuzzles.Count} active puzzles for command: open {command.Object}");
+            
+            foreach (var puzzle in activePuzzles)
+            {
+                System.Diagnostics.Debug.WriteLine($"[OpenCommandHandler] Attempting puzzle '{puzzle.Id}' with {puzzle.Steps.Count} steps");
+                var puzzleResult = await _puzzleEngine.AttemptStepAsync(puzzle.Id, command, gameState);
+                System.Diagnostics.Debug.WriteLine($"[OpenCommandHandler] Puzzle '{puzzle.Id}' attempt result: Success={puzzleResult.Success}, Message='{puzzleResult.Message}'");
+                
+                if (puzzleResult.Success)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[OpenCommandHandler] ✓ Puzzle step matched! Using puzzle messages.");
+                    
+                    // Open the object (if not already open and not locked)
+                    if (targetObject.State == null)
+                    {
+                        targetObject.State = new ObjectState();
+                    }
+                    
+                    var isLocked = targetObject.State.Flags.ContainsKey("is_locked") && 
+                                   (bool)targetObject.State.Flags["is_locked"];
+                    var isOpen = targetObject.State.Flags.ContainsKey("is_open") && 
+                                 (bool)targetObject.State.Flags["is_open"];
+                    
+                    if (!isLocked && !isOpen)
+                    {
+                        targetObject.State.Flags["is_open"] = true;
+                        
+                        // Reveal any hidden objects
+                        if (targetObject.Type == ObjectType.Container)
+                        {
+                            RevealContainedObjects(targetObject, gameState);
+                        }
+                    }
+                    
+                    // Set completion flag if specified
+                    if (puzzleResult.AttemptedStep != null && 
+                        !string.IsNullOrEmpty(puzzleResult.AttemptedStep.CompletionFlag))
+                    {
+                        _stateMachine.SetStoryFlag(puzzleResult.AttemptedStep.CompletionFlag, true);
+                    }
+                    
+                    // Build result message
+                    var puzzleMessages = new List<string> { puzzleResult.Message };
+                    
+                    if (puzzleResult.PuzzleCompleted && !string.IsNullOrEmpty(puzzle.CompletionMessage))
+                    {
+                        puzzleMessages.Add(puzzle.CompletionMessage);
+                    }
+                    
+                    System.Diagnostics.Debug.WriteLine($"[OpenCommandHandler] Returning puzzle result with {puzzleMessages.Count} messages");
+                    return new CommandResult
+                    {
+                        Success = true,
+                        Type = CommandResultType.Success,
+                        Message = string.Join("\n\n", puzzleMessages)
+                    };
+                }
+            }
+            
+            System.Diagnostics.Debug.WriteLine($"[OpenCommandHandler] No puzzle steps matched, using standard open behavior");
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine($"[OpenCommandHandler] PuzzleEngine is null, using standard open behavior");
+        }
+        
+        // No puzzle step matched, use standard open behavior
         var openAction = targetObject.Actions["open"];
 
         // Check if already open
@@ -62,12 +147,12 @@ public class OpenCommandHandler : ICommandHandler
             var isOpen = (bool)targetObject.State.Flags["is_open"];
             if (isOpen)
             {
-                return Task.FromResult(new CommandResult
+                return new CommandResult
                 {
                     Success = false,
                     Type = CommandResultType.Failure,
                     Message = $"The {targetObject.Name} is already open."
-                });
+                };
             }
         }
 
@@ -81,12 +166,12 @@ public class OpenCommandHandler : ICommandHandler
                     ? openAction.FailureMessage 
                     : $"The {targetObject.Name} is locked.";
                     
-                return Task.FromResult(new CommandResult
+                return new CommandResult
                 {
                     Success = false,
                     Type = CommandResultType.RequirementsNotMet,
                     Message = message
-                });
+                };
             }
         }
 
@@ -110,12 +195,12 @@ public class OpenCommandHandler : ICommandHandler
             RevealContainedObjects(targetObject, gameState);
         }
 
-        return Task.FromResult(new CommandResult
+        return new CommandResult
         {
             Success = true,
             Type = CommandResultType.Success,
             Message = openAction.SuccessMessage
-        });
+        };
     }
 
     private void ApplyStateChange(StateChange change, GameObject targetObject, GameState gameState)

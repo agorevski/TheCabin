@@ -108,6 +108,9 @@ public class StoryPackService : IStoryPackService
         
         var pack = await LoadPackFromFileAsync(filePath);
         
+        // Load puzzles from separate file
+        await LoadPuzzlesAsync(pack, filePath);
+        
         // Validate the pack
         ValidatePack(pack);
         
@@ -168,8 +171,9 @@ public class StoryPackService : IStoryPackService
         
         System.Diagnostics.Debug.WriteLine($"LoadPackFromFileAsync: After deserialization - Id='{pack.Id}', Theme='{pack.Theme}', Description='{pack.Description}'");
         
-        // Try to load achievements from separate file
+        // Try to load achievements and puzzles from separate files
         await LoadAchievementsAsync(pack, filePath);
+        await LoadPuzzlesAsync(pack, filePath);
         
         return pack;
     }
@@ -210,6 +214,49 @@ public class StoryPackService : IStoryPackService
         {
             // No achievements file, use empty list
             pack.Achievements = new List<Achievement>();
+        }
+    }
+    
+    private async Task LoadPuzzlesAsync(StoryPack pack, string packFilePath)
+    {
+        // Look for puzzles file: puzzles_{packId}.json
+        var directory = Path.GetDirectoryName(packFilePath);
+        var puzzlesFileName = $"puzzles_{pack.Id}.json";
+        var puzzlesPath = Path.Combine(directory ?? "", puzzlesFileName);
+        
+        if (File.Exists(puzzlesPath))
+        {
+            try
+            {
+                var json = await File.ReadAllTextAsync(puzzlesPath);
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    ReadCommentHandling = JsonCommentHandling.Skip,
+                    AllowTrailingCommas = true,
+                    Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() }
+                };
+                
+                var puzzles = JsonSerializer.Deserialize<List<Puzzle>>(json, options);
+                
+                if (puzzles != null && puzzles.Count > 0)
+                {
+                    pack.Puzzles = puzzles;
+                    System.Diagnostics.Debug.WriteLine($"LoadPuzzlesAsync: Loaded {puzzles.Count} puzzles for pack {pack.Id}");
+                }
+            }
+            catch (Exception ex)
+            {
+                // If puzzles file is invalid, just continue without them
+                System.Diagnostics.Debug.WriteLine($"LoadPuzzlesAsync: Error loading puzzles for {pack.Id}: {ex.Message}");
+                pack.Puzzles = new List<Puzzle>();
+            }
+        }
+        else
+        {
+            // No puzzles file, use empty list
+            System.Diagnostics.Debug.WriteLine($"LoadPuzzlesAsync: No puzzles file found at {puzzlesPath}");
+            pack.Puzzles = new List<Puzzle>();
         }
     }
     

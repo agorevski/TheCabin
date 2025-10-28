@@ -10,15 +10,18 @@ public class TakeCommandHandler : ICommandHandler
 {
     private readonly GameStateMachine _stateMachine;
     private readonly IInventoryManager _inventoryManager;
+    private readonly IPuzzleEngine? _puzzleEngine;
     
     public string Verb => "take";
     
     public TakeCommandHandler(
         GameStateMachine stateMachine,
-        IInventoryManager inventoryManager)
+        IInventoryManager inventoryManager,
+        IPuzzleEngine? puzzleEngine = null)
     {
         _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
         _inventoryManager = inventoryManager ?? throw new ArgumentNullException(nameof(inventoryManager));
+        _puzzleEngine = puzzleEngine;
     }
     
     public Task<CommandValidationResult> ValidateAsync(ParsedCommand command, GameState gameState)
@@ -52,24 +55,96 @@ public class TakeCommandHandler : ICommandHandler
         return Task.FromResult(CommandValidationResult.Valid());
     }
     
-    public Task<CommandResult> ExecuteAsync(ParsedCommand command, GameState gameState)
+    public async Task<CommandResult> ExecuteAsync(ParsedCommand command, GameState gameState)
     {
         var targetObject = _stateMachine.FindVisibleObject(command.Object!)!;
         
-        // Get success message from object actions or use default
+        // Check if this action matches any active puzzle steps
+        if (_puzzleEngine != null)
+        {
+            // Log current game state
+            var currentRoom = _stateMachine.GetCurrentRoom();
+            var inventoryItems = string.Join(", ", gameState.Player.Inventory.Items.Select(i => i.Id));
+            var storyFlags = string.Join(", ", gameState.Progress.StoryFlags.Where(f => f.Value).Select(f => f.Key));
+            
+            System.Diagnostics.Debug.WriteLine($"[TakeCommandHandler] === Current State ===");
+            System.Diagnostics.Debug.WriteLine($"[TakeCommandHandler] Current Room: {currentRoom.Id}");
+            System.Diagnostics.Debug.WriteLine($"[TakeCommandHandler] Inventory: [{inventoryItems}]");
+            System.Diagnostics.Debug.WriteLine($"[TakeCommandHandler] Story Flags: [{storyFlags}]");
+            System.Diagnostics.Debug.WriteLine($"[TakeCommandHandler] Target Object: {targetObject.Id} ({targetObject.Name})");
+            
+            var activePuzzles = _puzzleEngine.GetActivePuzzles(gameState);
+            System.Diagnostics.Debug.WriteLine($"[TakeCommandHandler] Checking {activePuzzles.Count} active puzzles for command: take {command.Object}");
+            
+            foreach (var puzzle in activePuzzles)
+            {
+                System.Diagnostics.Debug.WriteLine($"[TakeCommandHandler] Attempting puzzle '{puzzle.Id}' with {puzzle.Steps.Count} steps");
+                var puzzleResult = await _puzzleEngine.AttemptStepAsync(puzzle.Id, command, gameState);
+                System.Diagnostics.Debug.WriteLine($"[TakeCommandHandler] Puzzle '{puzzle.Id}' attempt result: Success={puzzleResult.Success}, Message='{puzzleResult.Message}'");
+                
+                if (puzzleResult.Success)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[TakeCommandHandler] ✓ Puzzle step matched! Using puzzle messages.");
+                    // Puzzle step matched! Use puzzle messages and complete the action
+                    
+                    // Add to inventory using gameState
+                    gameState.Player.Inventory.Items.Add(targetObject);
+                    
+                    // Remove from room's visible objects
+                    var room = _stateMachine.GetCurrentRoom();
+                    room.State.VisibleObjectIds.Remove(targetObject.Id);
+                    targetObject.IsVisible = false;
+                    
+                    // Set completion flag if specified
+                    if (puzzleResult.AttemptedStep != null && 
+                        !string.IsNullOrEmpty(puzzleResult.AttemptedStep.CompletionFlag))
+                    {
+                        _stateMachine.SetStoryFlag(puzzleResult.AttemptedStep.CompletionFlag, true);
+                    }
+                    
+                    // Build result message
+                    var puzzleMessages = new List<string> { puzzleResult.Message };
+                    
+                    if (puzzleResult.PuzzleCompleted && !string.IsNullOrEmpty(puzzle.CompletionMessage))
+                    {
+                        puzzleMessages.Add(puzzle.CompletionMessage);
+                    }
+                    
+                    System.Diagnostics.Debug.WriteLine($"[TakeCommandHandler] Returning puzzle result with {puzzleMessages.Count} messages");
+                    return new CommandResult
+                    {
+                        Success = true,
+                        Type = CommandResultType.Success,
+                        Message = string.Join("\n\n", puzzleMessages),
+                        StateChange = new GameStateChange
+                        {
+                            ItemsAdded = new List<string> { targetObject.Id }
+                        }
+                    };
+                }
+            }
+            
+            System.Diagnostics.Debug.WriteLine($"[TakeCommandHandler] No puzzle steps matched, using standard take behavior");
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine($"[TakeCommandHandler] PuzzleEngine is null, using standard take behavior");
+        }
+        
+        // No puzzle step matched, use standard take behavior
         var successMessage = targetObject.Actions.TryGetValue("take", out var takeAction)
             ? takeAction.SuccessMessage
             : $"You pick up the {targetObject.Name}.";
         
-        // Add to inventory
-        _inventoryManager.AddItem(targetObject);
+        // Add to inventory using gameState
+        gameState.Player.Inventory.Items.Add(targetObject);
         
         // Remove from room's visible objects
-        var currentRoom = _stateMachine.GetCurrentRoom();
-        currentRoom.State.VisibleObjectIds.Remove(targetObject.Id);
+        var roomForCleanup = _stateMachine.GetCurrentRoom();
+        roomForCleanup.State.VisibleObjectIds.Remove(targetObject.Id);
         targetObject.IsVisible = false;
         
-        return Task.FromResult(new CommandResult
+        return new CommandResult
         {
             Success = true,
             Type = CommandResultType.Success,
@@ -78,6 +153,6 @@ public class TakeCommandHandler : ICommandHandler
             {
                 ItemsAdded = new List<string> { targetObject.Id }
             }
-        });
+        };
     }
 }

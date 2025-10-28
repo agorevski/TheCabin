@@ -1,0 +1,175 @@
+[
+    {
+        "id": "arctic_escape",
+        "name": "Arctic Escape",
+        "description": "You must restore power, signal for rescue, and prepare for extraction before you can safely escape the blizzard.",
+        "type": "Sequential",
+        "steps": [
+            {
+                "id": "get_fuel",
+                "stepNumber": 1,
+                "description": "Retrieve the fuel can from the generator room",
+                "action": "take",
+                "targetObject": "fuel_can",
+                "requiredFlags": [],
+                "requiredItems": [],
+                "requiredLocation": "",
+                "completionFlag": "has_fuel",
+                "successMessage": "You pick up the heavy fuel can. The generator needs this to keep running.",
+                "failureMessage": "You don't see a fuel can here.",
+                "feedbackMessage": "The fuel gauge shows critically low levels. You need to find more fuel."
+            },
+            {
+                "id": "refuel_generator",
+                "stepNumber": 2,
+                "description": "Use the fuel can to refuel the main generator",
+                "action": "use",
+                "targetObject": "fuel_can",
+                "requiredFlags": [
+                    "has_fuel"
+                ],
+                "requiredItems": [
+                    "fuel_can"
+                ],
+                "requiredLocation": "main_lab",
+                "completionFlag": "generator_refueled",
+                "successMessage": "You pour the diesel fuel into the generator. It roars back to full power, and the lights brighten throughout the cabin. The communications equipment hums to life.",
+                "failureMessage": "You need the fuel can to refuel the generator.",
+                "feedbackMessage": "The generator's fuel gauge rises as you refill the tank."
+            },
+            {
+                "id": "activate_beacon",
+                "stepNumber": 3,
+                "description": "Activate the emergency beacon to call for rescue",
+                "action": "use",
+                "targetObject": "emergency_beacon",
+                "requiredFlags": [
+                    "generator_refueled"
+                ],
+                "requiredItems": [],
+                "requiredLocation": "communications_tower",
+                "completionFlag": "beacon_activated",
+                "successMessage": "You activate the emergency beacon. It changes from amber to bright red, broadcasting your distress signal. The weather radio crackles: 'Distress signal received. Rescue helicopter dispatching. ETA 15 minutes. Prepare for extraction.'",
+                "failureMessage": "The beacon won't activate without adequate power. The generator needs fuel.",
+                "feedbackMessage": "The beacon pulses, ready to send your distress signal across the arctic."
+            },
+            {
+                "id": "gather_coat",
+                "stepNumber": 4,
+                "description": "Take the insulated coat for protection",
+                "action": "take",
+                "targetObject": "coat",
+                "requiredFlags": [
+                    "beacon_activated"
+                ],
+                "requiredItems": [],
+                "requiredLocation": "main_lab",
+                "completionFlag": "has_coat",
+                "successMessage": "You grab the heavy insulated coat. It will protect you from the brutal cold when you go outside.",
+                "failureMessage": "You should signal for rescue first before gathering survival gear.",
+                "feedbackMessage": "The coat is essential for surviving the blizzard, even for a short time."
+            },
+            {
+                "id": "gather_survival_pack",
+                "stepNumber": 5,
+                "description": "Take the survival pack",
+                "action": "take",
+                "targetObject": "survival_pack",
+                "requiredFlags": [
+                    "beacon_activated"
+                ],
+                "requiredItems": [],
+                "requiredLocation": "bunk_room",
+                "completionFlag": "has_survival_pack",
+                "successMessage": "You sling the survival pack over your shoulder. Emergency rations, first aid, thermal blankets - everything you need for extraction.",
+                "failureMessage": "You should signal for rescue first before gathering supplies.",
+                "feedbackMessage": "The survival pack contains critical emergency supplies."
+            },
+            {
+                "id": "gather_flare_gun",
+                "stepNumber": 6,
+                "description": "Take the flare gun for signaling",
+                "action": "take",
+                "targetObject": "flare_gun",
+                "requiredFlags": [
+                    "beacon_activated"
+                ],
+                "requiredItems": [],
+                "requiredLocation": "storage_room",
+                "completionFlag": "has_flare",
+                "successMessage": "You grab the flare gun. One bright red flare is loaded and ready. You'll use this to signal the helicopter when it arrives.",
+                "failureMessage": "You should signal for rescue first before gathering signaling equipment.",
+                "feedbackMessage": "The flare gun's bright flare will be visible for miles in the blizzard."
+            },
+            {
+                "id": "signal_rescue",
+                "stepNumber": 7,
+                "description": "Use the flare gun to signal the rescue helicopter",
+                "action": "use",
+                "targetObject": "flare_gun",
+                "requiredFlags": [
+                    "beacon_activated",
+                    "has_flare",
+                    "has_coat",
+                    "has_survival_pack"
+                ],
+                "requiredItems": [
+                    "flare_gun",
+                    "coat",
+                    "survival_pack"
+                ],
+                "requiredLocation": "emergency_exit",
+                "completionFlag": "rescue_signaled",
+                "successMessage": "You fire the flare gun into the storm. The brilliant red flare arcs into the sky, cutting through the blizzard. Through the howling wind, you hear the distant thump of helicopter rotors growing louder. They've seen your signal! The emergency exit door's red light turns green - it's safe to open now.",
+                "failureMessage": "You need to be at the emergency exit with all your survival gear before signaling.",
+                "feedbackMessage": "The flare pierces through the darkness of the arctic storm."
+            },
+            {
+                "id": "escape",
+                "stepNumber": 8,
+                "description": "Open the emergency exit door and escape to the rescue helicopter",
+                "action": "use",
+                "targetObject": "exit_door",
+                "requiredFlags": [
+                    "rescue_signaled"
+                ],
+                "requiredItems": [
+                    "coat",
+                    "survival_pack"
+                ],
+                "requiredLocation": "emergency_exit",
+                "completionFlag": "escaped",
+                "successMessage": "You push open the heavy emergency exit door. The blizzard's fury hits you immediately, but your insulated coat shields you. Through the swirling snow, you see the rescue helicopter's spotlight. You run toward it, fighting the wind. Strong hands pull you aboard. As the helicopter lifts off, you look back at the cabin disappearing into the white void. You survived the Arctic. You're going home.",
+                "failureMessage": "The door won't open until rescue has been confirmed and signaled.",
+                "feedbackMessage": "The emergency exit awaits. Your escape is at hand."
+            }
+        ],
+        "requiredItems": [],
+        "completionMessage": "MISSION COMPLETE: You have successfully escaped the Arctic research station! Against all odds, you maintained power, called for help, and signaled your rescue. The cabin's emergency protocols saved your life. Welcome home, survivor.",
+        "completionAchievementId": "arctic_survivor",
+        "achievementId": "arctic_survivor",
+        "hints": [
+            {
+                "level": 1,
+                "text": "The generator is running low on fuel. Explore downward from the main lab to find the generator room.",
+                "cost": 0,
+                "order": 1,
+                "delayMinutes": 2
+            },
+            {
+                "level": 2,
+                "text": "After refueling the generator, head east to the communications tower to activate the emergency beacon.",
+                "cost": 0,
+                "order": 2,
+                "delayMinutes": 5
+            },
+            {
+                "level": 3,
+                "text": "Once rescue is confirmed, gather essential survival gear: insulated coat, survival pack, and flare gun. Then go to the emergency exit.",
+                "cost": 1,
+                "order": 3,
+                "delayMinutes": 10
+            }
+        ]
+    }
+]

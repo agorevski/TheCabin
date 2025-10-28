@@ -23,6 +23,7 @@ public partial class MainViewModel : BaseViewModel
     private readonly CommandRouter _commandRouter;
     private readonly IMainThreadDispatcher _mainThreadDispatcher;
     private readonly GameStateMachine _stateMachine;
+    private readonly IPuzzleEngine _puzzleEngine;
     
     private GameState? _currentGameState;
     private CancellationTokenSource? _listeningCts;
@@ -65,7 +66,8 @@ public partial class MainViewModel : BaseViewModel
         ILogger<MainViewModel> logger,
         CommandRouter commandRouter,
         IMainThreadDispatcher mainThreadDispatcher,
-        GameStateMachine stateMachine)
+        GameStateMachine stateMachine,
+        IPuzzleEngine puzzleEngine)
     {
         _voiceService = voiceService;
         _parserService = parserService;
@@ -78,6 +80,7 @@ public partial class MainViewModel : BaseViewModel
         _commandRouter = commandRouter;
         _mainThreadDispatcher = mainThreadDispatcher;
         _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
+        _puzzleEngine = puzzleEngine ?? throw new ArgumentNullException(nameof(puzzleEngine));
 
         Title = "The Cabin";
     }
@@ -95,6 +98,13 @@ public partial class MainViewModel : BaseViewModel
                 var storyPack = await _storyPackService.LoadPackAsync(selectedPackId);
                 _logger.LogInformation("Story pack loaded successfully: {Theme}", storyPack.Theme);
                 
+                // Initialize puzzle engine with loaded puzzles
+                if (storyPack.Puzzles != null && storyPack.Puzzles.Any())
+                {
+                    _puzzleEngine.InitializePuzzles(storyPack.Puzzles);
+                    _logger.LogInformation("Initialized {Count} puzzles", storyPack.Puzzles.Count);
+                }
+                
                 // Initialize game state in both services
                 await _gameStateService.InitializeNewGameAsync(storyPack);
                 await _stateMachine.InitializeAsync(storyPack);
@@ -106,34 +116,29 @@ public partial class MainViewModel : BaseViewModel
                 
                 // Show initial room description with objects and exits (like "look around")
                 var initialRoom = _currentGameState.World.Rooms[_currentGameState.Player.CurrentLocationId];
-                var message = initialRoom.Description;
                 
-                // Add visible objects
+                // Get visible objects
                 var visibleObjects = initialRoom.State.VisibleObjectIds
                     .Where(id => _currentGameState.World.Objects.ContainsKey(id))
                     .Select(id => _currentGameState.World.Objects[id])
                     .Where(obj => obj.IsVisible)
-                    .ToList();
+                    .Select(obj => obj.Name);
                 
-                if (visibleObjects.Any())
-                {
-                    var objectNames = string.Join(", ", visibleObjects.Select(o => o.Name));
-                    message += $"\n\nYou can see: {objectNames}";
-                }
+                // Get exits
+                var exits = initialRoom.Exits.Keys;
                 
-                // Add available exits
-                if (initialRoom.Exits.Any())
-                {
-                    var exits = string.Join(", ", initialRoom.Exits.Keys);
-                    message += $"\n\nExits: {exits}";
-                }
+                // Format with separate display and TTS messages
+                var (displayMessage, ttsMessage) = Core.Engine.RoomDescriptionFormatter.FormatRoomDescription(
+                    initialRoom.Description,
+                    visibleObjects,
+                    exits);
                 
-                AddNarrativeEntry(message, NarrativeType.Success);
+                AddNarrativeEntry(displayMessage, NarrativeType.Success);
                 
-                // Play TTS for initial room description if enabled
+                // Play TTS for initial room description if enabled (using TTS-specific message)
                 if (TtsEnabled)
                 {
-                    await _ttsService.SpeakAsync(message);
+                    await _ttsService.SpeakAsync(ttsMessage);
                 }
                 
                 // Update UI state
@@ -182,10 +187,9 @@ public partial class MainViewModel : BaseViewModel
             "Help",
             "🎙️ Voice Commands:\n\n" +
             "• Look around\n" +
-            "• Take [object]\n" +
-            "• Go [direction]\n" +
-            "• Use [object]\n" +
-            "• Inventory\n\n" +
+            "• Inventory\n" +
+            "• [Take | Use | Examine | Drop | Open] [object]\n" +
+            "• [Go | Move] [direction]\n\n" +
             "Tap the microphone to speak!",
             "OK");
     }
@@ -244,8 +248,16 @@ public partial class MainViewModel : BaseViewModel
             await _gameStateService.LoadGameAsync(saveId);
             _currentGameState = _gameStateService.CurrentState;
             
-            // Re-initialize GameStateMachine with loaded state
+            // Re-initialize GameStateMachine and PuzzleEngine with loaded state
             var storyPack = await _storyPackService.LoadPackAsync(_currentGameState.World.CurrentThemeId);
+            
+            // Re-initialize puzzle engine
+            if (storyPack.Puzzles != null && storyPack.Puzzles.Any())
+            {
+                _puzzleEngine.InitializePuzzles(storyPack.Puzzles);
+                _logger.LogInformation("Re-initialized {Count} puzzles for loaded game", storyPack.Puzzles.Count);
+            }
+            
             await _stateMachine.InitializeAsync(storyPack);
             
             // Restore the player's current location in the state machine
@@ -358,10 +370,11 @@ public partial class MainViewModel : BaseViewModel
             // Update UI state
             UpdateUIState();
             
-            // Optional TTS narration
+            // Optional TTS narration (use TTS-specific message if available)
             if (TtsEnabled && result.Success)
             {
-                await _ttsService.SpeakAsync(result.Message);
+                var ttsText = result.TtsMessage ?? result.Message;
+                await _ttsService.SpeakAsync(ttsText);
             }
             
             IsProcessing = false;

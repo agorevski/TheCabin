@@ -31,12 +31,28 @@ public class UseCommandHandler : ICommandHandler
             return Task.FromResult(CommandValidationResult.Invalid("Use what?"));
         }
 
-        // Check if item is in inventory
-        var item = _inventoryManager.GetItem(command.Object);
+        // Check if item is in inventory using gameState
+        var inventoryItem = gameState.Player.Inventory.Items.FirstOrDefault(i =>
+            i.Id.Contains(command.Object, StringComparison.OrdinalIgnoreCase) ||
+            i.Name.Contains(command.Object, StringComparison.OrdinalIgnoreCase));
+        
+        // If not in inventory, check if it's a usable object in the current room
+        GameObject? item = inventoryItem;
         if (item == null)
         {
-            return Task.FromResult(CommandValidationResult.Invalid(
-                $"You don't have a {command.Object}."));
+            item = _stateMachine.FindVisibleObject(command.Object);
+            if (item == null)
+            {
+                return Task.FromResult(CommandValidationResult.Invalid(
+                    $"You don't see a {command.Object} here."));
+            }
+            
+            // Must have a "use" action if not in inventory
+            if (!item.Actions.ContainsKey("use"))
+            {
+                return Task.FromResult(CommandValidationResult.Invalid(
+                    $"You can't use the {item.Name}."));
+            }
         }
 
         // Check if item has a use action
@@ -51,7 +67,96 @@ public class UseCommandHandler : ICommandHandler
 
     public async Task<CommandResult> ExecuteAsync(ParsedCommand command, GameState gameState)
     {
-        var item = _inventoryManager.GetItem(command.Object!)!;
+        // Get item from gameState inventory first
+        var item = gameState.Player.Inventory.Items.FirstOrDefault(i =>
+            i.Id.Contains(command.Object!, StringComparison.OrdinalIgnoreCase) ||
+            i.Name.Contains(command.Object!, StringComparison.OrdinalIgnoreCase));
+        
+        // If not in inventory, check if it's in the room
+        bool isInInventory = item != null;
+        if (item == null)
+        {
+            item = _stateMachine.FindVisibleObject(command.Object!);
+        }
+        
+        if (item == null)
+        {
+            return new CommandResult
+            {
+                Success = false,
+                Type = CommandResultType.InvalidCommand,
+                Message = $"You don't see a {command.Object} here."
+            };
+        }
+        
+        // Log current game state
+        var currentRoom = _stateMachine.GetCurrentRoom();
+        var inventoryItems = string.Join(", ", gameState.Player.Inventory.Items.Select(i => i.Id));
+        var storyFlags = string.Join(", ", gameState.Progress.StoryFlags.Where(f => f.Value).Select(f => f.Key));
+        
+        System.Diagnostics.Debug.WriteLine($"[UseCommandHandler] === Current State ===");
+        System.Diagnostics.Debug.WriteLine($"[UseCommandHandler] Current Room: {currentRoom.Id}");
+        System.Diagnostics.Debug.WriteLine($"[UseCommandHandler] Inventory: [{inventoryItems}]");
+        System.Diagnostics.Debug.WriteLine($"[UseCommandHandler] Story Flags: [{storyFlags}]");
+        System.Diagnostics.Debug.WriteLine($"[UseCommandHandler] Target Item: {item.Id} ({item.Name})");
+        
+        // Check if this action matches any active puzzle steps
+        var activePuzzles = _puzzleEngine.GetActivePuzzles(gameState);
+        System.Diagnostics.Debug.WriteLine($"[UseCommandHandler] Checking {activePuzzles.Count} active puzzles for command: use {command.Object}");
+        
+        foreach (var puzzle in activePuzzles)
+        {
+            System.Diagnostics.Debug.WriteLine($"[UseCommandHandler] Attempting puzzle '{puzzle.Id}' with {puzzle.Steps.Count} steps");
+            var puzzleStepResult = await _puzzleEngine.AttemptStepAsync(puzzle.Id, command, gameState);
+            System.Diagnostics.Debug.WriteLine($"[UseCommandHandler] Puzzle '{puzzle.Id}' attempt result: Success={puzzleStepResult.Success}, Message='{puzzleStepResult.Message}'");
+            
+            if (puzzleStepResult.Success)
+            {
+                System.Diagnostics.Debug.WriteLine($"[UseCommandHandler] ✓ Puzzle step matched! Using puzzle messages.");
+                // Puzzle step matched! Use puzzle messages
+                
+                // Set completion flag if specified
+                if (puzzleStepResult.AttemptedStep != null && 
+                    !string.IsNullOrEmpty(puzzleStepResult.AttemptedStep.CompletionFlag))
+                {
+                    _stateMachine.SetStoryFlag(puzzleStepResult.AttemptedStep.CompletionFlag, true);
+                }
+                
+                // Build result message
+                var puzzleMessages = new List<string> { puzzleStepResult.Message };
+                
+                if (puzzleStepResult.PuzzleCompleted && !string.IsNullOrEmpty(puzzle.CompletionMessage))
+                {
+                    puzzleMessages.Add(puzzle.CompletionMessage);
+                }
+                
+                // Handle item consumption if action exists (only for inventory items)
+                if (item.Actions.TryGetValue("use", out var itemUseAction))
+                {
+                    if (itemUseAction.ConsumesItem && isInInventory)
+                    {
+                        gameState.Player.Inventory.Items.Remove(item);
+                        puzzleMessages.Add($"The {item.Name} is used up.");
+                    }
+                    else
+                    {
+                        item.State.UsageCount++;
+                    }
+                }
+                
+                System.Diagnostics.Debug.WriteLine($"[UseCommandHandler] Returning puzzle result with {puzzleMessages.Count} messages");
+                return new CommandResult
+                {
+                    Success = true,
+                    Type = CommandResultType.Success,
+                    Message = string.Join("\n\n", puzzleMessages)
+                };
+            }
+        }
+        
+        System.Diagnostics.Debug.WriteLine($"[UseCommandHandler] No puzzle steps matched, using standard use behavior");
+        
+        // No puzzle step matched, use standard use behavior
         var useAction = item.Actions["use"];
 
         // Check required flags
@@ -78,10 +183,10 @@ public class UseCommandHandler : ICommandHandler
             gameState.Player.Stats.PuzzlesSolved++;
         }
 
-        // Consume item if needed
-        if (useAction.ConsumesItem)
+        // Consume item if needed (only for inventory items)
+        if (useAction.ConsumesItem && isInInventory)
         {
-            _inventoryManager.RemoveItem(item.Id);
+            gameState.Player.Inventory.Items.Remove(item);
             messages.Add($"The {item.Name} is used up.");
         }
         else
