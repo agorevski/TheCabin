@@ -77,10 +77,20 @@ class GameRunner
         _commandParser = serviceProvider.GetRequiredService<ICommandParserService>();
     }
     
-    private void InitializeGameComponents()
+    private void InitializeGameComponents(StoryPack storyPack)
     {
         // Get achievement service if available
         var achievementService = _serviceProvider.GetService<IAchievementService>();
+        
+        // Get puzzle engine
+        var puzzleEngine = _serviceProvider.GetRequiredService<IPuzzleEngine>();
+        
+        // Initialize puzzle engine with puzzles from story pack
+        if (storyPack.Puzzles != null && storyPack.Puzzles.Any())
+        {
+            puzzleEngine.InitializePuzzles(storyPack.Puzzles);
+            System.Console.WriteLine($"✓ Initialized {storyPack.Puzzles.Count} puzzle(s)");
+        }
         
         // Create inventory manager with current game state
         _inventoryManager = new InventoryManager(_gameStateService.CurrentState, achievementService);
@@ -92,13 +102,18 @@ class GameRunner
         var handlers = new List<ICommandHandler>
         {
             new MoveCommandHandler(_stateMachine),
-            new TakeCommandHandler(_stateMachine, _inventoryManager),
+            new TakeCommandHandler(_stateMachine, _inventoryManager, puzzleEngine),
+            new DropCommandHandler(_inventoryManager, _stateMachine, puzzleEngine),
+            new UseCommandHandler(_stateMachine, _inventoryManager, puzzleEngine),
+            new ExamineCommandHandler(_stateMachine, _inventoryManager, puzzleEngine),
+            new OpenCommandHandler(_stateMachine, puzzleEngine),
+            new CloseCommandHandler(_stateMachine, puzzleEngine),
             new LookCommandHandler(_stateMachine),
             new InventoryCommandHandler(_inventoryManager)
         };
         
         // Create command router with handlers and state machine
-        _commandRouter = new CommandRouter(handlers, _stateMachine);
+        _commandRouter = new CommandRouter(handlers, _stateMachine, achievementService);
     }
 
     public async Task RunAsync()
@@ -196,10 +211,10 @@ class GameRunner
             await _gameStateService.InitializeNewGameAsync(storyPack);
             
             // Initialize game components now that we have a game state
-            InitializeGameComponents();
+            InitializeGameComponents(storyPack);
             _stateMachine!.Initialize(storyPack);
 
-            System.Console.WriteLine($"\n✓ Loaded '{selectedPack.Theme}'");
+            System.Console.WriteLine($"✓ Loaded '{selectedPack.Theme}'");
             System.Console.WriteLine("\nPress any key to begin your adventure...");
             System.Console.ReadKey();
 
@@ -251,10 +266,10 @@ class GameRunner
             var storyPack = await _storyPackService.LoadPackAsync(selectedSave.ThemeId);
             
             // Initialize game components now that we have a game state
-            InitializeGameComponents();
+            InitializeGameComponents(storyPack);
             _stateMachine!.Initialize(storyPack);
 
-            System.Console.WriteLine($"\n✓ Loaded game '{selectedSave.Name}'");
+            System.Console.WriteLine($"✓ Loaded game '{selectedSave.Name}'");
             System.Console.WriteLine("\nPress any key to continue...");
             System.Console.ReadKey();
 
@@ -347,11 +362,23 @@ class GameRunner
     private void ShowHelp()
     {
         System.Console.WriteLine("\nAVAILABLE COMMANDS:");
-        System.Console.WriteLine("  Movement:    go [direction], move [direction]");
-        System.Console.WriteLine("  Items:       take [item], drop [item], use [item]");
-        System.Console.WriteLine("  Exploration: look, examine [object]");
-        System.Console.WriteLine("  Inventory:   inventory, i");
-        System.Console.WriteLine("  System:      save, help, quit/exit");
-        System.Console.WriteLine("\nExamples: 'go north', 'take lantern', 'look around'");
+        System.Console.WriteLine();
+        System.Console.WriteLine("  Movement:");
+        System.Console.WriteLine("    go [direction], move [direction]");
+        System.Console.WriteLine();
+        System.Console.WriteLine("  Items:");
+        System.Console.WriteLine("    take [item], drop [item], use [item]");
+        System.Console.WriteLine();
+        System.Console.WriteLine("  Exploration:");
+        System.Console.WriteLine("    look, examine [object], open [object], close [object]");
+        System.Console.WriteLine();
+        System.Console.WriteLine("  Inventory:");
+        System.Console.WriteLine("    inventory, i");
+        System.Console.WriteLine();
+        System.Console.WriteLine("  System:");
+        System.Console.WriteLine("    save, help, quit/exit");
+        System.Console.WriteLine();
+        System.Console.WriteLine("Examples:");
+        System.Console.WriteLine("  'go north', 'take lantern', 'use key', 'examine desk'");
     }
 }
