@@ -249,8 +249,18 @@ public class GameStateMachine : IGameStateMachine
         identifier = identifier.ToLowerInvariant();
         
         return visibleObjects.FirstOrDefault(obj =>
-            obj.Id.ToLowerInvariant().Contains(identifier) ||
-            obj.Name.ToLowerInvariant().Contains(identifier));
+        {
+            var objId = obj.Id.ToLowerInvariant();
+            var objName = obj.Name.ToLowerInvariant();
+            
+            // Check both directions for flexible matching:
+            // 1. Object ID/name contains the identifier (e.g., "fuel_can" contains "fuel")
+            // 2. Identifier contains the object ID/name (e.g., "insulated coat" contains "coat")
+            return objId.Contains(identifier) || 
+                   objName.Contains(identifier) ||
+                   identifier.Contains(objId) ||
+                   identifier.Contains(objName);
+        });
     }
     
     /// <summary>

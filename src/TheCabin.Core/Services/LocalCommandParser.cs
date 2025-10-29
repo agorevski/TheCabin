@@ -85,17 +85,32 @@ public class LocalCommandParser : ILocalCommandParser
             
             if (filtered.Count > 0)
             {
-                obj = filtered[0];
-                
                 // Check for "use X on Y" pattern
-                if (filtered.Count >= 3 && filtered[1] == "on")
+                var onIndex = filtered.IndexOf("on");
+                if (onIndex > 0 && filtered.Count > onIndex + 1)
                 {
-                    target = filtered[2];
+                    // Object is everything before "on"
+                    obj = string.Join(" ", filtered.Take(onIndex));
+                    // Target is everything after "on"
+                    target = string.Join(" ", filtered.Skip(onIndex + 1));
                 }
                 // Check for "put X in Y" pattern
-                else if (filtered.Count >= 3 && filtered[1] == "in")
+                else
                 {
-                    target = filtered[2];
+                    var inIndex = filtered.IndexOf("in");
+                    if (inIndex > 0 && filtered.Count > inIndex + 1)
+                    {
+                        // Object is everything before "in"
+                        obj = string.Join(" ", filtered.Take(inIndex));
+                        // Target is everything after "in"
+                        target = string.Join(" ", filtered.Skip(inIndex + 1));
+                    }
+                    else
+                    {
+                        // No pattern detected - object is all remaining words
+                        // Join with spaces, then normalize to underscores for matching
+                        obj = string.Join(" ", filtered).Replace(" ", "_");
+                    }
                 }
             }
         }

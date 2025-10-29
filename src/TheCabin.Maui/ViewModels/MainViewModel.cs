@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using TheCabin.Core.Engine;
 using TheCabin.Core.Interfaces;
 using TheCabin.Core.Models;
+using TheCabin.Core.Services;
 using TheCabin.Maui.Services;
 using NarrativeEntry = TheCabin.Maui.Models.NarrativeEntry;
 
@@ -13,19 +14,13 @@ namespace TheCabin.Maui.ViewModels;
 public partial class MainViewModel : BaseViewModel
 {
     private readonly IVoiceRecognitionService _voiceService;
-    private readonly ICommandParserService _parserService;
-    private readonly IGameStateService _gameStateService;
     private readonly ITextToSpeechService _ttsService;
-    private readonly IStoryPackService _storyPackService;
-    private readonly IAchievementService _achievementService;
-    private readonly IAchievementNotificationService _notificationService;
-    private readonly ILogger<MainViewModel> _logger;
-    private readonly CommandRouter _commandRouter;
+    private readonly IGameStateService _gameStateService;
+    private readonly GameOrchestrator _orchestrator;
     private readonly IMainThreadDispatcher _mainThreadDispatcher;
-    private readonly GameStateMachine _stateMachine;
-    private readonly IPuzzleEngine _puzzleEngine;
+    private readonly ILogger<MainViewModel> _logger;
+    private readonly MauiGameDisplay _display;
     
-    private GameState? _currentGameState;
     private CancellationTokenSource? _listeningCts;
 
     [ObservableProperty]
@@ -57,30 +52,40 @@ public partial class MainViewModel : BaseViewModel
 
     public MainViewModel(
         IVoiceRecognitionService voiceService,
-        ICommandParserService parserService,
-        IGameStateService gameStateService,
         ITextToSpeechService ttsService,
+        IGameStateService gameStateService,
         IStoryPackService storyPackService,
-        IAchievementService achievementService,
-        IAchievementNotificationService notificationService,
-        ILogger<MainViewModel> logger,
+        ICommandParserService commandParser,
         CommandRouter commandRouter,
+        IGameStateMachine stateMachine,
+        IPuzzleEngine puzzleEngine,
+        GameInitializationService initService,
         IMainThreadDispatcher mainThreadDispatcher,
-        GameStateMachine stateMachine,
-        IPuzzleEngine puzzleEngine)
+        IAchievementService achievementService,
+        ILogger<MainViewModel> logger,
+        ILogger<GameOrchestrator>? orchestratorLogger = null)
     {
         _voiceService = voiceService;
-        _parserService = parserService;
-        _gameStateService = gameStateService;
         _ttsService = ttsService;
-        _storyPackService = storyPackService;
-        _achievementService = achievementService;
-        _notificationService = notificationService;
-        _logger = logger;
-        _commandRouter = commandRouter;
+        _gameStateService = gameStateService;
         _mainThreadDispatcher = mainThreadDispatcher;
-        _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
-        _puzzleEngine = puzzleEngine ?? throw new ArgumentNullException(nameof(puzzleEngine));
+        _logger = logger;
+        
+        // Create MauiGameDisplay with our story feed
+        _display = new MauiGameDisplay(_mainThreadDispatcher, StoryFeed);
+        
+        // Create GameOrchestrator with our display
+        _orchestrator = new GameOrchestrator(
+            gameStateService,
+            storyPackService,
+            commandParser,
+            commandRouter,
+            stateMachine,
+            puzzleEngine,
+            _display,
+            initService,
+            achievementService,
+            orchestratorLogger);
 
         Title = "The Cabin";
     }
@@ -91,60 +96,39 @@ public partial class MainViewModel : BaseViewModel
         {
             try
             {
-                // Load a story pack (use provided packId or default to classic_horror)
+                // Use provided packId or default to classic_horror
                 var selectedPackId = packId ?? "classic_horror";
-                _logger.LogInformation("Attempting to load story pack: {PackId}", selectedPackId);
-                
-                var storyPack = await _storyPackService.LoadPackAsync(selectedPackId);
-                _logger.LogInformation("Story pack loaded successfully: {Theme}", storyPack.Theme);
-                
-                // Initialize puzzle engine with loaded puzzles
-                if (storyPack.Puzzles != null && storyPack.Puzzles.Any())
-                {
-                    _puzzleEngine.InitializePuzzles(storyPack.Puzzles);
-                    _logger.LogInformation("Initialized {Count} puzzles", storyPack.Puzzles.Count);
-                }
-                
-                // Initialize game state in both services
-                await _gameStateService.InitializeNewGameAsync(storyPack);
-                await _stateMachine.InitializeAsync(storyPack);
-                _currentGameState = _gameStateService.CurrentState;
-                _logger.LogInformation("Game state initialized");
+                _logger.LogInformation("Initializing game with story pack: {PackId}", selectedPackId);
                 
                 // Clear story feed for fresh start
                 StoryFeed.Clear();
                 
-                // Show initial room description with objects and exits (like "look around")
-                var initialRoom = _currentGameState.World.Rooms[_currentGameState.Player.CurrentLocationId];
+                // Initialize game using orchestrator
+                var success = await _orchestrator.InitializeGameAsync(selectedPackId);
                 
-                // Get visible objects
-                var visibleObjects = initialRoom.State.VisibleObjectIds
-                    .Where(id => _currentGameState.World.Objects.ContainsKey(id))
-                    .Select(id => _currentGameState.World.Objects[id])
-                    .Where(obj => obj.IsVisible)
-                    .Select(obj => obj.Name);
-                
-                // Get exits
-                var exits = initialRoom.Exits.Keys;
-                
-                // Format with separate display and TTS messages
-                var (displayMessage, ttsMessage) = Core.Engine.RoomDescriptionFormatter.FormatRoomDescription(
-                    initialRoom.Description,
-                    visibleObjects,
-                    exits);
-                
-                AddNarrativeEntry(displayMessage, NarrativeType.Success);
-                
-                // Play TTS for initial room description if enabled (using TTS-specific message)
-                if (TtsEnabled)
+                if (!success)
                 {
-                    await _ttsService.SpeakAsync(ttsMessage);
+                    throw new InvalidOperationException("Failed to initialize game");
+                }
+                
+                // Play TTS for initial room description if enabled
+                if (TtsEnabled && StoryFeed.Any())
+                {
+                    var initialDescription = StoryFeed.FirstOrDefault(e => e.Type == NarrativeType.Description)?.Text;
+                    if (!string.IsNullOrEmpty(initialDescription))
+                    {
+                        // Use TTS-specific formatting if available
+                        var ttsMessage = initialDescription
+                            .Replace("📍 You see:", "You see:")
+                            .Replace("🚪 Exits:", "Exits:");
+                        await _ttsService.SpeakAsync(ttsMessage);
+                    }
                 }
                 
                 // Update UI state
                 UpdateUIState();
                 
-                _logger.LogInformation("Game initialized with {Theme} (Pack: {PackId})", storyPack.Theme, selectedPackId);
+                _logger.LogInformation("Game initialized successfully with pack: {PackId}", selectedPackId);
             }
             catch (Exception ex)
             {
@@ -176,7 +160,6 @@ public partial class MainViewModel : BaseViewModel
     private async Task StartNewGameAsync()
     {
         // This will be called when returning from story selector
-        // For now, just show a message
         await Shell.Current.DisplayAlert("New Game", "Story pack selected! Ready to start.", "OK");
     }
     
@@ -211,7 +194,8 @@ public partial class MainViewModel : BaseViewModel
     [RelayCommand]
     private async Task SaveGameAsync()
     {
-        if (_currentGameState == null)
+        var currentState = _orchestrator.GetCurrentState();
+        if (currentState == null)
         {
             await ShowErrorAsync("No active game to save");
             return;
@@ -229,9 +213,11 @@ public partial class MainViewModel : BaseViewModel
         
         await ExecuteAsync(async () =>
         {
-            await _gameStateService.SaveGameAsync(saveName);
-            AddNarrativeEntry($"Game saved as '{saveName}'", NarrativeType.SystemMessage);
-            await Shell.Current.DisplayAlert("Success", "Game saved successfully!", "OK");
+            var success = await _orchestrator.SaveGameAsync(saveName);
+            if (success)
+            {
+                await Shell.Current.DisplayAlert("Success", "Game saved successfully!", "OK");
+            }
         }, "Failed to save game");
     }
     
@@ -245,34 +231,16 @@ public partial class MainViewModel : BaseViewModel
     {
         await ExecuteAsync(async () =>
         {
-            await _gameStateService.LoadGameAsync(saveId);
-            _currentGameState = _gameStateService.CurrentState;
-            
-            // Re-initialize GameStateMachine and PuzzleEngine with loaded state
-            var storyPack = await _storyPackService.LoadPackAsync(_currentGameState.World.CurrentThemeId);
-            
-            // Re-initialize puzzle engine
-            if (storyPack.Puzzles != null && storyPack.Puzzles.Any())
-            {
-                _puzzleEngine.InitializePuzzles(storyPack.Puzzles);
-                _logger.LogInformation("Re-initialized {Count} puzzles for loaded game", storyPack.Puzzles.Count);
-            }
-            
-            await _stateMachine.InitializeAsync(storyPack);
-            
-            // Restore the player's current location in the state machine
-            if (!string.IsNullOrEmpty(_currentGameState.Player.CurrentLocationId))
-            {
-                _stateMachine.CurrentState.Player.CurrentLocationId = _currentGameState.Player.CurrentLocationId;
-            }
-            
-            // Clear and reload story feed
+            // Clear story feed
             StoryFeed.Clear();
             
-            // Show current location
-            var room = _currentGameState.World.Rooms[_currentGameState.Player.CurrentLocationId];
-            AddNarrativeEntry(room.Description, NarrativeType.Description);
-            AddNarrativeEntry("Game loaded successfully!", NarrativeType.SystemMessage);
+            // Load game using orchestrator
+            var success = await _orchestrator.LoadGameAsync(saveId);
+            
+            if (!success)
+            {
+                throw new InvalidOperationException("Failed to load game");
+            }
             
             // Update UI
             UpdateUIState();
@@ -286,7 +254,7 @@ public partial class MainViewModel : BaseViewModel
     {
         TtsEnabled = !TtsEnabled;
         var message = TtsEnabled ? "Text-to-speech enabled" : "Text-to-speech disabled";
-        AddNarrativeEntry(message, NarrativeType.SystemMessage);
+        _display.ShowMessageAsync(message, MessageType.SystemMessage);
     }
 
     [RelayCommand]
@@ -323,7 +291,7 @@ public partial class MainViewModel : BaseViewModel
             else
             {
                 TranscriptText = string.Empty;
-                AddNarrativeEntry(result.ErrorMessage, NarrativeType.SystemMessage);
+                await _display.ShowMessageAsync(result.ErrorMessage, MessageType.SystemMessage);
             }
         }, "Voice recognition failed");
     }
@@ -338,7 +306,8 @@ public partial class MainViewModel : BaseViewModel
 
     private async Task ProcessCommandAsync(string input)
     {
-        if (_currentGameState == null || string.IsNullOrEmpty(_currentGameState.Player?.CurrentLocationId))
+        var currentState = _orchestrator.GetCurrentState();
+        if (currentState == null || string.IsNullOrEmpty(currentState.Player?.CurrentLocationId))
         {
             await ShowErrorAsync("Game not properly initialized. Please start a new game.");
             return;
@@ -348,33 +317,24 @@ public partial class MainViewModel : BaseViewModel
         {
             IsProcessing = true;
             
-            // Add player command to story feed
-            AddNarrativeEntry($"▶ \"{input}\"", NarrativeType.PlayerCommand);
-            
-            // Parse command
-            var context = BuildGameContext();
-            var parsed = await _parserService.ParseAsync(input, context);
-            
-            _logger.LogInformation("Parsed command: {Verb} {Object}", parsed.Verb, parsed.Object);
-            
-            // Execute command
-            var result = await _commandRouter.RouteAsync(parsed);
-            
-            // Add result to story feed
-            var entryType = result.Success ? NarrativeType.Success : NarrativeType.Failure;
-            AddNarrativeEntry(result.Message, entryType);
-            
-            // Check for achievement unlocks - the command router already handles this via TrackEventAsync
-            // No need to manually check achievements here
+            // Process command using orchestrator
+            await _orchestrator.ProcessCommandAsync(input);
             
             // Update UI state
             UpdateUIState();
             
-            // Optional TTS narration (use TTS-specific message if available)
-            if (TtsEnabled && result.Success)
+            // Optional TTS narration for the last message
+            if (TtsEnabled && StoryFeed.Any())
             {
-                var ttsText = result.TtsMessage ?? result.Message;
-                await _ttsService.SpeakAsync(ttsText);
+                var lastEntry = StoryFeed.Last();
+                if (lastEntry.Type == NarrativeType.Success || lastEntry.Type == NarrativeType.Description)
+                {
+                    // Clean up display formatting for TTS
+                    var ttsText = lastEntry.Text
+                        .Replace("📍 You see:", "You see:")
+                        .Replace("🚪 Exits:", "Exits:");
+                    await _ttsService.SpeakAsync(ttsText);
+                }
             }
             
             IsProcessing = false;
@@ -391,42 +351,18 @@ public partial class MainViewModel : BaseViewModel
         }
     }
 
-    private GameContext BuildGameContext()
-    {
-        if (_currentGameState == null)
-            return new GameContext();
-
-        var room = _currentGameState.World.Rooms[_currentGameState.Player.CurrentLocationId];
-        var visibleObjects = room.State.VisibleObjectIds
-            .Where(id => _currentGameState.World.Objects.ContainsKey(id))
-            .Select(id => _currentGameState.World.Objects[id])
-            .Where(obj => obj.IsVisible)
-            .ToList();
-
-        return new GameContext
-        {
-            CurrentLocation = room.Id,
-            VisibleObjects = visibleObjects.Select(o => o.Id).ToList(),
-            InventoryItems = _currentGameState.Player.Inventory.Items.Select(i => i.Id).ToList(),
-            RecentCommands = StoryFeed
-                .Where(e => e.Type == NarrativeType.PlayerCommand)
-                .TakeLast(3)
-                .Select(e => e.Text.TrimStart('▶', ' ', '"').TrimEnd('"'))
-                .ToList()
-        };
-    }
-
     private void UpdateUIState()
     {
-        if (_currentGameState == null)
+        var currentState = _orchestrator.GetCurrentState();
+        if (currentState == null)
             return;
 
-        var room = _currentGameState.World.Rooms[_currentGameState.Player.CurrentLocationId];
+        var room = currentState.World.Rooms[currentState.Player.CurrentLocationId];
         
         CurrentLocation = FormatRoomName(room.Id);
-        PlayerHealth = _currentGameState.Player.Health;
+        PlayerHealth = currentState.Player.Health;
         LightLevel = room.LightLevel.ToString();
-        GameTime = _currentGameState.Player.Stats.PlayTime.ToString(@"h\:mm");
+        GameTime = currentState.Player.Stats.PlayTime.ToString(@"h\:mm");
     }
 
     private string FormatRoomName(string roomId)
@@ -436,38 +372,4 @@ public partial class MainViewModel : BaseViewModel
             .Select(word => char.ToUpper(word[0]) + word.Substring(1))
             .Aggregate((a, b) => a + " " + b);
     }
-
-    private void AddNarrativeEntry(string text, NarrativeType type)
-    {
-        var color = type switch
-        {
-            NarrativeType.PlayerCommand => Color.FromArgb("#4A90E2"),
-            NarrativeType.Success => Color.FromArgb("#7ED321"),
-            NarrativeType.Failure => Color.FromArgb("#D0021B"),
-            NarrativeType.SystemMessage => Color.FromArgb("#F5A623"),
-            NarrativeType.Discovery => Color.FromArgb("#BD10E0"),
-            _ => Colors.White
-        };
-
-        var entry = new NarrativeEntry
-        {
-            Text = text,
-            Type = type,
-            Timestamp = DateTime.Now,
-            TextColor = color,
-            IsImportant = type == NarrativeType.Discovery
-        };
-
-        _mainThreadDispatcher.BeginInvokeOnMainThread(() =>
-        {
-            StoryFeed.Add(entry);
-            
-            // Keep only last 100 entries for performance
-            while (StoryFeed.Count > 100)
-            {
-                StoryFeed.RemoveAt(0);
-            }
-        });
-    }
-
 }

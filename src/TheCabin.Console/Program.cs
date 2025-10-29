@@ -29,16 +29,87 @@ class Program
             builder.SetMinimumLevel(LogLevel.Warning);
         });
 
+        // Core services
         services.AddSingleton<IStoryPackService>(sp => 
             new StoryPackService(Path.Combine(AppContext.BaseDirectory, "story_packs")));
         services.AddSingleton<IGameSaveRepository, GameSaveRepository>();
         services.AddSingleton<IGameStateService, GameStateService>();
         services.AddSingleton<ILocalCommandParser, LocalCommandParser>();
         services.AddSingleton<ICommandParserService, LocalCommandParserAdapter>();
-        services.AddSingleton<IPuzzleEngine, PuzzleEngine>();
         
-        // GameStateMachine and related dependencies will be registered per-game session
-        // Command handlers will be created manually with the GameStateMachine instance
+        // Achievement service
+        services.AddSingleton<IAchievementService, AchievementService>();
+        
+        // Puzzle engine with achievement service
+        services.AddSingleton<IPuzzleEngine>(sp =>
+            new PuzzleEngine(sp.GetService<IAchievementService>()));
+        
+        // Game state machine with achievement service
+        services.AddSingleton<IGameStateMachine>(sp =>
+        {
+            var achievementService = sp.GetService<IAchievementService>();
+            var emptyState = new GameState();
+            var emptyInventoryManager = new InventoryManager(emptyState, achievementService);
+            return new GameStateMachine(emptyInventoryManager, achievementService);
+        });
+        
+        services.AddSingleton<GameStateMachine>(sp =>
+            (GameStateMachine)sp.GetRequiredService<IGameStateMachine>());
+        
+        services.AddSingleton<IInventoryManager>(sp =>
+        {
+            var achievementService = sp.GetService<IAchievementService>();
+            var emptyState = new GameState();
+            return new InventoryManager(emptyState, achievementService);
+        });
+        
+        // Command handlers
+        services.AddTransient<ICommandHandler>(sp => 
+            new MoveCommandHandler(sp.GetRequiredService<GameStateMachine>()));
+        services.AddTransient<ICommandHandler>(sp => 
+            new TakeCommandHandler(
+                sp.GetRequiredService<GameStateMachine>(),
+                sp.GetRequiredService<IInventoryManager>(),
+                sp.GetRequiredService<IPuzzleEngine>()));
+        services.AddTransient<ICommandHandler>(sp =>
+            new DropCommandHandler(
+                sp.GetRequiredService<IInventoryManager>(),
+                sp.GetRequiredService<GameStateMachine>(),
+                sp.GetRequiredService<IPuzzleEngine>()));
+        services.AddTransient<ICommandHandler>(sp => 
+            new UseCommandHandler(
+                sp.GetRequiredService<GameStateMachine>(),
+                sp.GetRequiredService<IInventoryManager>(),
+                sp.GetRequiredService<IPuzzleEngine>()));
+        services.AddTransient<ICommandHandler>(sp => 
+            new ExamineCommandHandler(
+                sp.GetRequiredService<GameStateMachine>(),
+                sp.GetRequiredService<IInventoryManager>(),
+                sp.GetRequiredService<IPuzzleEngine>()));
+        services.AddTransient<ICommandHandler>(sp => 
+            new OpenCommandHandler(
+                sp.GetRequiredService<GameStateMachine>(),
+                sp.GetRequiredService<IPuzzleEngine>()));
+        services.AddTransient<ICommandHandler>(sp => 
+            new CloseCommandHandler(
+                sp.GetRequiredService<GameStateMachine>(),
+                sp.GetRequiredService<IPuzzleEngine>()));
+        services.AddTransient<ICommandHandler>(sp => 
+            new LookCommandHandler(sp.GetRequiredService<GameStateMachine>()));
+        services.AddTransient<ICommandHandler>(sp => 
+            new InventoryCommandHandler(sp.GetRequiredService<IInventoryManager>()));
+        
+        // Command router
+        services.AddSingleton(sp =>
+            new CommandRouter(
+                sp.GetServices<ICommandHandler>(),
+                sp.GetRequiredService<GameStateMachine>(),
+                sp.GetService<IAchievementService>()));
+        
+        // Console-specific services
+        services.AddSingleton<IGameDisplay, ConsoleGameDisplay>();
+        services.AddSingleton<GameInitializationService>();
+        services.AddSingleton<GameOrchestrator>();
 
         return services;
     }
@@ -64,56 +135,16 @@ class GameRunner
     private readonly IServiceProvider _serviceProvider;
     private readonly IStoryPackService _storyPackService;
     private readonly IGameStateService _gameStateService;
-    private readonly ICommandParserService _commandParser;
-    private GameStateMachine? _stateMachine;
-    private CommandRouter? _commandRouter;
-    private IInventoryManager? _inventoryManager;
+    private readonly GameOrchestrator _orchestrator;
+    private readonly IGameDisplay _display;
 
     public GameRunner(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
         _storyPackService = serviceProvider.GetRequiredService<IStoryPackService>();
         _gameStateService = serviceProvider.GetRequiredService<IGameStateService>();
-        _commandParser = serviceProvider.GetRequiredService<ICommandParserService>();
-    }
-    
-    private void InitializeGameComponents(StoryPack storyPack)
-    {
-        // Get achievement service if available
-        var achievementService = _serviceProvider.GetService<IAchievementService>();
-        
-        // Get puzzle engine
-        var puzzleEngine = _serviceProvider.GetRequiredService<IPuzzleEngine>();
-        
-        // Initialize puzzle engine with puzzles from story pack
-        if (storyPack.Puzzles != null && storyPack.Puzzles.Any())
-        {
-            puzzleEngine.InitializePuzzles(storyPack.Puzzles);
-            System.Console.WriteLine($"✓ Initialized {storyPack.Puzzles.Count} puzzle(s)");
-        }
-        
-        // Create inventory manager with current game state
-        _inventoryManager = new InventoryManager(_gameStateService.CurrentState, achievementService);
-        
-        // Create game state machine
-        _stateMachine = new GameStateMachine(_inventoryManager);
-        
-        // Create command handlers manually with the state machine instance
-        var handlers = new List<ICommandHandler>
-        {
-            new MoveCommandHandler(_stateMachine),
-            new TakeCommandHandler(_stateMachine, _inventoryManager, puzzleEngine),
-            new DropCommandHandler(_inventoryManager, _stateMachine, puzzleEngine),
-            new UseCommandHandler(_stateMachine, _inventoryManager, puzzleEngine),
-            new ExamineCommandHandler(_stateMachine, _inventoryManager, puzzleEngine),
-            new OpenCommandHandler(_stateMachine, puzzleEngine),
-            new CloseCommandHandler(_stateMachine, puzzleEngine),
-            new LookCommandHandler(_stateMachine),
-            new InventoryCommandHandler(_inventoryManager)
-        };
-        
-        // Create command router with handlers and state machine
-        _commandRouter = new CommandRouter(handlers, _stateMachine, achievementService);
+        _orchestrator = serviceProvider.GetRequiredService<GameOrchestrator>();
+        _display = serviceProvider.GetRequiredService<IGameDisplay>();
     }
 
     public async Task RunAsync()
@@ -207,18 +238,22 @@ class GameRunner
         if (int.TryParse(choice, out var index) && index >= 1 && index <= packs.Count)
         {
             var selectedPack = packs[index - 1];
-            var storyPack = await _storyPackService.LoadPackAsync(selectedPack.Id);
-            await _gameStateService.InitializeNewGameAsync(storyPack);
             
-            // Initialize game components now that we have a game state
-            InitializeGameComponents(storyPack);
-            _stateMachine!.Initialize(storyPack);
-
-            System.Console.WriteLine($"✓ Loaded '{selectedPack.Theme}'");
-            System.Console.WriteLine("\nPress any key to begin your adventure...");
-            System.Console.ReadKey();
-
-            await GameLoopAsync();
+            System.Console.WriteLine($"\nLoading '{selectedPack.Theme}'...");
+            
+            var success = await _orchestrator.InitializeGameAsync(selectedPack.Id);
+            
+            if (success)
+            {
+                System.Console.WriteLine("\nPress any key to begin your adventure...");
+                System.Console.ReadKey();
+                await GameLoopAsync();
+            }
+            else
+            {
+                System.Console.WriteLine("\nFailed to initialize game. Press any key to return...");
+                System.Console.ReadKey();
+            }
         }
         else
         {
@@ -262,29 +297,30 @@ class GameRunner
         if (int.TryParse(choice, out var index) && index >= 1 && index <= saves.Count)
         {
             var selectedSave = saves[index - 1];
-            await _gameStateService.LoadGameAsync(selectedSave.Id);
-            var storyPack = await _storyPackService.LoadPackAsync(selectedSave.ThemeId);
             
-            // Initialize game components now that we have a game state
-            InitializeGameComponents(storyPack);
-            _stateMachine!.Initialize(storyPack);
-
-            System.Console.WriteLine($"✓ Loaded game '{selectedSave.Name}'");
-            System.Console.WriteLine("\nPress any key to continue...");
-            System.Console.ReadKey();
-
-            await GameLoopAsync();
+            System.Console.WriteLine($"\nLoading game '{selectedSave.Name}'...");
+            
+            var success = await _orchestrator.LoadGameAsync(selectedSave.Id);
+            
+            if (success)
+            {
+                System.Console.WriteLine("\nPress any key to continue...");
+                System.Console.ReadKey();
+                await GameLoopAsync();
+            }
+            else
+            {
+                System.Console.WriteLine("\nFailed to load game. Press any key to return...");
+                System.Console.ReadKey();
+            }
         }
     }
 
     private async Task GameLoopAsync()
     {
-        var currentRoom = _stateMachine.GetCurrentRoom();
-        
-        System.Console.Clear();
-        System.Console.WriteLine("\n" + new string('=', 60));
-        System.Console.WriteLine(currentRoom.Description);
-        System.Console.WriteLine(new string('=', 60));
+        // Don't clear - the initial room description was just shown!
+        // Just add a separator
+        System.Console.WriteLine();
 
         while (true)
         {
@@ -297,15 +333,19 @@ class GameRunner
             if (input.Equals("quit", StringComparison.OrdinalIgnoreCase) ||
                 input.Equals("exit", StringComparison.OrdinalIgnoreCase))
             {
-                System.Console.Write("\nSave before quitting? (y/n): ");
-                if (System.Console.ReadLine()?.Trim().ToLower() == "y")
+                var shouldSave = await _display.ConfirmAsync(
+                    "Quit Game",
+                    "Save before quitting?");
+                
+                if (shouldSave)
                 {
-                    System.Console.Write("Enter save name: ");
-                    var saveName = System.Console.ReadLine()?.Trim();
+                    var saveName = await _display.PromptAsync(
+                        "Enter save name",
+                        $"Save {DateTime.Now:yyyy-MM-dd HH:mm}");
+                    
                     if (!string.IsNullOrWhiteSpace(saveName))
                     {
-                        await _gameStateService.SaveGameAsync(saveName);
-                        System.Console.WriteLine("Game saved!");
+                        await _orchestrator.SaveGameAsync(saveName);
                     }
                 }
                 break;
@@ -313,12 +353,13 @@ class GameRunner
 
             if (input.Equals("save", StringComparison.OrdinalIgnoreCase))
             {
-                System.Console.Write("Enter save name: ");
-                var saveName = System.Console.ReadLine()?.Trim();
+                var saveName = await _display.PromptAsync(
+                    "Enter save name",
+                    $"Save {DateTime.Now:yyyy-MM-dd HH:mm}");
+                
                 if (!string.IsNullOrWhiteSpace(saveName))
                 {
-                    await _gameStateService.SaveGameAsync(saveName);
-                    System.Console.WriteLine("✓ Game saved!");
+                    await _orchestrator.SaveGameAsync(saveName);
                 }
                 continue;
             }
@@ -331,30 +372,11 @@ class GameRunner
 
             try
             {
-                var context = new GameContext
-                {
-                    CurrentLocation = _stateMachine.GetCurrentRoom().Id,
-                    VisibleObjects = _stateMachine.GetVisibleObjects().Select(o => o.Id).ToList(),
-                    InventoryItems = _gameStateService.CurrentState.Player.Inventory.Items.Select(i => i.Id).ToList(),
-                    GameFlags = _gameStateService.CurrentState.Progress.StoryFlags,
-                    RecentCommands = new List<string>()
-                };
-
-                var parsed = await _commandParser.ParseAsync(input, context);
-                var result = await _commandRouter.RouteAsync(parsed);
-
-                System.Console.WriteLine();
-                System.Console.WriteLine(result.Message);
-
-                if (result.Success)
-                {
-                    // State is automatically updated by the command handlers through StateMachine
-                    // Just track the narrative for display purposes
-                }
+                await _orchestrator.ProcessCommandAsync(input);
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine($"\nError: {ex.Message}");
+                await _display.ShowMessageAsync($"Error: {ex.Message}", MessageType.Failure);
             }
         }
     }

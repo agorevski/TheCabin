@@ -129,6 +129,9 @@ public static class MauiProgram
         services.AddSingleton<IPuzzleEngine>(sp =>
             new PuzzleEngine(sp.GetService<IAchievementService>()));
         
+        // Shared game orchestration services
+        services.AddSingleton<GameInitializationService>();
+        
     }
     
     private static void RegisterEngineComponents(IServiceCollection services)
@@ -210,6 +213,8 @@ public static class MauiProgram
     
     private static void RegisterViewModels(IServiceCollection services)
     {
+        // Don't register GameOrchestrator here - MainViewModel will create it with the correct display
+        
         services.AddTransient<ViewModels.MainViewModel>();
         services.AddTransient<ViewModels.InventoryViewModel>();
         services.AddTransient<ViewModels.SettingsViewModel>();
