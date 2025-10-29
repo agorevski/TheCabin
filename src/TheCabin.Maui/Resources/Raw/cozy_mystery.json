@@ -9,7 +9,7 @@
       "description": "A crackling fire warms the cabin. A photo album rests on the coffee table.",
       "objectIds": [
         "photo_album",
-        "fireplace",
+        "stone_fireplace",
         "cup_of_tea"
       ],
       "exits": {
@@ -21,8 +21,8 @@
       "id": "bedroom",
       "description": "A quilt-covered bed and a half-open wardrobe. The window rattles in the wind.",
       "objectIds": [
-        "wardrobe",
-        "letter"
+        "antique_wardrobe",
+        "handwritten_letter"
       ],
       "exits": {
         "south": "living_room"
@@ -32,8 +32,8 @@
       "id": "study",
       "description": "Stacks of papers and old journals. A typewriter still holds a half-finished note.",
       "objectIds": [
-        "typewriter",
-        "journal"
+        "vintage_typewriter",
+        "leather_journal"
       ],
       "exits": {
         "west": "living_room"
@@ -51,8 +51,8 @@
       "isCollectable": true,
       "isUsable": false
     },
-    "fireplace": {
-      "id": "fireplace",
+    "stone_fireplace": {
+      "id": "stone_fireplace",
       "name": "Stone Fireplace",
       "description": "A cozy fireplace with crackling logs.",
       "type": "Furniture",
@@ -89,8 +89,8 @@
         }
       }
     },
-    "wardrobe": {
-      "id": "wardrobe",
+    "antique_wardrobe": {
+      "id": "antique_wardrobe",
       "name": "Antique Wardrobe",
       "description": "An old wardrobe with ornate carvings, slightly ajar.",
       "type": "Container",
@@ -108,8 +108,8 @@
         }
       }
     },
-    "letter": {
-      "id": "letter",
+    "handwritten_letter": {
+      "id": "handwritten_letter",
       "name": "Handwritten Letter",
       "description": "A carefully folded letter with elegant handwriting.",
       "type": "Item",
@@ -118,8 +118,8 @@
       "isCollectable": true,
       "isUsable": false
     },
-    "typewriter": {
-      "id": "typewriter",
+    "vintage_typewriter": {
+      "id": "vintage_typewriter",
       "name": "Vintage Typewriter",
       "description": "An old typewriter with a half-finished note still in it.",
       "type": "Furniture",
@@ -137,8 +137,8 @@
         }
       }
     },
-    "journal": {
-      "id": "journal",
+    "leather_journal": {
+      "id": "leather_journal",
       "name": "Leather Journal",
       "description": "A personal journal filled with entries and sketches.",
       "type": "Item",

@@ -58,7 +58,7 @@
                 "stepNumber": 4,
                 "description": "Take the insulated coat for protection",
                 "action": "take",
-                "targetObject": "coat",
+                "targetObject": "insulated_coat",
                 "requiredFlags": [
                     "beacon_activated"
                 ],
@@ -115,7 +115,7 @@
                 ],
                 "requiredItems": [
                     "flare_gun",
-                    "coat",
+                    "insulated_coat",
                     "survival_pack"
                 ],
                 "requiredLocation": "emergency_exit",
@@ -134,7 +134,7 @@
                     "rescue_signaled"
                 ],
                 "requiredItems": [
-                    "coat",
+                    "insulated_coat",
                     "survival_pack"
                 ],
                 "requiredLocation": "emergency_exit",

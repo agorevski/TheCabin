@@ -24,7 +24,7 @@
                 "stepNumber": 2,
                 "description": "Take the handwritten letter from the bedroom",
                 "action": "take",
-                "targetObject": "letter",
+                "targetObject": "handwritten_letter",
                 "requiredFlags": [],
                 "requiredItems": [],
                 "requiredLocation": "bedroom",
@@ -38,7 +38,7 @@
                 "stepNumber": 3,
                 "description": "Search the antique wardrobe for hidden items",
                 "action": "use",
-                "targetObject": "wardrobe",
+                "targetObject": "antique_wardrobe",
                 "requiredFlags": [
                     "photos_examined"
                 ],
@@ -54,7 +54,7 @@
                 "stepNumber": 4,
                 "description": "Take the leather journal from the study",
                 "action": "take",
-                "targetObject": "journal",
+                "targetObject": "leather_journal",
                 "requiredFlags": [
                     "wardrobe_searched"
                 ],
@@ -70,7 +70,7 @@
                 "stepNumber": 5,
                 "description": "Examine the vintage typewriter and its unfinished note",
                 "action": "use",
-                "targetObject": "typewriter",
+                "targetObject": "vintage_typewriter",
                 "requiredFlags": [
                     "has_journal",
                     "has_letter"
@@ -87,7 +87,7 @@
                 "stepNumber": 6,
                 "description": "Use the fireplace to warm yourself while considering the evidence",
                 "action": "use",
-                "targetObject": "fireplace",
+                "targetObject": "stone_fireplace",
                 "requiredFlags": [
                     "typewriter_examined"
                 ],
@@ -108,8 +108,8 @@
                     "contemplated_truth"
                 ],
                 "requiredItems": [
-                    "journal",
-                    "letter"
+                    "leather_journal",
+                    "handwritten_letter"
                 ],
                 "requiredLocation": "living_room",
                 "completionFlag": "mystery_solved",

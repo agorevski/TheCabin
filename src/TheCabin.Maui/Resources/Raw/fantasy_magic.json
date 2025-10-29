@@ -8,9 +8,9 @@
       "id": "study",
       "description": "Scrolls and books lie open on a rune-etched desk. A cauldron bubbles mysteriously.",
       "objectIds": [
-        "cauldron",
-        "scroll",
-        "crystal"
+        "bubbling_cauldron",
+        "ancient_scroll",
+        "glowing_crystal"
       ],
       "exits": {
         "north": "garden",
@@ -21,8 +21,8 @@
       "id": "garden",
       "description": "Glowing herbs sway in the moonlight. A stone arch leads deeper into the forest.",
       "objectIds": [
-        "herb",
-        "archway"
+        "luminescent_herb",
+        "stone_archway"
       ],
       "exits": {
         "south": "study"
@@ -33,8 +33,8 @@
       "description": "Dusty tomes line every wall. A magical barrier shimmers near a hidden door.",
       "objectIds": [
         "book",
-        "barrier",
-        "wand"
+        "magical_barrier",
+        "wizard's_wand"
       ],
       "exits": {
         "west": "study"
@@ -42,8 +42,8 @@
     }
   ],
   "objects": {
-    "cauldron": {
-      "id": "cauldron",
+    "bubbling_cauldron": {
+      "id": "bubbling_cauldron",
       "name": "Bubbling Cauldron",
       "description": "A large iron cauldron with a mysterious glowing liquid inside.",
       "type": "Furniture",
@@ -61,8 +61,8 @@
         }
       }
     },
-    "scroll": {
-      "id": "scroll",
+    "ancient_scroll": {
+      "id": "ancient_scroll",
       "name": "Ancient Scroll",
       "description": "A yellowed scroll covered in arcane symbols and spells.",
       "type": "Item",
@@ -71,8 +71,8 @@
       "isCollectable": true,
       "isUsable": false
     },
-    "crystal": {
-      "id": "crystal",
+    "glowing_crystal": {
+      "id": "glowing_crystal",
       "name": "Glowing Crystal",
       "description": "A crystal orb that pulses with magical energy.",
       "type": "Tool",
@@ -90,8 +90,8 @@
         }
       }
     },
-    "herb": {
-      "id": "herb",
+    "luminescent_herb": {
+      "id": "luminescent_herb",
       "name": "Luminescent Herb",
       "description": "A magical herb that glows softly in the moonlight.",
       "type": "Item",
@@ -109,8 +109,8 @@
         }
       }
     },
-    "archway": {
-      "id": "archway",
+    "stone_archway": {
+      "id": "stone_archway",
       "name": "Stone Archway",
       "description": "An ancient archway covered in ivy and runes.",
       "type": "Door",
@@ -138,8 +138,8 @@
       "isCollectable": true,
       "isUsable": false
     },
-    "barrier": {
-      "id": "barrier",
+    "magical_barrier": {
+      "id": "magical_barrier",
       "name": "Magical Barrier",
       "description": "A shimmering magical barrier blocking a hidden passage.",
       "type": "Puzzle",
@@ -157,8 +157,8 @@
         }
       }
     },
-    "wand": {
-      "id": "wand",
+    "wizard's_wand": {
+      "id": "wizard's_wand",
       "name": "Wizard's Wand",
       "description": "An ornate wooden wand that tingles with power.",
       "type": "Tool",

@@ -10,7 +10,7 @@
                 "stepNumber": 1,
                 "description": "Take the engineering toolkit",
                 "action": "take",
-                "targetObject": "toolkit",
+                "targetObject": "engineering_toolkit",
                 "requiredFlags": [],
                 "requiredItems": [],
                 "requiredLocation": "engine_room",
@@ -38,12 +38,12 @@
                 "stepNumber": 3,
                 "description": "Use the toolkit to stabilize the reactor core",
                 "action": "use",
-                "targetObject": "reactor",
+                "targetObject": "reactor_core",
                 "requiredFlags": [
                     "has_toolkit"
                 ],
                 "requiredItems": [
-                    "toolkit"
+                    "engineering_toolkit"
                 ],
                 "requiredLocation": "engine_room",
                 "completionFlag": "reactor_stabilized",
@@ -56,13 +56,13 @@
                 "stepNumber": 4,
                 "description": "Repair the damaged control panel on the bridge",
                 "action": "use",
-                "targetObject": "panel",
+                "targetObject": "control_panel",
                 "requiredFlags": [
                     "reactor_stabilized",
                     "has_toolkit"
                 ],
                 "requiredItems": [
-                    "toolkit"
+                    "engineering_toolkit"
                 ],
                 "requiredLocation": "bridge",
                 "completionFlag": "panel_repaired",
@@ -75,7 +75,7 @@
                 "stepNumber": 5,
                 "description": "Use the navigation console with the override code",
                 "action": "use",
-                "targetObject": "console",
+                "targetObject": "navigation_console",
                 "requiredFlags": [
                     "logs_heard",
                     "panel_repaired"
@@ -92,7 +92,7 @@
                 "stepNumber": 6,
                 "description": "Enter and launch the escape pod",
                 "action": "use",
-                "targetObject": "cryopod",
+                "targetObject": "cryogenic_pod",
                 "requiredFlags": [
                     "console_accessed"
                 ],

@@ -8,9 +8,9 @@
       "id": "bridge",
       "description": "Broken panels flicker erratically. A viewport reveals the planets red storms.",
       "objectIds": [
-        "panel",
+        "control_panel",
         "helmet",
-        "console"
+        "navigation_console"
       ],
       "exits": {
         "south": "quarters"
@@ -20,7 +20,7 @@
       "id": "quarters",
       "description": "Your cryopod lies shattered. A log recorder blinks with a red light.",
       "objectIds": [
-        "cryopod",
+        "cryogenic_pod",
         "log_recorder"
       ],
       "exits": {
@@ -32,8 +32,8 @@
       "id": "engine_room",
       "description": "Pipes hiss steam. A reactor core pulses weakly in the gloom.",
       "objectIds": [
-        "reactor",
-        "toolkit"
+        "reactor_core",
+        "engineering_toolkit"
       ],
       "exits": {
         "west": "quarters"
@@ -41,8 +41,8 @@
     }
   ],
   "objects": {
-    "panel": {
-      "id": "panel",
+    "control_panel": {
+      "id": "control_panel",
       "name": "Control Panel",
       "description": "A damaged control panel with flickering displays.",
       "type": "Furniture",
@@ -70,8 +70,8 @@
       "isCollectable": true,
       "isUsable": false
     },
-    "console": {
-      "id": "console",
+    "navigation_console": {
+      "id": "navigation_console",
       "name": "Navigation Console",
       "description": "The ship's navigation system, barely operational.",
       "type": "Furniture",
@@ -89,8 +89,8 @@
         }
       }
     },
-    "cryopod": {
-      "id": "cryopod",
+    "cryogenic_pod": {
+      "id": "cryogenic_pod",
       "name": "Cryogenic Pod",
       "description": "Your shattered sleeping pod, covered in frost.",
       "type": "Furniture",
@@ -127,8 +127,8 @@
         }
       }
     },
-    "reactor": {
-      "id": "reactor",
+    "reactor_core": {
+      "id": "reactor_core",
       "name": "Reactor Core",
       "description": "The ship's failing reactor, pulsing with unstable energy.",
       "type": "Furniture",
@@ -146,8 +146,8 @@
         }
       }
     },
-    "toolkit": {
-      "id": "toolkit",
+    "engineering_toolkit": {
+      "id": "engineering_toolkit",
       "name": "Engineering Toolkit",
       "description": "A set of tools for ship repairs.",
       "type": "Container",

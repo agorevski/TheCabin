@@ -10,7 +10,7 @@
       "objectIds": [
         "generator",
         "radio",
-        "coat"
+        "insulated_coat"
       ],
       "exits": {
         "north": "storage_room",
@@ -23,8 +23,8 @@
       "id": "storage_room",
       "description": "Shelves hold frozen food cans and broken tools. A faint draft comes from the west.",
       "objectIds": [
-        "can",
-        "toolbox",
+        "frozen_food_can",
+        "tool_box",
         "flare_gun"
       ],
       "exits": {
@@ -120,8 +120,8 @@
         }
       }
     },
-    "coat": {
-      "id": "coat",
+    "insulated_coat": {
+      "id": "insulated_coat",
       "name": "Insulated Coat",
       "description": "A heavy winter coat that could save your life in the blizzard.",
       "type": "Item",
@@ -130,8 +130,8 @@
       "isCollectable": true,
       "isUsable": false
     },
-    "can": {
-      "id": "can",
+    "frozen_food_can": {
+      "id": "frozen_food_can",
       "name": "Frozen Food Can",
       "description": "A can of preserved food, frozen solid.",
       "type": "Item",
@@ -149,8 +149,8 @@
         }
       }
     },
-    "toolbox": {
-      "id": "toolbox",
+    "tool_box": {
+      "id": "tool_box",
       "name": "Tool Box",
       "description": "A metal box containing various repair tools.",
       "type": "Container",

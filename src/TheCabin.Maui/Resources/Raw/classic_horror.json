@@ -9,8 +9,8 @@
       "description": "A flickering candle casts shadows across the warped floorboards. A locked door creaks in the wind.",
       "objectIds": [
         "candle",
-        "door",
-        "note"
+        "locked_door",
+        "crumpled_note"
       ],
       "exits": {
         "north": "attic",
@@ -21,9 +21,9 @@
       "id": "attic",
       "description": "Dust and cobwebs blanket old furniture. A cracked mirror reflects your pale face.",
       "objectIds": [
-        "mirror",
-        "chest",
-        "key"
+        "cracked_mirror",
+        "wooden_chest",
+        "iron_key"
       ],
       "exits": {
         "south": "main_room"
@@ -33,7 +33,7 @@
       "id": "basement",
       "description": "Moisture drips from the ceiling. Rusted chains hang from the walls.",
       "objectIds": [
-        "lantern",
+        "old_lantern",
         "chains",
         "skeleton"
       ],
@@ -62,8 +62,8 @@
         }
       }
     },
-    "door": {
-      "id": "door",
+    "locked_door": {
+      "id": "locked_door",
       "name": "Locked Door",
       "description": "A heavy wooden door with rusty hinges. It's locked tight.",
       "type": "Door",
@@ -81,8 +81,8 @@
         }
       }
     },
-    "note": {
-      "id": "note",
+    "crumpled_note": {
+      "id": "crumpled_note",
       "name": "Crumpled Note",
       "description": "A water-stained note with barely legible handwriting.",
       "type": "Item",
@@ -91,8 +91,8 @@
       "isCollectable": true,
       "isUsable": false
     },
-    "mirror": {
-      "id": "mirror",
+    "cracked_mirror": {
+      "id": "cracked_mirror",
       "name": "Cracked Mirror",
       "description": "An old mirror with a spider web of cracks across its surface.",
       "type": "Furniture",
@@ -110,8 +110,8 @@
         }
       }
     },
-    "chest": {
-      "id": "chest",
+    "wooden_chest": {
+      "id": "wooden_chest",
       "name": "Wooden Chest",
       "description": "A dusty old chest with a rusted lock.",
       "type": "Container",
@@ -129,8 +129,8 @@
         }
       }
     },
-    "lantern": {
-      "id": "lantern",
+    "old_lantern": {
+      "id": "old_lantern",
       "name": "Old Lantern",
       "description": "A rusted lantern that might still work.",
       "type": "Light",
@@ -148,8 +148,8 @@
         }
       }
     },
-    "key": {
-      "id": "key",
+    "iron_key": {
+      "id": "iron_key",
       "name": "Iron Key",
       "description": "An ornate iron key covered in strange engravings.",
       "type": "Item",

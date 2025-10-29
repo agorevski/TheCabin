@@ -10,7 +10,7 @@
                 "stepNumber": 1,
                 "description": "Light the old lantern to see in the darkness",
                 "action": "use",
-                "targetObject": "lantern",
+                "targetObject": "old_lantern",
                 "requiredFlags": [],
                 "requiredItems": [],
                 "requiredLocation": "basement",
@@ -24,7 +24,7 @@
                 "stepNumber": 2,
                 "description": "Use the cracked mirror to reveal hidden truths",
                 "action": "use",
-                "targetObject": "mirror",
+                "targetObject": "cracked_mirror",
                 "requiredFlags": [
                     "lantern_lit"
                 ],
@@ -40,7 +40,7 @@
                 "stepNumber": 3,
                 "description": "Open the wooden chest to find what's hidden inside",
                 "action": "use",
-                "targetObject": "chest",
+                "targetObject": "wooden_chest",
                 "requiredFlags": [
                     "mirror_used"
                 ],
@@ -56,7 +56,7 @@
                 "stepNumber": 4,
                 "description": "Take the mysterious key from the chest",
                 "action": "take",
-                "targetObject": "key",
+                "targetObject": "iron_key",
                 "requiredFlags": [
                     "chest_opened"
                 ],
@@ -72,7 +72,7 @@
                 "stepNumber": 5,
                 "description": "Read the crumpled note to understand the curse",
                 "action": "examine",
-                "targetObject": "note",
+                "targetObject": "crumpled_note",
                 "requiredFlags": [
                     "lantern_lit"
                 ],
@@ -88,14 +88,14 @@
                 "stepNumber": 6,
                 "description": "Use the key to unlock the cabin's main door",
                 "action": "use",
-                "targetObject": "door",
+                "targetObject": "locked_door",
                 "requiredFlags": [
                     "has_key",
                     "note_read"
                 ],
                 "requiredItems": [
-                    "key",
-                    "lantern"
+                    "iron_key",
+                    "old_lantern"
                 ],
                 "requiredLocation": "main_room",
                 "completionFlag": "door_unlocked",
@@ -108,12 +108,12 @@
                 "stepNumber": 7,
                 "description": "Escape through the unlocked door before the entity awakens",
                 "action": "use",
-                "targetObject": "door",
+                "targetObject": "locked_door",
                 "requiredFlags": [
                     "door_unlocked"
                 ],
                 "requiredItems": [
-                    "lantern"
+                    "old_lantern"
                 ],
                 "requiredLocation": "main_room",
                 "completionFlag": "escaped",

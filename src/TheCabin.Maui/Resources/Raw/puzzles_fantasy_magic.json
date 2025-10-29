@@ -10,7 +10,7 @@
                 "stepNumber": 1,
                 "description": "Take the glowing crystal for magical power",
                 "action": "take",
-                "targetObject": "crystal",
+                "targetObject": "glowing_crystal",
                 "requiredFlags": [],
                 "requiredItems": [],
                 "requiredLocation": "study",
@@ -24,7 +24,7 @@
                 "stepNumber": 2,
                 "description": "Collect the luminescent herb from the garden",
                 "action": "take",
-                "targetObject": "herb",
+                "targetObject": "luminescent_herb",
                 "requiredFlags": [],
                 "requiredItems": [],
                 "requiredLocation": "garden",
@@ -38,14 +38,14 @@
                 "stepNumber": 3,
                 "description": "Use the cauldron to brew a magical potion",
                 "action": "use",
-                "targetObject": "cauldron",
+                "targetObject": "bubbling_cauldron",
                 "requiredFlags": [
                     "has_crystal",
                     "has_herb"
                 ],
                 "requiredItems": [
-                    "crystal",
-                    "herb"
+                    "glowing_crystal",
+                    "luminescent_herb"
                 ],
                 "requiredLocation": "study",
                 "completionFlag": "potion_brewed",
@@ -58,7 +58,7 @@
                 "stepNumber": 4,
                 "description": "Take the wizard's wand",
                 "action": "take",
-                "targetObject": "wand",
+                "targetObject": "wizard's_wand",
                 "requiredFlags": [
                     "potion_brewed"
                 ],
@@ -74,7 +74,7 @@
                 "stepNumber": 5,
                 "description": "Read the ancient scroll to learn the unsealing spell",
                 "action": "examine",
-                "targetObject": "scroll",
+                "targetObject": "ancient_scroll",
                 "requiredFlags": [
                     "has_wand"
                 ],
@@ -90,13 +90,13 @@
                 "stepNumber": 6,
                 "description": "Use the wand to dispel the magical barrier",
                 "action": "use",
-                "targetObject": "barrier",
+                "targetObject": "magical_barrier",
                 "requiredFlags": [
                     "spell_learned",
                     "potion_brewed"
                 ],
                 "requiredItems": [
-                    "wand"
+                    "wizard's_wand"
                 ],
                 "requiredLocation": "library",
                 "completionFlag": "barrier_dispelled",
@@ -109,12 +109,12 @@
                 "stepNumber": 7,
                 "description": "Pass through the stone archway to freedom",
                 "action": "use",
-                "targetObject": "archway",
+                "targetObject": "stone_archway",
                 "requiredFlags": [
                     "barrier_dispelled"
                 ],
                 "requiredItems": [
-                    "wand"
+                    "wizard's_wand"
                 ],
                 "requiredLocation": "garden",
                 "completionFlag": "escaped",

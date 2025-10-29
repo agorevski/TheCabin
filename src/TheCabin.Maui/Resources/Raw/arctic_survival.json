@@ -10,7 +10,7 @@
       "objectIds": [
         "generator",
         "radio",
-        "coat"
+        "insulated_coat"
       ],
       "exits": {
         "north": "storage_room",
@@ -23,8 +23,8 @@
       "id": "storage_room",
       "description": "Shelves hold frozen food cans and broken tools. A faint draft comes from the west.",
       "objectIds": [
-        "can",
-        "toolbox",
+        "frozen_food_can",
+        "tool_box",
         "flare_gun"
       ],
       "exits": {
@@ -90,7 +90,16 @@
       "weight": 100,
       "isVisible": true,
       "isCollectable": false,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "The generator continues to rumble. It needs fuel to keep running.",
+          "failureMessage": "The generator is already running, but it needs more fuel.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "radio": {
       "id": "radio",
@@ -100,10 +109,19 @@
       "weight": 5,
       "isVisible": true,
       "isCollectable": true,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You turn the radio's dial. Static crackles and hisses, but no clear signal comes through. The power seems insufficient.",
+          "failureMessage": "The radio needs adequate power to transmit.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
-    "coat": {
-      "id": "coat",
+    "insulated_coat": {
+      "id": "insulated_coat",
       "name": "Insulated Coat",
       "description": "A heavy winter coat that could save your life in the blizzard.",
       "type": "Item",
@@ -112,25 +130,43 @@
       "isCollectable": true,
       "isUsable": false
     },
-    "can": {
-      "id": "can",
+    "frozen_food_can": {
+      "id": "frozen_food_can",
       "name": "Frozen Food Can",
       "description": "A can of preserved food, frozen solid.",
       "type": "Item",
       "weight": 2,
       "isVisible": true,
       "isCollectable": true,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You manage to open the frozen can and eat the preserved food. It's cold but edible, giving you some energy.",
+          "failureMessage": "The can is frozen solid. You need something to open it with.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": true
+        }
+      }
     },
-    "toolbox": {
-      "id": "toolbox",
+    "tool_box": {
+      "id": "tool_box",
       "name": "Tool Box",
       "description": "A metal box containing various repair tools.",
       "type": "Container",
       "weight": 5,
       "isVisible": true,
       "isCollectable": true,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You open the toolbox and examine the contents: wrenches, screwdrivers, pliers, and other basic repair tools. They might come in handy.",
+          "failureMessage": "You can't use the toolbox right now.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "flare_gun": {
       "id": "flare_gun",
@@ -140,7 +176,16 @@
       "weight": 2,
       "isVisible": true,
       "isCollectable": true,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You fire the flare gun into the storm. The brilliant red flare arcs high into the sky, cutting through the blizzard like a beacon of hope.",
+          "failureMessage": "You should wait until you're ready to signal the rescue helicopter.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": true
+        }
+      }
     },
     "notebook": {
       "id": "notebook",
@@ -160,7 +205,16 @@
       "weight": 2,
       "isVisible": true,
       "isCollectable": true,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You unscrew the cap and drink the warm liquid inside. It's coffee, still faintly warm, and it helps fight the cold.",
+          "failureMessage": "The thermos is empty.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": true
+        }
+      }
     },
     "survival_pack": {
       "id": "survival_pack",
@@ -199,7 +253,16 @@
       "weight": 2,
       "isVisible": true,
       "isCollectable": true,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You turn on the weather radio. A robotic voice announces: 'Severe blizzard warning in effect. Wind speeds 60 mph. Visibility near zero. Seek shelter immediately.'",
+          "failureMessage": "The weather radio needs power to function.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "antenna": {
       "id": "antenna",
@@ -238,7 +301,16 @@
       "weight": 150,
       "isVisible": true,
       "isCollectable": false,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You try to start the backup generator, but it won't turn over. It looks like it hasn't been maintained in years.",
+          "failureMessage": "The backup generator is non-functional without repairs and fuel.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "fuel_gauge": {
       "id": "fuel_gauge",
@@ -258,7 +330,16 @@
       "weight": 200,
       "isVisible": true,
       "isCollectable": false,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You push open the heavy emergency exit door. The blizzard's fury hits you immediately, but you're prepared.",
+          "failureMessage": "The door is sealed. The red light indicates the emergency protocols haven't been completed yet.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     },
     "warning_sign": {
       "id": "warning_sign",
@@ -278,7 +359,16 @@
       "weight": 5,
       "isVisible": true,
       "isCollectable": false,
-      "isUsable": true
+      "isUsable": true,
+      "actions": {
+        "use": {
+          "successMessage": "You open the emergency kit and find medical supplies, bandages, and an instruction card for emergency procedures. Everything is still sealed and ready for use.",
+          "failureMessage": "You can't use the emergency kit right now.",
+          "requiredFlags": [],
+          "stateChanges": [],
+          "consumesItem": false
+        }
+      }
     }
   },
   "puzzles": [],
