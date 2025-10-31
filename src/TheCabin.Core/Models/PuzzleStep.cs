@@ -66,6 +66,11 @@ public class PuzzleStep
     public string FeedbackMessage { get; set; } = string.Empty;
     
     /// <summary>
+    /// State changes that occur when step is completed
+    /// </summary>
+    public List<StateChange> StateChanges { get; set; } = new();
+    
+    /// <summary>
     /// Checks if this step can be attempted based on current game state
     /// </summary>
     public bool CanAttempt(Dictionary<string, bool> flags, List<string> inventoryItems)

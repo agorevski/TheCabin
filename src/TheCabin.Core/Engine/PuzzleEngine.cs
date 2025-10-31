@@ -279,6 +279,13 @@ public class PuzzleEngine : IPuzzleEngine
         puzzleState.CompletedSteps.Add(matchingStep.Id);
         puzzleState.LastActivityAt = DateTime.UtcNow;
         
+        // Apply state changes from the puzzle step
+        if (matchingStep.StateChanges != null && matchingStep.StateChanges.Any())
+        {
+            System.Diagnostics.Debug.WriteLine($"[PuzzleEngine] Applying {matchingStep.StateChanges.Count} state changes");
+            ApplyPuzzleStateChanges(matchingStep.StateChanges, gameState);
+        }
+        
         // Check if puzzle is complete
         var puzzleCompleted = puzzleState.CompletedSteps.Count == puzzle.Steps.Count;
         System.Diagnostics.Debug.WriteLine($"[PuzzleEngine] Steps completed: {puzzleState.CompletedSteps.Count}/{puzzle.Steps.Count}");
@@ -498,5 +505,52 @@ public class PuzzleEngine : IPuzzleEngine
         
         System.Diagnostics.Debug.WriteLine($"[PuzzleEngine.MatchesStep] ✓ All checks passed - returning true");
         return true;
+    }
+    
+    /// <summary>
+    /// Applies state changes from a completed puzzle step
+    /// </summary>
+    private void ApplyPuzzleStateChanges(List<StateChange> stateChanges, GameState gameState)
+    {
+        System.Diagnostics.Debug.WriteLine($"[PuzzleEngine.ApplyPuzzleStateChanges] === Applying State Changes ===");
+        
+        foreach (var change in stateChanges)
+        {
+            System.Diagnostics.Debug.WriteLine($"[PuzzleEngine.ApplyPuzzleStateChanges] Change: Target='{change.Target}', Property='{change.Property}', NewValue='{change.NewValue}'");
+            
+            if (gameState.World.Objects.TryGetValue(change.Target, out var targetObj))
+            {
+                System.Diagnostics.Debug.WriteLine($"[PuzzleEngine.ApplyPuzzleStateChanges] Found target object '{change.Target}'");
+                ApplyStateChangeToObject(targetObj, change);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"[PuzzleEngine.ApplyPuzzleStateChanges] ✗ Target object '{change.Target}' not found in game state");
+            }
+        }
+        
+        System.Diagnostics.Debug.WriteLine($"[PuzzleEngine.ApplyPuzzleStateChanges] === State Changes Complete ===");
+    }
+    
+    /// <summary>
+    /// Applies a single state change to an object
+    /// </summary>
+    private void ApplyStateChangeToObject(GameObject obj, StateChange change)
+    {
+        System.Diagnostics.Debug.WriteLine($"[PuzzleEngine.ApplyStateChangeToObject] Applying change to object '{obj.Id}': Property='{change.Property}', NewValue='{change.NewValue}'");
+        
+        var property = obj.GetType().GetProperty(change.Property);
+        if (property != null && property.CanWrite)
+        {
+            var oldValue = property.GetValue(obj);
+            property.SetValue(obj, change.NewValue);
+            var newValue = property.GetValue(obj);
+            
+            System.Diagnostics.Debug.WriteLine($"[PuzzleEngine.ApplyStateChangeToObject] ✓ Property '{change.Property}' changed from '{oldValue}' to '{newValue}'");
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine($"[PuzzleEngine.ApplyStateChangeToObject] ✗ Property '{change.Property}' not found or not writable on object '{obj.Id}'");
+        }
     }
 }

@@ -47,6 +47,13 @@
                 "requiredItems": [],
                 "requiredLocation": "attic",
                 "completionFlag": "chest_opened",
+                "stateChanges": [
+                    {
+                        "target": "iron_key",
+                        "property": "IsVisible",
+                        "newValue": true
+                    }
+                ],
                 "successMessage": "The chest creaks open, releasing a puff of ancient dust. Inside, you find an ornate iron key covered in strange engravings. This must unlock the main door!",
                 "failureMessage": "The chest won't budge. Perhaps you need to discover its secret first.",
                 "feedbackMessage": "The chest contains something important for your escape."
