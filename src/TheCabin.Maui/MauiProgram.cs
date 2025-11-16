@@ -31,6 +31,11 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
         builder.Logging.SetMinimumLevel(LogLevel.Debug);
+        
+        // Add file logging for Windows to help debug crashes
+#if WINDOWS
+        AddFileLogging(builder.Logging);
+#endif
 #else
         builder.Logging.SetMinimumLevel(LogLevel.Warning);
 #endif
@@ -95,6 +100,17 @@ public static class MauiProgram
         // Story pack service - will initialize story packs lazily on first access
         services.AddSingleton<IStoryPackService>(sp => 
         {
+            // For Windows unpackaged apps, use the story_packs directory in the app directory
+            // For packaged apps (Android), copy from resources to AppDataDirectory
+#if WINDOWS
+            var storyPackPath = Path.Combine(AppContext.BaseDirectory, "story_packs");
+            System.Diagnostics.Debug.WriteLine($"Windows: Using story pack path: {storyPackPath}");
+            
+            if (!Directory.Exists(storyPackPath))
+            {
+                System.Diagnostics.Debug.WriteLine($"Warning: story_packs directory not found at {storyPackPath}");
+            }
+#else
             var storyPackPath = Path.Combine(FileSystem.AppDataDirectory, "story_packs");
             
             // Ensure directory exists
@@ -105,6 +121,7 @@ public static class MauiProgram
             
             // Copy story pack files from Resources/Raw to AppDataDirectory synchronously
             CopyStoryPacksFromResourcesSync(storyPackPath);
+#endif
             
             return new StoryPackService(storyPackPath);
         });
@@ -236,6 +253,92 @@ public static class MauiProgram
         services.AddTransient<Views.LoadGamePage>();
         services.AddTransient<Views.AchievementsPage>();
     }
+    
+#if WINDOWS
+    private static void AddFileLogging(ILoggingBuilder logging)
+    {
+        var logPath = Path.Combine(AppContext.BaseDirectory, "logs", $"thecabin_{DateTime.Now:yyyyMMdd_HHmmss}.log");
+        var logDir = Path.GetDirectoryName(logPath);
+        
+        if (!Directory.Exists(logDir))
+        {
+            Directory.CreateDirectory(logDir!);
+        }
+        
+        // Create a simple file logger
+        logging.AddProvider(new FileLoggerProvider(logPath));
+        
+        // Also log startup info immediately
+        File.AppendAllText(logPath, $"=== TheCabin Application Started at {DateTime.Now:yyyy-MM-dd HH:mm:ss} ==={Environment.NewLine}");
+        File.AppendAllText(logPath, $"Base Directory: {AppContext.BaseDirectory}{Environment.NewLine}");
+        File.AppendAllText(logPath, $"Story Packs Path: {Path.Combine(AppContext.BaseDirectory, "story_packs")}{Environment.NewLine}");
+        File.AppendAllText(logPath, $"Log File: {logPath}{Environment.NewLine}{Environment.NewLine}");
+    }
+    
+    // Simple file logger provider
+    private class FileLoggerProvider : ILoggerProvider
+    {
+        private readonly string _logPath;
+        
+        public FileLoggerProvider(string logPath)
+        {
+            _logPath = logPath;
+        }
+        
+        public ILogger CreateLogger(string categoryName)
+        {
+            return new FileLogger(_logPath, categoryName);
+        }
+        
+        public void Dispose() { }
+    }
+    
+    // Simple file logger
+    private class FileLogger : ILogger
+    {
+        private readonly string _logPath;
+        private readonly string _categoryName;
+        private static readonly object _lock = new object();
+        
+        public FileLogger(string logPath, string categoryName)
+        {
+            _logPath = logPath;
+            _categoryName = categoryName;
+        }
+        
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+        
+        public bool IsEnabled(LogLevel logLevel) => logLevel >= LogLevel.Debug;
+        
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        {
+            if (!IsEnabled(logLevel))
+                return;
+            
+            var message = formatter(state, exception);
+            var logEntry = $"[{DateTime.Now:HH:mm:ss.fff}] [{logLevel}] [{_categoryName}] {message}";
+            
+            if (exception != null)
+            {
+                logEntry += $"{Environment.NewLine}Exception: {exception}";
+            }
+            
+            logEntry += Environment.NewLine;
+            
+            lock (_lock)
+            {
+                try
+                {
+                    File.AppendAllText(_logPath, logEntry);
+                }
+                catch
+                {
+                    // Silently fail if we can't write to log
+                }
+            }
+        }
+    }
+#endif
     
     private static void CopyStoryPacksFromResourcesSync(string targetDirectory)
     {
