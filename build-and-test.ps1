@@ -1,6 +1,10 @@
 # The Cabin - Build and Test Script
 # This script builds the project, runs all tests, and provides a summary
 
+param(
+    [switch]$IncludeMauiWindows = $false
+)
+
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  The Cabin - Build and Test Script" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
@@ -10,6 +14,7 @@ Write-Host ""
 $ErrorActionPreference = "Continue"
 $buildSuccess = $true
 $testSuccess = $true
+$mauiWindowsSuccess = $true
 
 # Step 1: Clean previous builds
 Write-Host "[1/5] Cleaning previous builds..." -ForegroundColor Yellow
@@ -66,6 +71,19 @@ if ($LASTEXITCODE -ne 0) {
 }
 Write-Host ""
 
+# Optional Step 6: Build MAUI Windows App
+if ($IncludeMauiWindows) {
+    Write-Host "[6/6] Building MAUI Windows app..." -ForegroundColor Yellow
+    dotnet build src/TheCabin.Maui/TheCabin.Maui.csproj -f net9.0-windows10.0.19041.0 --configuration Release
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "X MAUI Windows build failed" -ForegroundColor Red
+        $mauiWindowsSuccess = $false
+    } else {
+        Write-Host "√ MAUI Windows build successful" -ForegroundColor Green
+    }
+    Write-Host ""
+}
+
 # Summary
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  Build and Test Summary" -ForegroundColor Cyan
@@ -84,7 +102,18 @@ if ($testSuccess) {
     Write-Host "X Tests: FAILED (check details above)" -ForegroundColor Red
 }
 
+if ($IncludeMauiWindows) {
+    if ($mauiWindowsSuccess) {
+        Write-Host "√ MAUI Windows: SUCCESS" -ForegroundColor Green
+    } else {
+        Write-Host "X MAUI Windows: FAILED" -ForegroundColor Red
+    }
+}
+
 Write-Host ""
+if (-not $IncludeMauiWindows) {
+    Write-Host "Note: To build MAUI Windows app, use: .\build-and-test.ps1 -IncludeMauiWindows" -ForegroundColor Cyan
+}
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Done!" -ForegroundColor Cyan

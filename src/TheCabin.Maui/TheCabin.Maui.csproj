@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 <PropertyGroup>
-<TargetFrameworks>net9.0-android</TargetFrameworks>
+<TargetFrameworks>net9.0-android;net9.0-windows10.0.19041.0</TargetFrameworks>
+<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 
 <OutputType>Exe</OutputType>
 <RootNamespace>TheCabin.Maui</RootNamespace>
@@ -21,10 +22,15 @@
 <ApplicationVersion>1</ApplicationVersion>
 
 <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 
 <!-- Android Specific -->
 <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
 <AndroidLinkMode>None</AndroidLinkMode>
+
+<!-- Windows Specific - Enable unpackaged deployment -->
+<WindowsPackageType Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">None</WindowsPackageType>
+<WindowsAppSDKSelfContained Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">true</WindowsAppSDKSelfContained>
 </PropertyGroup>
 
 	<ItemGroup>
@@ -41,9 +47,15 @@
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
 
-		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
-		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
-	</ItemGroup>
+<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+
+<!-- Story Pack Files -->
+<None Include="..\..\story_packs\*.json">
+  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  <Link>story_packs\%(Filename)%(Extension)</Link>
+</None>
+</ItemGroup>
 
 <ItemGroup>
 <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />

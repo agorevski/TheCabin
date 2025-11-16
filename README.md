@@ -1,9 +1,10 @@
 # 🎮 The Cabin
 
-A voice-controlled interactive fiction game built with .NET MAUI for Android. Explore mysterious environments by speaking commands in this immersive narrative-driven adventure that combines classic text adventure gameplay with modern AI-powered natural language processing.
+A voice-controlled interactive fiction game built with .NET MAUI for Android and Windows. Explore mysterious environments by speaking commands in this immersive narrative-driven adventure that combines classic text adventure gameplay with modern AI-powered natural language processing.
 
-[![.NET MAUI](https://img.shields.io/badge/.NET%20MAUI-8.0-512BD4?logo=.net)](https://dotnet.microsoft.com/apps/maui)
+[![.NET MAUI](https://img.shields.io/badge/.NET%20MAUI-9.0-512BD4?logo=.net)](https://dotnet.microsoft.com/apps/maui)
 [![Android](https://img.shields.io/badge/Android-6.0%2B-3DDC84?logo=android)](https://www.android.com/)
+[![Windows](https://img.shields.io/badge/Windows-10%2B-0078D6?logo=windows)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## ✨ Features
@@ -52,7 +53,7 @@ The project follows a clean architecture pattern with clear separation of concer
 ```text
 TheCabin/
 ├── src/
-│   ├── TheCabin.Maui/           # MAUI Android app (UI layer)
+│   ├── TheCabin.Maui/           # MAUI app (Android & Windows)
 │   ├── TheCabin.Core/           # Game engine and domain logic
 │   ├── TheCabin.Infrastructure/ # Data access and external services
 │   └── TheCabin.Console/        # Console test harness
@@ -72,10 +73,20 @@ TheCabin/
 
 ### Prerequisites
 
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) or higher
+#### For Both Platforms
+
+- [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) or higher
 - [Visual Studio 2022](https://visualstudio.microsoft.com/) (17.8+) with MAUI workload
+
+#### For Android Testing
+
 - Android SDK (API Level 23-34)
 - Android device or emulator
+
+#### For Windows Testing
+
+- Windows 10 (version 1809 / build 17763) or higher
+- Windows 10 SDK (installed with Visual Studio MAUI workload)
 
 ### Build and Run
 
@@ -89,15 +100,47 @@ dotnet restore
 
 # Build the solution
 dotnet build
+```
 
-# Run on Android (requires connected device/emulator)
+#### Run on Windows
+
+**From Visual Studio (Recommended):**
+
+1. Set `TheCabin.Maui` as startup project
+2. Select **Windows Machine** from the debug target dropdown
+3. Press F5 or click Start
+
+**From Command Line (for debugging):**
+
+```bash
+# Build the Windows app
+cd src/TheCabin.Maui
+dotnet build -f net9.0-windows10.0.19041.0
+
+# Run with console output to see errors
+cd bin\Debug\net9.0-windows10.0.19041.0\win10-x64
+cmd /c "TheCabin.Maui.exe & pause"
+```
+
+**Troubleshooting:** If the app crashes immediately:
+
+1. **Use Visual Studio** - It's the recommended way to run and debug Windows MAUI apps
+2. Check for missing resources - Story pack JSON files must be in the output directory
+3. View crash logs in Windows Event Viewer (Application logs)
+4. Run from Visual Studio debugger to see exception details (F5)
+
+**Note:** Windows MAUI apps require the Windows App SDK runtime. Visual Studio handles all dependencies and provides debugging capabilities automatically.
+
+#### Run on Android
+
+```bash
+# Build and run on Android (requires connected device/emulator)
 cd src/TheCabin.Maui
 dotnet build -t:Run -f net9.0-android
 
 # Look at device logs while running
 cd C:\android-sdk\platform-tools
 adb logcat -c && adb logcat | findstr "com.thecabin.voiceadventure"
-
 ```
 
 ### Alternative: Use PowerShell Script
@@ -111,10 +154,11 @@ adb logcat -c && adb logcat | findstr "com.thecabin.voiceadventure"
 
 | Component | Technology |
 |-----------|-----------|
-| **Framework** | .NET MAUI 8.0 |
+| **Framework** | .NET MAUI 9.0 |
 | **Language** | C# 12 |
+| **Platforms** | Android 6.0+, Windows 10+ |
 | **UI Pattern** | MVVM (CommunityToolkit.Mvvm) |
-| **Speech Recognition** | Android SpeechRecognizer API |
+| **Speech Recognition** | Platform-specific APIs (Android) |
 | **Text-to-Speech** | MAUI TextToSpeech / Azure TTS |
 | **LLM Integration** | OpenAI GPT-4o-mini / Azure OpenAI |
 | **Database** | SQLite (sqlite-net-pcl) |
@@ -142,17 +186,32 @@ Development progress is tracked in phase summary documents (`PHASE_*_SUMMARY.md`
 
 ## 🎮 How to Play
 
-1. **Launch the app** and grant microphone permissions
+### On Android
+
+1. **Launch the app** and grant microphone permissions when prompted
 2. **Select a story pack** from the available themes
-3. **Tap the microphone button** or say "Listen" to activate voice input
-4. **Speak commands** naturally:
-   - "Look around"
-   - "Pick up the lantern"
-   - "Go north"
-   - "Use the key on the door"
-   - "Check my inventory"
+3. **Tap the microphone button** to activate voice input
+4. **Speak commands** naturally (e.g., "Look around", "Pick up the lantern", "Go north")
 5. **Listen or read** the narration describing what happens
 6. **Solve puzzles** and explore to uncover the story
+
+### On Windows
+
+1. **Launch the app** from Visual Studio or the built executable
+2. **Select a story pack** from the available themes
+3. **Type commands** in the command entry field (voice input coming in future updates)
+4. **Press Enter** or click the submit button to execute commands
+5. **Read** the narration describing what happens (text-to-speech available)
+6. **Solve puzzles** and explore to uncover the story
+
+### Common Commands
+
+- "Look around" - Examine your current location
+- "Pick up [item]" - Add an item to your inventory
+- "Go [direction]" - Move to another room (north, south, east, west)
+- "Use [item] on [target]" - Interact with objects
+- "Check inventory" - View items you're carrying
+- "Help" - Get available commands
 
 ## 🧪 Testing
 
@@ -236,4 +295,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Made with ❤️ using .NET MAUI**
+## Made with ❤️ using .NET MAUI**
