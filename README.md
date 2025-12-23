@@ -259,22 +259,12 @@ dotnet test --collect:"XPlat Code Coverage"
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature requests.
+Contributions are welcome! Please see our [Contributing Guide](CONTRIBUTING.md) for detailed information on:
 
-### Development Setup
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Code Style
-
-- Follow standard C# coding conventions
-- Use meaningful variable and method names
-- Add XML documentation comments for public APIs
-- Write unit tests for new functionality
+- Development environment setup
+- Coding standards and conventions
+- Pull request process
+- Issue reporting guidelines
 
 ## 📄 License
 

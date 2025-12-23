@@ -15,13 +15,6 @@ This document outlines actionable improvements to enhance code quality, develope
 
 ## 📦 Project Structure
 
-### 8. Create a CONTRIBUTING.md
-Extract and expand the contributing section from README.md into a dedicated file with:
-- Development environment setup
-- Coding standards and conventions
-- PR review process
-- Issue reporting guidelines
-
 ### 9. Add CHANGELOG.md
 Track version history and changes. The extensive phase summaries in `/docs` could be consolidated into a user-facing changelog.
 
