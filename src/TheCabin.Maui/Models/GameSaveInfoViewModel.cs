@@ -11,12 +11,12 @@ public class GameSaveInfoViewModel
     public TimeSpan PlayTime { get; set; }
     public string PlayerLocation { get; set; } = string.Empty;
     public int PlayerHealth { get; set; }
-    
+
     // UI-specific properties
     public string Icon => GetThemeIcon();
     public string SavedDateDisplay => SavedDate.ToString("MMM dd, yyyy h:mm tt");
-    public string PlayTimeDisplay => PlayTime.TotalHours >= 1 
-        ? $"{PlayTime.Hours}h {PlayTime.Minutes}m" 
+    public string PlayTimeDisplay => PlayTime.TotalHours >= 1
+        ? $"{PlayTime.Hours}h {PlayTime.Minutes}m"
         : $"{PlayTime.Minutes}m";
     public string LocationDisplay => FormatLocation(PlayerLocation);
     public string HealthDisplay => $"{PlayerHealth}/100";
@@ -27,7 +27,7 @@ public class GameSaveInfoViewModel
         >= 25 => Color.FromArgb("#FF6B35"), // Dark Orange
         _ => Color.FromArgb("#D0021B")      // Red
     };
-    
+
     private string GetThemeIcon()
     {
         return ThemeName.ToLower() switch
@@ -40,12 +40,12 @@ public class GameSaveInfoViewModel
             _ => "📖"
         };
     }
-    
+
     private string FormatLocation(string location)
     {
         if (string.IsNullOrEmpty(location))
             return "Unknown";
-            
+
         return location
             .Replace("_", " ")
             .Split(' ')

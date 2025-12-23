@@ -12,8 +12,8 @@ public class LlmCommandParserService : ICommandParserService
     private readonly HttpClient _httpClient;
     private readonly string _apiKey;
     private readonly ILocalCommandParser _fallbackParser;
-    
-    private const string SystemPrompt = @"You are a command parser for a text adventure game. 
+
+    private const string SystemPrompt = @"You are a command parser for a text adventure game.
 Parse the player's input into a structured JSON command.
 
 Available verbs: go, take, drop, use, open, close, examine, look, read, push, pull, inventory, help
@@ -32,7 +32,7 @@ Input: 'go north' → {""verb"":""go"",""object"":""north"",""confidence"":0.95}
 Input: 'pick up the lantern' → {""verb"":""take"",""object"":""lantern"",""confidence"":0.9}
 Input: 'use key on door' → {""verb"":""use"",""object"":""key"",""target"":""door"",""confidence"":0.85}
 Input: 'look around' → {""verb"":""look"",""object"":null,""confidence"":0.95}";
-    
+
     public LlmCommandParserService(
         HttpClient httpClient,
         string apiKey,
@@ -41,10 +41,10 @@ Input: 'look around' → {""verb"":""look"",""object"":null,""confidence"":0.95}
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         _apiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey));
         _fallbackParser = fallbackParser ?? throw new ArgumentNullException(nameof(fallbackParser));
-        
+
         _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
     }
-    
+
     public async Task<ParsedCommand> ParseAsync(string input, GameContext context, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(input))
@@ -56,12 +56,12 @@ Input: 'look around' → {""verb"":""look"",""object"":null,""confidence"":0.95}
                 RawInput = input
             };
         }
-        
+
         try
         {
             // Build context information for better parsing
             var contextInfo = BuildContextInfo(context);
-            
+
             var userPrompt = $@"
 Context:
 - Location: {context.CurrentLocation}
@@ -72,7 +72,7 @@ Context:
 Player input: ""{input}""
 
 Parse this command into JSON.";
-            
+
             var requestBody = new
             {
                 model = "gpt-4o-mini",
@@ -85,24 +85,24 @@ Parse this command into JSON.";
                 max_tokens = 150,
                 response_format = new { type = "json_object" }
             };
-            
+
             var jsonRequest = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(jsonRequest, System.Text.Encoding.UTF8, "application/json");
-            
+
             var response = await _httpClient.PostAsync(
                 "https://api.openai.com/v1/chat/completions",
                 content);
-            
+
             if (response.IsSuccessStatusCode)
             {
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 var apiResponse = JsonSerializer.Deserialize<LlmApiResponse>(jsonResponse);
-                
+
                 if (apiResponse?.Choices?.Length > 0)
                 {
                     var messageContent = apiResponse.Choices[0].Message.Content;
                     var parsed = JsonSerializer.Deserialize<ParsedCommand>(messageContent);
-                    
+
                     if (parsed != null)
                     {
                         parsed.RawInput = input;
@@ -116,11 +116,11 @@ Parse this command into JSON.";
         {
             // Fall back to local parser on any error
         }
-        
+
         // Fallback to local parser
         return await _fallbackParser.ParseAsync(input, context);
     }
-    
+
     private string BuildContextInfo(GameContext context)
     {
         return JsonSerializer.Serialize(new
@@ -131,18 +131,18 @@ Parse this command into JSON.";
             flags = context.GameFlags
         });
     }
-    
+
     // API response models
     private class LlmApiResponse
     {
         public Choice[]? Choices { get; set; }
     }
-    
+
     private class Choice
     {
         public Message Message { get; set; } = new();
     }
-    
+
     private class Message
     {
         public string Content { get; set; } = string.Empty;

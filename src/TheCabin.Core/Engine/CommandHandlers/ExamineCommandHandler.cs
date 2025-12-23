@@ -50,7 +50,7 @@ public class ExamineCommandHandler : ICommandHandler
     {
         // First check visible objects in room
         var targetObject = _stateMachine.FindVisibleObject(command.Object!);
-        
+
         // If not in room, check inventory using gameState
         if (targetObject == null)
         {
@@ -76,41 +76,41 @@ public class ExamineCommandHandler : ICommandHandler
             var currentRoom = _stateMachine.GetCurrentRoom();
             var inventoryItems = string.Join(", ", gameState.Player.Inventory.Items.Select(i => i.Id));
             var storyFlags = string.Join(", ", gameState.Progress.StoryFlags.Where(f => f.Value).Select(f => f.Key));
-            
+
             System.Diagnostics.Debug.WriteLine($"[ExamineCommandHandler] === Current State ===");
             System.Diagnostics.Debug.WriteLine($"[ExamineCommandHandler] Current Room: {currentRoom.Id}");
             System.Diagnostics.Debug.WriteLine($"[ExamineCommandHandler] Inventory: [{inventoryItems}]");
             System.Diagnostics.Debug.WriteLine($"[ExamineCommandHandler] Story Flags: [{storyFlags}]");
             System.Diagnostics.Debug.WriteLine($"[ExamineCommandHandler] Target Object: {targetObject.Id} ({targetObject.Name})");
-            
+
             var activePuzzles = _puzzleEngine.GetActivePuzzles(gameState);
             System.Diagnostics.Debug.WriteLine($"[ExamineCommandHandler] Checking {activePuzzles.Count} active puzzles for command: examine {command.Object}");
-            
+
             foreach (var puzzle in activePuzzles)
             {
                 System.Diagnostics.Debug.WriteLine($"[ExamineCommandHandler] Attempting puzzle '{puzzle.Id}' with {puzzle.Steps.Count} steps");
                 var puzzleResult = await _puzzleEngine.AttemptStepAsync(puzzle.Id, command, gameState);
                 System.Diagnostics.Debug.WriteLine($"[ExamineCommandHandler] Puzzle '{puzzle.Id}' attempt result: Success={puzzleResult.Success}, Message='{puzzleResult.Message}'");
-                
+
                 if (puzzleResult.Success)
                 {
                     System.Diagnostics.Debug.WriteLine($"[ExamineCommandHandler] ✓ Puzzle step matched! Using puzzle messages.");
-                    
+
                     // Set completion flag if specified
-                    if (puzzleResult.AttemptedStep != null && 
+                    if (puzzleResult.AttemptedStep != null &&
                         !string.IsNullOrEmpty(puzzleResult.AttemptedStep.CompletionFlag))
                     {
                         _stateMachine.SetStoryFlag(puzzleResult.AttemptedStep.CompletionFlag, true);
                     }
-                    
+
                     // Build result message
                     var puzzleMessages = new List<string> { puzzleResult.Message };
-                    
+
                     if (puzzleResult.PuzzleCompleted && !string.IsNullOrEmpty(puzzle.CompletionMessage))
                     {
                         puzzleMessages.Add(puzzle.CompletionMessage);
                     }
-                    
+
                     System.Diagnostics.Debug.WriteLine($"[ExamineCommandHandler] Returning puzzle result with {puzzleMessages.Count} messages");
                     return new CommandResult
                     {
@@ -120,7 +120,7 @@ public class ExamineCommandHandler : ICommandHandler
                     };
                 }
             }
-            
+
             System.Diagnostics.Debug.WriteLine($"[ExamineCommandHandler] No puzzle steps matched, using standard examine behavior");
         }
         else

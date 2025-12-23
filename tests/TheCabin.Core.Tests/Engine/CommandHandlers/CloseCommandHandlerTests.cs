@@ -17,18 +17,18 @@ public class CloseCommandHandlerTests
     {
         // Create test story pack first
         var storyPack = CreateTestStoryPack();
-        
+
         // Create inventory manager with temporary game state
         var tempGameState = new GameState();
         _inventoryManager = new InventoryManager(tempGameState);
-        
+
         // Create state machine and initialize
         _stateMachine = new GameStateMachine(_inventoryManager);
         _stateMachine.Initialize(storyPack);
-        
+
         // Get the actual game state created by Initialize
         _gameState = _stateMachine.CurrentState;
-        
+
         // Create handler
         _handler = new CloseCommandHandler(_stateMachine);
     }
@@ -215,7 +215,7 @@ public class CloseCommandHandlerTests
             Property = "Description",
             NewValue = "A closed door that blends with the wall."
         });
-        
+
         var currentRoom = _stateMachine.GetCurrentRoom();
         currentRoom.State.VisibleObjectIds.Add("door");
         var command = new ParsedCommand { Verb = "close", Object = "door" };
@@ -240,7 +240,7 @@ public class CloseCommandHandlerTests
             Property = "Description",
             NewValue = "The room feels more enclosed now."
         });
-        
+
         var currentRoom = _stateMachine.GetCurrentRoom();
         currentRoom.State.VisibleObjectIds.Add("door");
         var command = new ParsedCommand { Verb = "close", Object = "door" };

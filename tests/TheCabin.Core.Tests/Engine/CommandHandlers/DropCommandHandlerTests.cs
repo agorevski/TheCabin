@@ -18,11 +18,11 @@ public class DropCommandHandlerTests
         _gameState = CreateTestGameState();
         _inventoryManager = new InventoryManager(_gameState);
         _stateMachine = new GameStateMachine(_inventoryManager);
-        
+
         // Initialize the state machine with a simple story pack
         var storyPack = CreateTestStoryPack();
         _stateMachine.Initialize(storyPack);
-        
+
         _handler = new DropCommandHandler(_inventoryManager, _stateMachine);
     }
 
@@ -91,11 +91,11 @@ public class DropCommandHandlerTests
     {
         // Arrange
         var lantern = CreateTestObject("lantern", "Lantern", isCollectable: true);
-        
+
         // Add to the state machine's inventory (not the test gameState)
         _stateMachine.CurrentState.Player.Inventory.Items.Add(lantern);
         _stateMachine.CurrentState.World.Objects[lantern.Id] = lantern;
-        
+
         var command = new ParsedCommand { Verb = "drop", Object = "lantern" };
         var currentRoom = _stateMachine.GetCurrentRoom();
         var initialCount = currentRoom.State.VisibleObjectIds.Count;
@@ -141,7 +141,7 @@ public class DropCommandHandlerTests
             }
         };
     }
-    
+
     private StoryPack CreateTestStoryPack()
     {
         var room = new Room

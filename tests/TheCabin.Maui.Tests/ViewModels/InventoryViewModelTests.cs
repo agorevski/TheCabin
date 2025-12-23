@@ -17,7 +17,7 @@ public class InventoryViewModelTests
     public InventoryViewModelTests()
     {
         _mockStateMachine = new Mock<IGameStateMachine>();
-        
+
         // Setup test game state with inventory
         _testGameState = new GameState();
         _testGameState.Player.Inventory = new Inventory
@@ -256,7 +256,7 @@ public class InventoryViewModelTests
 
         // Note: In real scenario, this would show a confirmation dialog
         // For testing, we're directly manipulating the collection
-        
+
         // Act
         _viewModel.Items.Remove(item);
 

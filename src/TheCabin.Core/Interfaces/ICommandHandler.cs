@@ -11,7 +11,7 @@ public interface ICommandHandler
     /// The verb this handler responds to (e.g., "take", "go", "use")
     /// </summary>
     string Verb { get; }
-    
+
     /// <summary>
     /// Validates whether the command can be executed
     /// </summary>
@@ -19,7 +19,7 @@ public interface ICommandHandler
     /// <param name="gameState">Current game state</param>
     /// <returns>Validation result</returns>
     Task<CommandValidationResult> ValidateAsync(ParsedCommand command, GameState gameState);
-    
+
     /// <summary>
     /// Executes the command
     /// </summary>
@@ -38,20 +38,20 @@ public class CommandValidationResult
     /// Whether the command is valid and can be executed
     /// </summary>
     public bool IsValid { get; set; }
-    
+
     /// <summary>
     /// Message explaining why validation failed (if applicable)
     /// </summary>
     public string Message { get; set; } = string.Empty;
-    
+
     /// <summary>
     /// Creates a successful validation result
     /// </summary>
     public static CommandValidationResult Valid() => new() { IsValid = true };
-    
+
     /// <summary>
     /// Creates a failed validation result with a message
     /// </summary>
-    public static CommandValidationResult Invalid(string message) => 
+    public static CommandValidationResult Invalid(string message) =>
         new() { IsValid = false, Message = message };
 }

@@ -88,7 +88,7 @@ public class GameInitializationService
             // Get exits
             var exits = initialRoom.Exits.Keys.ToList();
 
-            _logger?.LogInformation("Game initialized successfully: {Theme} (Pack: {PackId})", 
+            _logger?.LogInformation("Game initialized successfully: {Theme} (Pack: {PackId})",
                 storyPack.Theme, storyPack.Id);
 
             return new InitializationResult

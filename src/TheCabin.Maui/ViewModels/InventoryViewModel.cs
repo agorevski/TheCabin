@@ -9,19 +9,19 @@ namespace TheCabin.Maui.ViewModels;
 public partial class InventoryViewModel : BaseViewModel
 {
     private readonly IGameStateMachine _stateMachine;
-    
+
     [ObservableProperty]
     private ObservableCollection<GameObject> items;
-    
+
     [ObservableProperty]
     private int totalWeight;
-    
+
     [ObservableProperty]
     private int maxCapacity;
-    
+
     [ObservableProperty]
     private string weightDisplay = string.Empty;
-    
+
     public InventoryViewModel(IGameStateMachine stateMachine)
     {
         _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
@@ -30,34 +30,34 @@ public partial class InventoryViewModel : BaseViewModel
         MaxCapacity = 20;
         UpdateInventory();
     }
-    
+
     public void UpdateInventory()
     {
         if (_stateMachine?.CurrentState?.Player?.Inventory != null)
         {
             var inventory = _stateMachine.CurrentState.Player.Inventory;
-            
+
             Items.Clear();
             foreach (var item in inventory.Items)
             {
                 Items.Add(item);
             }
-            
+
             TotalWeight = inventory.TotalWeight;
             MaxCapacity = inventory.MaxCapacity;
             WeightDisplay = $"{TotalWeight} / {MaxCapacity} kg";
         }
     }
-    
+
     [RelayCommand]
     private async Task DropItemAsync(GameObject item)
     {
         if (item == null) return;
-        
+
         var confirm = await ShowConfirmAsync(
             "Drop Item",
             $"Drop {item.Name}? You can pick it up again later.");
-        
+
         if (confirm)
         {
             // TODO: Implement drop logic through game state
@@ -66,12 +66,12 @@ public partial class InventoryViewModel : BaseViewModel
             WeightDisplay = $"{TotalWeight} / {MaxCapacity} kg";
         }
     }
-    
+
     [RelayCommand]
     private async Task UseItemAsync(GameObject item)
     {
         if (item == null) return;
-        
+
         if (!item.Actions.ContainsKey("use"))
         {
             await Shell.Current.DisplayAlert(
@@ -80,25 +80,25 @@ public partial class InventoryViewModel : BaseViewModel
                 "OK");
             return;
         }
-        
+
         // TODO: Implement use logic through game state
         await Shell.Current.DisplayAlert(
             "Item Used",
             $"You used the {item.Name}.",
             "OK");
     }
-    
+
     [RelayCommand]
     private async Task ExamineItemAsync(GameObject item)
     {
         if (item == null) return;
-        
+
         await Shell.Current.DisplayAlert(
             item.Name,
             item.Description,
             "OK");
     }
-    
+
     [RelayCommand]
     private async Task CloseAsync()
     {

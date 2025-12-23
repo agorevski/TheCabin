@@ -17,18 +17,18 @@ public class OpenCommandHandlerTests
     {
         // Create test story pack first
         var storyPack = CreateTestStoryPack();
-        
+
         // Create inventory manager with temporary game state
         var tempGameState = new GameState();
         _inventoryManager = new InventoryManager(tempGameState);
-        
+
         // Create state machine and initialize
         _stateMachine = new GameStateMachine(_inventoryManager);
         _stateMachine.Initialize(storyPack);
-        
+
         // Get the actual game state created by Initialize
         _gameState = _stateMachine.CurrentState;
-        
+
         // Create handler
         _handler = new OpenCommandHandler(_stateMachine);
     }
@@ -211,12 +211,12 @@ public class OpenCommandHandlerTests
         // Arrange
         var chest = CreateOpenableContainer("chest", "Treasure Chest");
         chest.State.Flags["is_open"] = false;
-        
+
         // Create a hidden item inside the chest
         var gem = CreateTestObject("gem", "Ruby Gem");
         gem.IsVisible = false;
         chest.RequiredItems = new List<string> { "gem" };
-        
+
         var currentRoom = _stateMachine.GetCurrentRoom();
         currentRoom.State.VisibleObjectIds.Add("chest");
         var command = new ParsedCommand { Verb = "open", Object = "chest" };
@@ -242,7 +242,7 @@ public class OpenCommandHandlerTests
             Property = "Description",
             NewValue = "An open doorway reveals a hidden passage."
         });
-        
+
         var currentRoom = _stateMachine.GetCurrentRoom();
         currentRoom.State.VisibleObjectIds.Add("door");
         var command = new ParsedCommand { Verb = "open", Object = "door" };

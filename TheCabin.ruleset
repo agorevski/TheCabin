@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="The Cabin Code Analysis Rules" ToolsVersion="17.0">
+  <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
+    <!-- Suppress SA1309: Field names should not begin with underscore -->
+    <!-- Project uses underscore prefix convention for private fields -->
+    <Rule Id="SA1309" Action="None" />
+
+    <!-- Suppress SA1413: Use trailing comma in multi-line initializers -->
+    <!-- Not enforced in this project -->
+    <Rule Id="SA1413" Action="None" />
+
+    <!-- Suppress SA1201: Elements should appear in correct order -->
+    <!-- Allow flexibility in member ordering -->
+    <Rule Id="SA1201" Action="None" />
+
+    <!-- Suppress SA1600-SA1651: Documentation rules -->
+    <!-- XML documentation not required for all members -->
+    <Rule Id="SA1600" Action="None" />
+    <Rule Id="SA1601" Action="None" />
+    <Rule Id="SA1602" Action="None" />
+    <Rule Id="SA1604" Action="None" />
+    <Rule Id="SA1605" Action="None" />
+    <Rule Id="SA1606" Action="None" />
+    <Rule Id="SA1607" Action="None" />
+    <Rule Id="SA1608" Action="None" />
+    <Rule Id="SA1609" Action="None" />
+    <Rule Id="SA1610" Action="None" />
+    <Rule Id="SA1611" Action="None" />
+    <Rule Id="SA1612" Action="None" />
+    <Rule Id="SA1613" Action="None" />
+    <Rule Id="SA1614" Action="None" />
+    <Rule Id="SA1615" Action="None" />
+    <Rule Id="SA1616" Action="None" />
+    <Rule Id="SA1617" Action="None" />
+    <Rule Id="SA1618" Action="None" />
+    <Rule Id="SA1619" Action="None" />
+    <Rule Id="SA1620" Action="None" />
+    <Rule Id="SA1621" Action="None" />
+    <Rule Id="SA1622" Action="None" />
+    <Rule Id="SA1623" Action="None" />
+    <Rule Id="SA1624" Action="None" />
+    <Rule Id="SA1625" Action="None" />
+    <Rule Id="SA1626" Action="None" />
+    <Rule Id="SA1627" Action="None" />
+    <Rule Id="SA1629" Action="None" />
+    <Rule Id="SA1633" Action="None" />
+    <Rule Id="SA1634" Action="None" />
+    <Rule Id="SA1635" Action="None" />
+    <Rule Id="SA1636" Action="None" />
+    <Rule Id="SA1637" Action="None" />
+    <Rule Id="SA1638" Action="None" />
+    <Rule Id="SA1639" Action="None" />
+    <Rule Id="SA1640" Action="None" />
+    <Rule Id="SA1641" Action="None" />
+    <Rule Id="SA1642" Action="None" />
+    <Rule Id="SA1643" Action="None" />
+    <Rule Id="SA1648" Action="None" />
+    <Rule Id="SA1649" Action="None" />
+    <Rule Id="SA1651" Action="None" />
+
+    <!-- Suppress SA0001: XML comment analysis disabled -->
+    <Rule Id="SA0001" Action="None" />
+
+    <!-- Suppress SA1101: Prefix local calls with this -->
+    <Rule Id="SA1101" Action="None" />
+
+    <!-- Suppress SA1200: Using directives should be placed inside namespace -->
+    <Rule Id="SA1200" Action="None" />
+
+    <!-- Suppress SA1516: Elements should be separated by blank line -->
+    <Rule Id="SA1516" Action="None" />
+
+    <!-- Suppress SA1513: Closing brace should be followed by blank line -->
+    <Rule Id="SA1513" Action="None" />
+
+    <!-- Suppress SA1503: Braces should not be omitted -->
+    <Rule Id="SA1503" Action="None" />
+
+    <!-- Suppress SA1128: Put constructor initializers on their own line -->
+    <Rule Id="SA1128" Action="None" />
+
+    <!-- Suppress SA1202: 'public' members should come before 'private' members -->
+    <Rule Id="SA1202" Action="None" />
+
+    <!-- Suppress SA1116, SA1117: Parameter placement rules -->
+    <Rule Id="SA1116" Action="None" />
+    <Rule Id="SA1117" Action="None" />
+
+    <!-- Suppress SA1122: Use string.Empty for empty strings -->
+    <Rule Id="SA1122" Action="None" />
+
+    <!-- Suppress SA1028: Code should not contain trailing whitespace -->
+    <!-- Can be fixed via IDE settings or format on save -->
+    <Rule Id="SA1028" Action="None" />
+
+    <!-- Suppress SA1009: Closing parenthesis should not be preceded by a space -->
+    <Rule Id="SA1009" Action="None" />
+
+    <!-- Suppress SA1402: File may only contain a single type -->
+    <!-- Project groups related types in single files -->
+    <Rule Id="SA1402" Action="None" />
+
+    <!-- Suppress SA1214: Readonly fields should appear before non-readonly fields -->
+    <Rule Id="SA1214" Action="None" />
+
+    <!-- Suppress SA1515: Single-line comment should be preceded by blank line -->
+    <Rule Id="SA1515" Action="None" />
+
+    <!-- Suppress SA1111: Closing parenthesis should be on line of last parameter -->
+    <Rule Id="SA1111" Action="None" />
+
+    <!-- Suppress SA1203: Constant fields should appear before non-constant fields -->
+    <Rule Id="SA1203" Action="None" />
+
+    <!-- Suppress SA1002: Semicolons should be followed by space -->
+    <Rule Id="SA1002" Action="None" />
+
+    <!-- Suppress SA1512: Single-line comments should not be followed by blank line -->
+    <Rule Id="SA1512" Action="None" />
+
+    <!-- Suppress SA1500: Braces for multi-line statements should not share line -->
+    <Rule Id="SA1500" Action="None" />
+  </Rules>
+
+  <Rules AnalyzerId="SonarAnalyzer.CSharp" RuleNamespace="SonarAnalyzer.CSharp">
+    <!-- Suppress S1481: Remove unused local variables - allow for debugging -->
+    <Rule Id="S1481" Action="None" />
+
+    <!-- Suppress S2325: Make method static - style preference -->
+    <Rule Id="S2325" Action="None" />
+
+    <!-- Suppress S6602: Use Find instead of FirstOrDefault - style preference -->
+    <Rule Id="S6602" Action="None" />
+
+    <!-- Suppress S6605: Use Exists instead of Any - style preference -->
+    <Rule Id="S6605" Action="None" />
+
+    <!-- Suppress S1066: Merge if statements - style preference -->
+    <Rule Id="S1066" Action="None" />
+
+    <!-- Suppress S1871: Branches should have different implementations -->
+    <Rule Id="S1871" Action="None" />
+
+    <!-- Suppress S1905: Remove unnecessary cast - false positives with Dictionary<string, object> -->
+    <Rule Id="S1905" Action="None" />
+
+    <!-- Suppress S4487: Unread private fields - refactoring suggestion -->
+    <Rule Id="S4487" Action="None" />
+
+    <!-- Suppress S3626: Remove redundant jump -->
+    <Rule Id="S3626" Action="None" />
+
+    <!-- Suppress S3267: Simplify loops using LINQ -->
+    <Rule Id="S3267" Action="None" />
+
+    <!-- Suppress S3261: Remove empty namespace -->
+    <Rule Id="S3261" Action="None" />
+
+    <!-- Suppress S3459: Remove unassigned auto-property -->
+    <Rule Id="S3459" Action="None" />
+
+    <!-- Suppress S1144: Remove unused private members -->
+    <Rule Id="S1144" Action="None" />
+
+    <!-- Suppress S1450: Private fields should be local variables -->
+    <Rule Id="S1450" Action="None" />
+
+    <!-- Suppress S3260: Private classes should be sealed -->
+    <Rule Id="S3260" Action="None" />
+
+    <!-- Suppress S6603: Use TrueForAll instead of All -->
+    <Rule Id="S6603" Action="None" />
+
+    <!-- Suppress S1075: Hardcoded URIs/paths -->
+    <Rule Id="S1075" Action="None" />
+  </Rules>
+</RuleSet>

@@ -20,7 +20,7 @@ public partial class MainViewModel : BaseViewModel
     private readonly IMainThreadDispatcher _mainThreadDispatcher;
     private readonly ILogger<MainViewModel> _logger;
     private readonly MauiGameDisplay _display;
-    
+
     private CancellationTokenSource? _listeningCts;
 
     [ObservableProperty]
@@ -70,10 +70,10 @@ public partial class MainViewModel : BaseViewModel
         _gameStateService = gameStateService;
         _mainThreadDispatcher = mainThreadDispatcher;
         _logger = logger;
-        
+
         // Create MauiGameDisplay with our story feed
         _display = new MauiGameDisplay(_mainThreadDispatcher, StoryFeed);
-        
+
         // Create GameOrchestrator with our display
         _orchestrator = new GameOrchestrator(
             gameStateService,
@@ -99,18 +99,18 @@ public partial class MainViewModel : BaseViewModel
                 // Use provided packId or default to classic_horror
                 var selectedPackId = packId ?? "classic_horror";
                 _logger.LogInformation("Initializing game with story pack: {PackId}", selectedPackId);
-                
+
                 // Clear story feed for fresh start
                 StoryFeed.Clear();
-                
+
                 // Initialize game using orchestrator
                 var success = await _orchestrator.InitializeGameAsync(selectedPackId);
-                
+
                 if (!success)
                 {
                     throw new InvalidOperationException("Failed to initialize game");
                 }
-                
+
                 // Play TTS for initial room description if enabled
                 if (TtsEnabled && StoryFeed.Any())
                 {
@@ -124,10 +124,10 @@ public partial class MainViewModel : BaseViewModel
                         await _ttsService.SpeakAsync(ttsMessage);
                     }
                 }
-                
+
                 // Update UI state
                 UpdateUIState();
-                
+
                 _logger.LogInformation("Game initialized successfully with pack: {PackId}", selectedPackId);
             }
             catch (Exception ex)
@@ -143,26 +143,26 @@ public partial class MainViewModel : BaseViewModel
     {
         await Shell.Current.GoToAsync("//SettingsPage");
     }
-    
+
     [RelayCommand]
     private async Task ShowAchievementsAsync()
     {
         await Shell.Current.GoToAsync("//AchievementsPage");
     }
-    
+
     [RelayCommand]
     private async Task SelectStoryPackAsync()
     {
         await Shell.Current.GoToAsync("//StoryPackSelectorPage");
     }
-    
+
     [RelayCommand]
     private async Task StartNewGameAsync()
     {
         // This will be called when returning from story selector
         await Shell.Current.DisplayAlert("New Game", "Story pack selected! Ready to start.", "OK");
     }
-    
+
     [RelayCommand]
     private async Task ShowHelpAsync()
     {
@@ -183,14 +183,14 @@ public partial class MainViewModel : BaseViewModel
         var confirm = await ShowConfirmAsync(
             "New Game",
             "Start a new game? Current progress will be lost.");
-        
+
         if (confirm)
         {
             StoryFeed.Clear();
             await InitializeAsync();
         }
     }
-    
+
     [RelayCommand]
     private async Task SaveGameAsync()
     {
@@ -200,17 +200,17 @@ public partial class MainViewModel : BaseViewModel
             await ShowErrorAsync("No active game to save");
             return;
         }
-        
+
         var saveName = await Shell.Current.DisplayPromptAsync(
             "Save Game",
             "Enter a name for this save:",
             "Save",
             "Cancel",
             placeholder: $"Save {DateTime.Now:yyyy-MM-dd HH:mm}");
-        
+
         if (string.IsNullOrWhiteSpace(saveName))
             return;
-        
+
         await ExecuteAsync(async () =>
         {
             var success = await _orchestrator.SaveGameAsync(saveName);
@@ -220,31 +220,31 @@ public partial class MainViewModel : BaseViewModel
             }
         }, "Failed to save game");
     }
-    
+
     [RelayCommand]
     private async Task LoadGameAsync()
     {
         await Shell.Current.GoToAsync("//LoadGamePage");
     }
-    
+
     public async Task LoadSavedGameAsync(int saveId)
     {
         await ExecuteAsync(async () =>
         {
             // Clear story feed
             StoryFeed.Clear();
-            
+
             // Load game using orchestrator
             var success = await _orchestrator.LoadGameAsync(saveId);
-            
+
             if (!success)
             {
                 throw new InvalidOperationException("Failed to load game");
             }
-            
+
             // Update UI
             UpdateUIState();
-            
+
             _logger.LogInformation("Game loaded from save {SaveId}", saveId);
         }, "Failed to load game");
     }
@@ -276,13 +276,13 @@ public partial class MainViewModel : BaseViewModel
         {
             IsListening = true;
             TranscriptText = "Listening...";
-            
+
             _listeningCts = new CancellationTokenSource();
-            
+
             var result = await _voiceService.RecognizeSpeechAsync(_listeningCts.Token);
-            
+
             IsListening = false;
-            
+
             if (result.Success)
             {
                 TranscriptText = result.TranscribedText;
@@ -316,13 +316,13 @@ public partial class MainViewModel : BaseViewModel
         await ExecuteAsync(async () =>
         {
             IsProcessing = true;
-            
+
             // Process command using orchestrator
             await _orchestrator.ProcessCommandAsync(input);
-            
+
             // Update UI state
             UpdateUIState();
-            
+
             // Optional TTS narration for the last message
             if (TtsEnabled && StoryFeed.Any())
             {
@@ -336,7 +336,7 @@ public partial class MainViewModel : BaseViewModel
                     await _ttsService.SpeakAsync(ttsText);
                 }
             }
-            
+
             IsProcessing = false;
             TranscriptText = string.Empty;
         }, "Command processing failed");
@@ -358,7 +358,7 @@ public partial class MainViewModel : BaseViewModel
             return;
 
         var room = currentState.World.Rooms[currentState.Player.CurrentLocationId];
-        
+
         CurrentLocation = FormatRoomName(room.Id);
         PlayerHealth = currentState.Player.Health;
         LightLevel = room.LightLevel.ToString();

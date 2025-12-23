@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TheCabin.Core.Engine;
 using TheCabin.Core.Engine.CommandHandlers;
@@ -30,20 +30,20 @@ class Program
         });
 
         // Core services
-        services.AddSingleton<IStoryPackService>(sp => 
+        services.AddSingleton<IStoryPackService>(sp =>
             new StoryPackService(Path.Combine(AppContext.BaseDirectory, "story_packs")));
         services.AddSingleton<IGameSaveRepository, GameSaveRepository>();
         services.AddSingleton<IGameStateService, GameStateService>();
         services.AddSingleton<ILocalCommandParser, LocalCommandParser>();
         services.AddSingleton<ICommandParserService, LocalCommandParserAdapter>();
-        
+
         // Achievement service
         services.AddSingleton<IAchievementService, AchievementService>();
-        
+
         // Puzzle engine with achievement service
         services.AddSingleton<IPuzzleEngine>(sp =>
             new PuzzleEngine(sp.GetService<IAchievementService>()));
-        
+
         // Game state machine with achievement service
         services.AddSingleton<IGameStateMachine>(sp =>
         {
@@ -52,21 +52,21 @@ class Program
             var emptyInventoryManager = new InventoryManager(emptyState, achievementService);
             return new GameStateMachine(emptyInventoryManager, achievementService);
         });
-        
+
         services.AddSingleton<GameStateMachine>(sp =>
             (GameStateMachine)sp.GetRequiredService<IGameStateMachine>());
-        
+
         services.AddSingleton<IInventoryManager>(sp =>
         {
             var achievementService = sp.GetService<IAchievementService>();
             var emptyState = new GameState();
             return new InventoryManager(emptyState, achievementService);
         });
-        
+
         // Command handlers
-        services.AddTransient<ICommandHandler>(sp => 
+        services.AddTransient<ICommandHandler>(sp =>
             new MoveCommandHandler(sp.GetRequiredService<GameStateMachine>()));
-        services.AddTransient<ICommandHandler>(sp => 
+        services.AddTransient<ICommandHandler>(sp =>
             new TakeCommandHandler(
                 sp.GetRequiredService<GameStateMachine>(),
                 sp.GetRequiredService<IInventoryManager>(),
@@ -76,36 +76,36 @@ class Program
                 sp.GetRequiredService<IInventoryManager>(),
                 sp.GetRequiredService<GameStateMachine>(),
                 sp.GetRequiredService<IPuzzleEngine>()));
-        services.AddTransient<ICommandHandler>(sp => 
+        services.AddTransient<ICommandHandler>(sp =>
             new UseCommandHandler(
                 sp.GetRequiredService<GameStateMachine>(),
                 sp.GetRequiredService<IInventoryManager>(),
                 sp.GetRequiredService<IPuzzleEngine>()));
-        services.AddTransient<ICommandHandler>(sp => 
+        services.AddTransient<ICommandHandler>(sp =>
             new ExamineCommandHandler(
                 sp.GetRequiredService<GameStateMachine>(),
                 sp.GetRequiredService<IInventoryManager>(),
                 sp.GetRequiredService<IPuzzleEngine>()));
-        services.AddTransient<ICommandHandler>(sp => 
+        services.AddTransient<ICommandHandler>(sp =>
             new OpenCommandHandler(
                 sp.GetRequiredService<GameStateMachine>(),
                 sp.GetRequiredService<IPuzzleEngine>()));
-        services.AddTransient<ICommandHandler>(sp => 
+        services.AddTransient<ICommandHandler>(sp =>
             new CloseCommandHandler(
                 sp.GetRequiredService<GameStateMachine>(),
                 sp.GetRequiredService<IPuzzleEngine>()));
-        services.AddTransient<ICommandHandler>(sp => 
+        services.AddTransient<ICommandHandler>(sp =>
             new LookCommandHandler(sp.GetRequiredService<GameStateMachine>()));
-        services.AddTransient<ICommandHandler>(sp => 
+        services.AddTransient<ICommandHandler>(sp =>
             new InventoryCommandHandler(sp.GetRequiredService<IInventoryManager>()));
-        
+
         // Command router
         services.AddSingleton(sp =>
             new CommandRouter(
                 sp.GetServices<ICommandHandler>(),
                 sp.GetRequiredService<GameStateMachine>(),
                 sp.GetService<IAchievementService>()));
-        
+
         // Console-specific services
         services.AddSingleton<IGameDisplay, ConsoleGameDisplay>();
         services.AddSingleton<GameInitializationService>();
@@ -238,11 +238,11 @@ class GameRunner
         if (int.TryParse(choice, out var index) && index >= 1 && index <= packs.Count)
         {
             var selectedPack = packs[index - 1];
-            
+
             System.Console.WriteLine($"\nLoading '{selectedPack.Theme}'...");
-            
+
             var success = await _orchestrator.InitializeGameAsync(selectedPack.Id);
-            
+
             if (success)
             {
                 System.Console.WriteLine("\nPress any key to begin your adventure...");
@@ -297,11 +297,11 @@ class GameRunner
         if (int.TryParse(choice, out var index) && index >= 1 && index <= saves.Count)
         {
             var selectedSave = saves[index - 1];
-            
+
             System.Console.WriteLine($"\nLoading game '{selectedSave.Name}'...");
-            
+
             var success = await _orchestrator.LoadGameAsync(selectedSave.Id);
-            
+
             if (success)
             {
                 System.Console.WriteLine("\nPress any key to continue...");
@@ -336,13 +336,13 @@ class GameRunner
                 var shouldSave = await _display.ConfirmAsync(
                     "Quit Game",
                     "Save before quitting?");
-                
+
                 if (shouldSave)
                 {
                     var saveName = await _display.PromptAsync(
                         "Enter save name",
                         $"Save {DateTime.Now:yyyy-MM-dd HH:mm}");
-                    
+
                     if (!string.IsNullOrWhiteSpace(saveName))
                     {
                         await _orchestrator.SaveGameAsync(saveName);
@@ -356,7 +356,7 @@ class GameRunner
                 var saveName = await _display.PromptAsync(
                     "Enter save name",
                     $"Save {DateTime.Now:yyyy-MM-dd HH:mm}");
-                
+
                 if (!string.IsNullOrWhiteSpace(saveName))
                 {
                     await _orchestrator.SaveGameAsync(saveName);

@@ -15,7 +15,7 @@ public class Puzzle
     public string? CompletionAchievementId { get; set; }
     public string? AchievementId { get; set; }
     public List<Hint> Hints { get; set; } = new();
-    
+
     /// <summary>
     /// Gets the current step based on completed step IDs
     /// </summary>
@@ -45,11 +45,11 @@ public class Puzzle
             }
             return null; // All steps completed
         }
-        
+
         // For other types, return first incomplete step
         return Steps.FirstOrDefault(s => !completedStepIds.Contains(s.Id));
     }
-    
+
     /// <summary>
     /// Checks if all required flags are set for this puzzle
     /// </summary>

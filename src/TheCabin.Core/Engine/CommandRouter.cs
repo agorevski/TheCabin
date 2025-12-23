@@ -11,7 +11,7 @@ public class CommandRouter
     private readonly Dictionary<string, ICommandHandler> _handlers;
     private readonly GameStateMachine _stateMachine;
     private readonly IAchievementService? _achievementService;
-    
+
     public CommandRouter(
         IEnumerable<ICommandHandler> handlers,
         GameStateMachine stateMachine,
@@ -22,7 +22,7 @@ public class CommandRouter
         _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
         _achievementService = achievementService; // Optional dependency
     }
-    
+
     /// <summary>
     /// Routes and executes a parsed command
     /// </summary>
@@ -30,9 +30,9 @@ public class CommandRouter
     {
         if (command == null)
             throw new ArgumentNullException(nameof(command));
-        
+
         var verb = command.Verb.ToLowerInvariant();
-        
+
         // Find appropriate handler
         if (!_handlers.TryGetValue(verb, out var handler))
         {
@@ -43,7 +43,7 @@ public class CommandRouter
                 Message = $"I don't understand '{command.Verb}'. Try 'help' for available commands."
             };
         }
-        
+
         // Validate command
         var validation = await handler.ValidateAsync(command, _stateMachine.CurrentState);
         if (!validation.IsValid)
@@ -55,16 +55,16 @@ public class CommandRouter
                 Message = validation.Message
             };
         }
-        
+
         // Execute command
         try
         {
             var result = await handler.ExecuteAsync(command, _stateMachine.CurrentState);
-            
+
             // Update game stats
             _stateMachine.CurrentState.Player.Stats.CommandsExecuted++;
             _stateMachine.CurrentState.World.TurnNumber++;
-            
+
             // Track achievement for command execution
             if (_achievementService != null && result.Success)
             {
@@ -73,19 +73,19 @@ public class CommandRouter
                     verb,
                     _stateMachine.CurrentState);
             }
-            
+
             // Add narrative entry
             _stateMachine.AddNarrativeEntry(
                 $"> {command.RawInput}",
                 NarrativeType.PlayerCommand
             );
-            
+
             _stateMachine.AddNarrativeEntry(
                 result.Message,
                 result.Success ? NarrativeType.Success : NarrativeType.Failure,
                 result.Type == CommandResultType.Success
             );
-            
+
             return result;
         }
         catch (Exception ex)
@@ -98,7 +98,7 @@ public class CommandRouter
             };
         }
     }
-    
+
     /// <summary>
     /// Gets a list of all available verbs
     /// </summary>
@@ -106,7 +106,7 @@ public class CommandRouter
     {
         return _handlers.Keys.ToList();
     }
-    
+
     /// <summary>
     /// Gets help text for a specific verb
     /// </summary>
@@ -116,7 +116,7 @@ public class CommandRouter
         {
             return $"{handler.Verb}: Command handler available";
         }
-        
+
         return $"Unknown command: {verb}";
     }
 }

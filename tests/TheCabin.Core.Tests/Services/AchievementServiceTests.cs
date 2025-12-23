@@ -15,13 +15,13 @@ public class AchievementServiceTests
     {
         _mockLogger = new Mock<ILogger<AchievementService>>();
         _service = new AchievementService(_mockLogger.Object);
-        
+
         // Clean up any existing progress file from previous test runs
         var progressFilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "TheCabin",
             "achievement_progress.json");
-        
+
         if (File.Exists(progressFilePath))
         {
             File.Delete(progressFilePath);
@@ -72,13 +72,13 @@ public class AchievementServiceTests
     public async Task TrackEventAsync_RoomVisited_IncrementsProgress()
     {
         // Arrange
-        var achievement = CreateTestAchievement("room_visitor", "Room Visitor", 
+        var achievement = CreateTestAchievement("room_visitor", "Room Visitor",
             TriggerType.RoomVisited, "main_room");
         await _service.InitializeAsync(new List<Achievement> { achievement });
         var gameState = CreateTestGameState();
 
         // Act
-        var unlocked = await _service.TrackEventAsync(TriggerType.RoomVisited, 
+        var unlocked = await _service.TrackEventAsync(TriggerType.RoomVisited,
             "main_room", gameState);
 
         // Assert
@@ -92,7 +92,7 @@ public class AchievementServiceTests
     public async Task TrackEventAsync_MultipleEvents_AccumulatesProgress()
     {
         // Arrange
-        var achievement = CreateTestAchievement("collector", "Collector", 
+        var achievement = CreateTestAchievement("collector", "Collector",
             TriggerType.ItemCollected, "", 3);
         await _service.InitializeAsync(new List<Achievement> { achievement });
         var gameState = CreateTestGameState();
@@ -100,7 +100,7 @@ public class AchievementServiceTests
         // Act
         await _service.TrackEventAsync(TriggerType.ItemCollected, "item1", gameState);
         await _service.TrackEventAsync(TriggerType.ItemCollected, "item2", gameState);
-        var unlocked = await _service.TrackEventAsync(TriggerType.ItemCollected, 
+        var unlocked = await _service.TrackEventAsync(TriggerType.ItemCollected,
             "item3", gameState);
 
         // Assert
@@ -114,7 +114,7 @@ public class AchievementServiceTests
     public async Task TrackEventAsync_WrongTriggerType_DoesNotIncrementProgress()
     {
         // Arrange
-        var achievement = CreateTestAchievement("room_visitor", "Room Visitor", 
+        var achievement = CreateTestAchievement("room_visitor", "Room Visitor",
             TriggerType.RoomVisited);
         await _service.InitializeAsync(new List<Achievement> { achievement });
         var gameState = CreateTestGameState();
@@ -132,7 +132,7 @@ public class AchievementServiceTests
     public async Task TrackEventAsync_WrongTarget_DoesNotIncrementProgress()
     {
         // Arrange
-        var achievement = CreateTestAchievement("specific_room", "Specific Room", 
+        var achievement = CreateTestAchievement("specific_room", "Specific Room",
             TriggerType.RoomVisited, "target_room");
         await _service.InitializeAsync(new List<Achievement> { achievement });
         var gameState = CreateTestGameState();
@@ -149,15 +149,15 @@ public class AchievementServiceTests
     public async Task TrackEventAsync_WithRequiredFlags_OnlyUnlocksWhenFlagsSet()
     {
         // Arrange
-        var achievement = CreateTestAchievement("flag_dependent", "Flag Dependent", 
+        var achievement = CreateTestAchievement("flag_dependent", "Flag Dependent",
             TriggerType.RoomVisited);
         achievement.RequiredFlags.Add("required_flag");
         await _service.InitializeAsync(new List<Achievement> { achievement });
-        
+
         var gameState = CreateTestGameState();
 
         // Act - without flag
-        var unlocked1 = await _service.TrackEventAsync(TriggerType.RoomVisited, 
+        var unlocked1 = await _service.TrackEventAsync(TriggerType.RoomVisited,
             "room1", gameState);
 
         // Assert - not unlocked
@@ -166,7 +166,7 @@ public class AchievementServiceTests
 
         // Act - with flag
         gameState.Progress.StoryFlags["required_flag"] = true;
-        var unlocked2 = await _service.TrackEventAsync(TriggerType.RoomVisited, 
+        var unlocked2 = await _service.TrackEventAsync(TriggerType.RoomVisited,
             "room1", gameState);
 
         // Assert - now unlocked
@@ -178,16 +178,16 @@ public class AchievementServiceTests
     public async Task TrackEventAsync_WithMinHealthCondition_OnlyUnlocksWhenMet()
     {
         // Arrange
-        var achievement = CreateTestAchievement("healthy", "Healthy", 
+        var achievement = CreateTestAchievement("healthy", "Healthy",
             TriggerType.CommandExecuted);
         achievement.Trigger.Conditions["minHealth"] = 80;
         await _service.InitializeAsync(new List<Achievement> { achievement });
-        
+
         var gameState = CreateTestGameState();
 
         // Act - with low health
         gameState.Player.Health = 50;
-        var unlocked1 = await _service.TrackEventAsync(TriggerType.CommandExecuted, 
+        var unlocked1 = await _service.TrackEventAsync(TriggerType.CommandExecuted,
             "test", gameState);
 
         // Assert - not unlocked
@@ -195,7 +195,7 @@ public class AchievementServiceTests
 
         // Act - with high health
         gameState.Player.Health = 100;
-        var unlocked2 = await _service.TrackEventAsync(TriggerType.CommandExecuted, 
+        var unlocked2 = await _service.TrackEventAsync(TriggerType.CommandExecuted,
             "test", gameState);
 
         // Assert - now unlocked
@@ -206,17 +206,17 @@ public class AchievementServiceTests
     public async Task TrackEventAsync_WithMinInventoryCondition_OnlyUnlocksWhenMet()
     {
         // Arrange
-        var achievement = CreateTestAchievement("hoarder", "Hoarder", 
+        var achievement = CreateTestAchievement("hoarder", "Hoarder",
             TriggerType.ItemCollected);
         achievement.Trigger.Conditions["minInventory"] = 3;
         await _service.InitializeAsync(new List<Achievement> { achievement });
-        
+
         var gameState = CreateTestGameState();
 
         // Act - with 2 items
         gameState.Player.Inventory.Items.Add(new GameObject { Id = "item1" });
         gameState.Player.Inventory.Items.Add(new GameObject { Id = "item2" });
-        var unlocked1 = await _service.TrackEventAsync(TriggerType.ItemCollected, 
+        var unlocked1 = await _service.TrackEventAsync(TriggerType.ItemCollected,
             "item2", gameState);
 
         // Assert - not unlocked
@@ -224,7 +224,7 @@ public class AchievementServiceTests
 
         // Act - with 3 items
         gameState.Player.Inventory.Items.Add(new GameObject { Id = "item3" });
-        var unlocked2 = await _service.TrackEventAsync(TriggerType.ItemCollected, 
+        var unlocked2 = await _service.TrackEventAsync(TriggerType.ItemCollected,
             "item3", gameState);
 
         // Assert - now unlocked
@@ -235,7 +235,7 @@ public class AchievementServiceTests
     public async Task UnlockAchievementAsync_ManuallyUnlocksAchievement()
     {
         // Arrange
-        var achievement = CreateTestAchievement("manual", "Manual", 
+        var achievement = CreateTestAchievement("manual", "Manual",
             TriggerType.RoomVisited);
         await _service.InitializeAsync(new List<Achievement> { achievement });
 
@@ -252,7 +252,7 @@ public class AchievementServiceTests
     public async Task UnlockAchievementAsync_AlreadyUnlocked_ReturnsNull()
     {
         // Arrange
-        var achievement = CreateTestAchievement("already_unlocked", "Already Unlocked", 
+        var achievement = CreateTestAchievement("already_unlocked", "Already Unlocked",
             TriggerType.RoomVisited);
         await _service.InitializeAsync(new List<Achievement> { achievement });
         await _service.UnlockAchievementAsync("already_unlocked");
@@ -281,7 +281,7 @@ public class AchievementServiceTests
     public async Task IsUnlocked_UnlockedAchievement_ReturnsTrue()
     {
         // Arrange
-        var achievement = CreateTestAchievement("test", "Test", 
+        var achievement = CreateTestAchievement("test", "Test",
             TriggerType.RoomVisited);
         await _service.InitializeAsync(new List<Achievement> { achievement });
         await _service.UnlockAchievementAsync("test");
@@ -297,7 +297,7 @@ public class AchievementServiceTests
     public async Task IsUnlocked_LockedAchievement_ReturnsFalse()
     {
         // Arrange
-        var achievement = CreateTestAchievement("test", "Test", 
+        var achievement = CreateTestAchievement("test", "Test",
             TriggerType.RoomVisited);
         await _service.InitializeAsync(new List<Achievement> { achievement });
 
@@ -487,7 +487,7 @@ public class AchievementServiceTests
     public async Task GetProgress_ExistingAchievement_ReturnsProgress()
     {
         // Arrange
-        var achievement = CreateTestAchievement("test", "Test", 
+        var achievement = CreateTestAchievement("test", "Test",
             TriggerType.RoomVisited, "", 5);
         await _service.InitializeAsync(new List<Achievement> { achievement });
 
@@ -531,7 +531,7 @@ public class AchievementServiceTests
     }
 
     // Helper methods
-    private Achievement CreateTestAchievement(string id, string name, 
+    private Achievement CreateTestAchievement(string id, string name,
         TriggerType triggerType, string targetId = "", int requiredCount = 1)
     {
         return new Achievement
@@ -550,7 +550,7 @@ public class AchievementServiceTests
         };
     }
 
-    private Achievement CreateTestAchievementWithPoints(string id, string name, 
+    private Achievement CreateTestAchievementWithPoints(string id, string name,
         int points, string category)
     {
         return new Achievement
@@ -568,7 +568,7 @@ public class AchievementServiceTests
         };
     }
 
-    private Achievement CreateSecretAchievement(string id, string name, 
+    private Achievement CreateSecretAchievement(string id, string name,
         TriggerType triggerType)
     {
         var achievement = CreateTestAchievement(id, name, triggerType);

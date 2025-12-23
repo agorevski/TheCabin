@@ -14,12 +14,12 @@ public class PuzzleState
     public DateTime LastActivityAt { get; set; }
     public DateTime? CompletedAt { get; set; }
     public int Attempts { get; set; }
-    
+
     public PuzzleState()
     {
         StartedAt = DateTime.UtcNow;
     }
-    
+
     /// <summary>
     /// Marks a step as completed
     /// </summary>
@@ -30,7 +30,7 @@ public class PuzzleState
             CompletedSteps.Add(stepId);
         }
     }
-    
+
     /// <summary>
     /// Marks the puzzle as fully completed
     /// </summary>
@@ -39,7 +39,7 @@ public class PuzzleState
         IsCompleted = true;
         CompletedAt = DateTime.UtcNow;
     }
-    
+
     /// <summary>
     /// Records a hint being used
     /// </summary>
@@ -47,7 +47,7 @@ public class PuzzleState
     {
         HintsUsed++;
     }
-    
+
     /// <summary>
     /// Records an attempt at solving the puzzle
     /// </summary>

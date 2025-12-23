@@ -29,11 +29,11 @@ public class AchievementService : IAchievementService
     {
         _achievements.Clear();
         _progress.Clear();
-        
+
         foreach (var achievement in achievements)
         {
             _achievements[achievement.Id] = achievement;
-            
+
             // Initialize fresh progress for all achievements
             _progress[achievement.Id] = new AchievementProgress
             {
@@ -42,7 +42,7 @@ public class AchievementService : IAchievementService
             };
         }
 
-        _logger.LogInformation("Initialized achievement system with {Count} achievements", 
+        _logger.LogInformation("Initialized achievement system with {Count} achievements",
             achievements.Count);
 
         // Try to load saved progress (this will override the fresh progress if save file exists)
@@ -82,7 +82,7 @@ public class AchievementService : IAchievementService
                 continue;
 
             // Check if target matches (empty string means any target)
-            if (!string.IsNullOrEmpty(achievement.Trigger.TargetId) && 
+            if (!string.IsNullOrEmpty(achievement.Trigger.TargetId) &&
                 achievement.Trigger.TargetId != targetId)
                 continue;
 
@@ -140,7 +140,7 @@ public class AchievementService : IAchievementService
         progress.UnlockedDate = DateTime.UtcNow;
         achievement.IsUnlocked = true;
 
-        _logger.LogInformation("Achievement unlocked: {Name} ({Id})", 
+        _logger.LogInformation("Achievement unlocked: {Name} ({Id})",
             achievement.Name, achievement.Id);
 
         var notification = new AchievementUnlocked
@@ -213,7 +213,7 @@ public class AchievementService : IAchievementService
     public async Task ResetAllProgressAsync()
     {
         _progress.Clear();
-        
+
         foreach (var achievement in _achievements.Values)
         {
             achievement.IsUnlocked = false;
@@ -225,7 +225,7 @@ public class AchievementService : IAchievementService
         }
 
         await SaveProgressAsync();
-        
+
         _logger.LogInformation("All achievement progress reset");
     }
 
@@ -248,7 +248,7 @@ public class AchievementService : IAchievementService
             });
 
             await File.WriteAllTextAsync(_progressFilePath, json);
-            
+
             _logger.LogDebug("Achievement progress saved to {Path}", _progressFilePath);
         }
         catch (Exception ex)
@@ -278,7 +278,7 @@ public class AchievementService : IAchievementService
                     if (_achievements.ContainsKey(kvp.Key))
                     {
                         _progress[kvp.Key] = kvp.Value;
-                        
+
                         // Update achievement unlocked status
                         if (kvp.Value.IsUnlocked)
                         {

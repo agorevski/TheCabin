@@ -20,21 +20,21 @@ public class CommandRouterIntegrationTests
     {
         // Create test story pack
         var storyPack = CreateIntegrationTestStoryPack();
-        
+
         // Create a temporary game state for initial setup
         var tempGameState = new GameState();
         var tempInventoryManager = new InventoryManager(tempGameState);
-        
+
         // Create state machine and initialize
         _stateMachine = new GameStateMachine(tempInventoryManager);
         _stateMachine.Initialize(storyPack);
-        
+
         // Get the actual game state after initialization
         _gameState = _stateMachine.CurrentState;
-        
+
         // Create inventory manager with the ACTUAL game state
         _inventoryManager = new InventoryManager(_gameState);
-        
+
         // Create command handlers
         var handlers = new List<ICommandHandler>
         {
@@ -48,7 +48,7 @@ public class CommandRouterIntegrationTests
             new CloseCommandHandler(_stateMachine),
             new InventoryCommandHandler(_inventoryManager)
         };
-        
+
         // Create router
         _router = new CommandRouter(handlers, _stateMachine);
     }
@@ -57,7 +57,7 @@ public class CommandRouterIntegrationTests
     public async Task IntegrationTest_CompleteGameplaySequence()
     {
         // Test a complete sequence of commands in a realistic gameplay scenario
-        
+
         // 1. Look around at start
         var lookCmd = new ParsedCommand { Verb = "look" };
         var result = await _router.RouteAsync(lookCmd);
@@ -104,7 +104,7 @@ public class CommandRouterIntegrationTests
     public async Task IntegrationTest_InvalidCommandSequence()
     {
         // Test handling of invalid commands in sequence
-        
+
         // 1. Try to take object that doesn't exist
         var takeCmd = new ParsedCommand { Verb = "take", Object = "unicorn" };
         var result = await _router.RouteAsync(takeCmd);
@@ -130,7 +130,7 @@ public class CommandRouterIntegrationTests
     public async Task IntegrationTest_ObjectManipulationSequence()
     {
         // Test full object lifecycle: examine, take, use, drop
-        
+
         // 1. Examine object in room
         var examineCmd = new ParsedCommand { Verb = "examine", Object = "key" };
         var result = await _router.RouteAsync(examineCmd);
@@ -165,7 +165,7 @@ public class CommandRouterIntegrationTests
     public async Task IntegrationTest_RoomNavigationSequence()
     {
         // Test navigation between multiple rooms
-        
+
         var startRoom = _gameState.Player.CurrentLocationId;
         Assert.Equal("start_room", startRoom);
 
@@ -195,7 +195,7 @@ public class CommandRouterIntegrationTests
     public async Task IntegrationTest_ContainerInteractionSequence()
     {
         // Test opening container and accessing contents
-        
+
         // Move to room with chest
         var moveCmd = new ParsedCommand { Verb = "go", Object = "north" };
         await _router.RouteAsync(moveCmd);
@@ -234,10 +234,10 @@ public class CommandRouterIntegrationTests
     public async Task IntegrationTest_UnknownCommandHandling()
     {
         // Test that unknown verbs are handled gracefully
-        
+
         var unknownCmd = new ParsedCommand { Verb = "fly", Object = "away" };
         var result = await _router.RouteAsync(unknownCmd);
-        
+
         Assert.False(result.Success);
         Assert.Equal(CommandResultType.InvalidCommand, result.Type);
         Assert.Contains("don't understand", result.Message.ToLower());
@@ -247,7 +247,7 @@ public class CommandRouterIntegrationTests
     public async Task IntegrationTest_StateConsistencyAfterMultipleCommands()
     {
         // Ensure game state remains consistent after multiple operations
-        
+
         var initialHealth = _gameState.Player.Health;
         var initialTurnNumber = _gameState.World.TurnNumber;
 

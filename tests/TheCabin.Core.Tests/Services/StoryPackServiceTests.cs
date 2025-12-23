@@ -122,7 +122,7 @@ public class StoryPackServiceTests
     {
         // Arrange
         var pack = CreateValidStoryPack();
-        
+
         // Create circular path: room1 -> room2 -> room1
         var room1 = pack.Rooms[0];
         var room2 = new Room
@@ -132,10 +132,10 @@ public class StoryPackServiceTests
             State = new RoomState(),
             ObjectIds = new List<string>()
         };
-        
+
         room1.Exits["north"] = "room2";
         room2.Exits["south"] = room1.Id;
-        
+
         pack.Rooms.Add(room2);
 
         // Act

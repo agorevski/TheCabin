@@ -9,14 +9,14 @@ namespace TheCabin.Core.Engine.CommandHandlers;
 public class MoveCommandHandler : ICommandHandler
 {
     private readonly GameStateMachine _stateMachine;
-    
+
     public string Verb => "go";
-    
+
     public MoveCommandHandler(GameStateMachine stateMachine)
     {
         _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
     }
-    
+
     public Task<CommandValidationResult> ValidateAsync(ParsedCommand command, GameState gameState)
     {
         if (string.IsNullOrWhiteSpace(command.Object))
@@ -24,10 +24,10 @@ public class MoveCommandHandler : ICommandHandler
             return Task.FromResult(CommandValidationResult.Invalid(
                 "Go where? Please specify a direction (north, south, east, west, up, down)."));
         }
-        
+
         var direction = NormalizeDirection(command.Object);
         var currentRoom = _stateMachine.GetCurrentRoom();
-        
+
         // Check if exit exists in that direction
         if (!currentRoom.Exits.TryGetValue(direction, out var targetRoomId))
         {
@@ -35,39 +35,39 @@ public class MoveCommandHandler : ICommandHandler
             return Task.FromResult(CommandValidationResult.Invalid(
                 $"You can't go {direction} from here. Available exits: {availableExits}"));
         }
-        
+
         // Check if player can transition (handles locked rooms, etc.)
         if (!_stateMachine.CanTransitionTo(targetRoomId))
         {
             return Task.FromResult(CommandValidationResult.Invalid(
                 "The way is blocked or locked."));
         }
-        
+
         return Task.FromResult(CommandValidationResult.Valid());
     }
-    
+
     public Task<CommandResult> ExecuteAsync(ParsedCommand command, GameState gameState)
     {
         var direction = NormalizeDirection(command.Object!);
         var currentRoom = _stateMachine.GetCurrentRoom();
         var targetRoomId = currentRoom.Exits[direction];
-        
+
         // Perform the transition
         _stateMachine.TransitionTo(targetRoomId);
-        
+
         var newRoom = _stateMachine.GetCurrentRoom();
-        
+
         // Get visible objects and exits
         var visibleObjects = _stateMachine.GetVisibleObjects().Select(o => o.Name);
         var exits = newRoom.Exits.Keys;
-        
+
         // Format with separate display and TTS messages
         var (displayMessage, ttsMessage) = RoomDescriptionFormatter.FormatMovementDescription(
             direction,
             newRoom.Description,
             visibleObjects,
             exits);
-        
+
         return Task.FromResult(new CommandResult
         {
             Success = true,
@@ -80,7 +80,7 @@ public class MoveCommandHandler : ICommandHandler
             }
         });
     }
-    
+
     private string NormalizeDirection(string input)
     {
         return input.ToLowerInvariant() switch

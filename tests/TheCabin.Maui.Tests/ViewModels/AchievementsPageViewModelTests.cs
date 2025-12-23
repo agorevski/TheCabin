@@ -410,10 +410,10 @@ public class AchievementsPageViewModelTests
             new Achievement { Id = "b", Name = "Alpha", Description = "First", IconPath = "2" }
         };
         var progress = new Dictionary<string, AchievementProgress>();
-        
+
         _mockAchievementService.Setup(x => x.GetAllAchievements()).Returns(achievements);
         _mockAchievementService.Setup(x => x.GetAllProgress()).Returns(progress);
-        
+
         var vm = new AchievementsPageViewModel(_mockAchievementService.Object);
 
         // Act

@@ -1,4 +1,4 @@
-﻿namespace TheCabin.Maui;
+namespace TheCabin.Maui;
 
 public partial class App : Application
 {
@@ -16,7 +16,7 @@ public partial class App : Application
     protected override void OnStart()
     {
         base.OnStart();
-        
+
         // Initialize story packs asynchronously after app starts
         // This avoids blocking the UI thread during startup
         Task.Run(async () => await InitializeStoryPacksAsync());
@@ -27,7 +27,7 @@ public partial class App : Application
         try
         {
             var storyPackPath = Path.Combine(FileSystem.AppDataDirectory, "story_packs");
-            
+
             // Story pack files to copy from Resources/Raw
             var storyPacks = new[]
             {
@@ -37,11 +37,11 @@ public partial class App : Application
                 "sci_fi_isolation.json",
                 "cozy_mystery.json"
             };
-            
+
             foreach (var packFile in storyPacks)
             {
                 var targetFile = Path.Combine(storyPackPath, packFile);
-                
+
                 // Only copy if doesn't exist (don't overwrite user modifications)
                 if (!File.Exists(targetFile))
                 {
@@ -51,7 +51,7 @@ public partial class App : Application
                         using var reader = new StreamReader(stream);
                         var content = await reader.ReadToEndAsync();
                         await File.WriteAllTextAsync(targetFile, content);
-                        
+
                         System.Diagnostics.Debug.WriteLine($"Successfully copied {packFile}");
                     }
                     catch (Exception ex)

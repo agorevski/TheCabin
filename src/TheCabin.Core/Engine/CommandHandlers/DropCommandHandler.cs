@@ -15,7 +15,7 @@ public class DropCommandHandler : ICommandHandler
     public string Verb => "drop";
 
     public DropCommandHandler(
-        IInventoryManager inventoryManager, 
+        IInventoryManager inventoryManager,
         GameStateMachine stateMachine,
         IPuzzleEngine? puzzleEngine = null)
     {
@@ -57,29 +57,29 @@ public class DropCommandHandler : ICommandHandler
             var currentRoom = _stateMachine.GetCurrentRoom();
             var inventoryItems = string.Join(", ", gameState.Player.Inventory.Items.Select(i => i.Id));
             var storyFlags = string.Join(", ", gameState.Progress.StoryFlags.Where(f => f.Value).Select(f => f.Key));
-            
+
             System.Diagnostics.Debug.WriteLine($"[DropCommandHandler] === Current State ===");
             System.Diagnostics.Debug.WriteLine($"[DropCommandHandler] Current Room: {currentRoom.Id}");
             System.Diagnostics.Debug.WriteLine($"[DropCommandHandler] Inventory: [{inventoryItems}]");
             System.Diagnostics.Debug.WriteLine($"[DropCommandHandler] Story Flags: [{storyFlags}]");
             System.Diagnostics.Debug.WriteLine($"[DropCommandHandler] Target Item: {item.Id} ({item.Name})");
-            
+
             var activePuzzles = _puzzleEngine.GetActivePuzzles(gameState);
             System.Diagnostics.Debug.WriteLine($"[DropCommandHandler] Checking {activePuzzles.Count} active puzzles for command: drop {command.Object}");
-            
+
             foreach (var puzzle in activePuzzles)
             {
                 System.Diagnostics.Debug.WriteLine($"[DropCommandHandler] Attempting puzzle '{puzzle.Id}' with {puzzle.Steps.Count} steps");
                 var puzzleResult = await _puzzleEngine.AttemptStepAsync(puzzle.Id, command, gameState);
                 System.Diagnostics.Debug.WriteLine($"[DropCommandHandler] Puzzle '{puzzle.Id}' attempt result: Success={puzzleResult.Success}, Message='{puzzleResult.Message}'");
-                
+
                 if (puzzleResult.Success)
                 {
                     System.Diagnostics.Debug.WriteLine($"[DropCommandHandler] ✓ Puzzle step matched! Using puzzle messages.");
-                    
+
                     // Remove from inventory using gameState
                     gameState.Player.Inventory.Items.Remove(item);
-                    
+
                     // Add to current room
                     if (!currentRoom.ObjectIds.Contains(item.Id))
                     {
@@ -87,22 +87,22 @@ public class DropCommandHandler : ICommandHandler
                     }
                     currentRoom.State.VisibleObjectIds.Add(item.Id);
                     item.IsVisible = true;
-                    
+
                     // Set completion flag if specified
-                    if (puzzleResult.AttemptedStep != null && 
+                    if (puzzleResult.AttemptedStep != null &&
                         !string.IsNullOrEmpty(puzzleResult.AttemptedStep.CompletionFlag))
                     {
                         _stateMachine.SetStoryFlag(puzzleResult.AttemptedStep.CompletionFlag, true);
                     }
-                    
+
                     // Build result message
                     var puzzleMessages = new List<string> { puzzleResult.Message };
-                    
+
                     if (puzzleResult.PuzzleCompleted && !string.IsNullOrEmpty(puzzle.CompletionMessage))
                     {
                         puzzleMessages.Add(puzzle.CompletionMessage);
                     }
-                    
+
                     System.Diagnostics.Debug.WriteLine($"[DropCommandHandler] Returning puzzle result with {puzzleMessages.Count} messages");
                     return new CommandResult
                     {
@@ -116,7 +116,7 @@ public class DropCommandHandler : ICommandHandler
                     };
                 }
             }
-            
+
             System.Diagnostics.Debug.WriteLine($"[DropCommandHandler] No puzzle steps matched, using standard drop behavior");
         }
         else

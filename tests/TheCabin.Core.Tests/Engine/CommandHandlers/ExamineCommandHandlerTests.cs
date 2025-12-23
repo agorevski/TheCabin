@@ -17,18 +17,18 @@ public class ExamineCommandHandlerTests
     {
         // Create test story pack first
         var storyPack = CreateTestStoryPack();
-        
+
         // Create inventory manager with temporary game state
         var tempGameState = new GameState();
         _inventoryManager = new InventoryManager(tempGameState);
-        
+
         // Create state machine and initialize
         _stateMachine = new GameStateMachine(_inventoryManager);
         _stateMachine.Initialize(storyPack);
-        
+
         // Get the actual game state created by Initialize
         _gameState = _stateMachine.CurrentState;
-        
+
         // Create handler
         _handler = new ExamineCommandHandler(_stateMachine, _inventoryManager);
     }
@@ -234,11 +234,11 @@ public class ExamineCommandHandlerTests
         var roomKey = CreateTestObject("key", "A rusty iron key on the floor.");
         var inventoryKey = CreateTestObject("key_inventory", "A shiny brass key.", isCollectable: true);
         inventoryKey.Id = "key"; // Same ID for testing
-        
+
         var currentRoom = _stateMachine.GetCurrentRoom();
         currentRoom.State.VisibleObjectIds.Add("key");
         _inventoryManager.AddItem(inventoryKey);
-        
+
         var command = new ParsedCommand { Verb = "examine", Object = "key" };
 
         // Act

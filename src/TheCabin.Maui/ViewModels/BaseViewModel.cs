@@ -33,7 +33,7 @@ public partial class BaseViewModel : ObservableObject
                 System.Diagnostics.Debug.WriteLine($"Inner exception: {ex.InnerException.Message}");
                 System.Diagnostics.Debug.WriteLine($"Inner stack trace: {ex.InnerException.StackTrace}");
             }
-            
+
             ErrorMessage = $"{errorMessage ?? "Error"}: {ex.Message}";
             if (ex.InnerException != null)
             {

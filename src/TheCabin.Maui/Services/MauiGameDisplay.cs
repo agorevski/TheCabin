@@ -78,7 +78,7 @@ public class MauiGameDisplay : IGameDisplay
     public Task ShowAchievementUnlockedAsync(string achievementTitle, string achievementDescription)
     {
         var message = $"🏆 ACHIEVEMENT UNLOCKED!\n{achievementTitle}\n{achievementDescription}";
-        
+
         var entry = new MauiNarrativeEntry
         {
             Text = message,

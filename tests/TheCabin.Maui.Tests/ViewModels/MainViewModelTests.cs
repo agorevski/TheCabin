@@ -43,7 +43,7 @@ public class MainViewModelTests
         _mockLogger = new Mock<ILogger<MainViewModel>>();
         _mockInventoryManager = new Mock<IInventoryManager>();
         _mockPuzzleEngine = new Mock<IPuzzleEngine>();
-        
+
         // Create synchronous main thread dispatcher for tests
         _mainThreadDispatcher = new SynchronousMainThreadDispatcher();
 
@@ -79,7 +79,7 @@ public class MainViewModelTests
         {
             _testGameState.World.Rooms[room.Id] = room;
         }
-        
+
         _mockGameStateService.Setup(x => x.CurrentState).Returns(_testGameState);
         _mockStoryPackService.Setup(x => x.LoadPackAsync(It.IsAny<string>()))
             .ReturnsAsync(_testStoryPack);

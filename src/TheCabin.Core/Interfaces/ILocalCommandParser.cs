@@ -11,7 +11,7 @@ public interface ILocalCommandParser
     /// Parses a command using local rules
     /// </summary>
     Task<ParsedCommand> ParseAsync(string input, GameContext context);
-    
+
     /// <summary>
     /// Checks if this parser can handle the input
     /// </summary>

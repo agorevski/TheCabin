@@ -18,21 +18,21 @@ public class UseCommandHandlerTests
     {
         // Create test story pack first
         var storyPack = CreateTestStoryPack();
-        
+
         // Create inventory manager with temporary game state
         var tempGameState = new GameState();
         _inventoryManager = new InventoryManager(tempGameState);
-        
+
         // Create state machine and initialize
         _stateMachine = new GameStateMachine(_inventoryManager);
         _stateMachine.Initialize(storyPack);
-        
+
         // Get the actual game state created by Initialize
         _gameState = _stateMachine.CurrentState;
-        
+
         // Create puzzle engine
         _puzzleEngine = new PuzzleEngine();
-        
+
         // Create handler
         _handler = new UseCommandHandler(_stateMachine, _inventoryManager, _puzzleEngine);
     }

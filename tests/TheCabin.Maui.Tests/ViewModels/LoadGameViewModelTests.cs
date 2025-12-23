@@ -198,7 +198,7 @@ public class LoadGameViewModelTests
 
         // Note: Shell.Current.GoToAsync would be called in real scenario
         // For unit testing, we verify the property is set
-        
+
         // Act
         _viewModel.SelectedSave = saveToLoad;
 

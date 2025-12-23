@@ -28,7 +28,7 @@ public class AchievementPuzzleIntegrationTests
         _achievementService = new AchievementService(NullLogger<AchievementService>.Instance);
         _puzzleEngine = new PuzzleEngine(_achievementService);
         _stateMachine = new GameStateMachine(_inventoryManager, _achievementService);
-        
+
         // Create a minimal story pack for initialization
         var testStoryPack = new StoryPack
         {
@@ -46,7 +46,7 @@ public class AchievementPuzzleIntegrationTests
             },
             Objects = new Dictionary<string, GameObject>()
         };
-        
+
         _stateMachine.Initialize(testStoryPack);
 
         // Set up command handlers
@@ -185,7 +185,7 @@ public class AchievementPuzzleIntegrationTests
         };
 
         _puzzleEngine.InitializePuzzles(new List<Puzzle> { puzzle1, puzzle2 });
-        
+
         // Mark puzzle2 as complete
         _gameState.Progress.PuzzleStates["puzzle2"] = new PuzzleState { IsCompleted = true };
         _gameState.Progress.StoryFlags["puzzle2_done"] = true;
@@ -266,7 +266,7 @@ public class AchievementPuzzleIntegrationTests
         _gameState.Progress.StoryFlags["room3_visited"] = true;
         await _achievementService.TrackEventAsync(TriggerType.RoomVisited, "room2", _gameState);
         var unlocked = await _achievementService.TrackEventAsync(TriggerType.RoomVisited, "room3", _gameState);
-        
+
         // Check if achievement unlocks
         Assert.Contains(unlocked, a => a.Achievement.Id == "explorer");
     }
@@ -321,7 +321,7 @@ public class AchievementPuzzleIntegrationTests
             Verb = "take",
             Object = "coin"
         };
-        
+
         var result = await _commandRouter.RouteAsync(command);
 
         // Assert
@@ -386,7 +386,7 @@ public class AchievementPuzzleIntegrationTests
 
         // Initialize with ONLY this puzzle
         _puzzleEngine.InitializePuzzles(new List<Puzzle> { puzzle });
-        
+
         // Mark all steps as complete
         _gameState.Progress.PuzzleStates["test_completion_puzzle"] = new PuzzleState
         {

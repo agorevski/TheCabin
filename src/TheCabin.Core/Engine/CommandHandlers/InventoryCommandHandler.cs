@@ -8,26 +8,24 @@ namespace TheCabin.Core.Engine.CommandHandlers;
 /// </summary>
 public class InventoryCommandHandler : ICommandHandler
 {
-    private readonly IInventoryManager _inventoryManager;
-    
     public string Verb => "inventory";
-    
+
     public InventoryCommandHandler(IInventoryManager inventoryManager)
     {
-        _inventoryManager = inventoryManager ?? throw new ArgumentNullException(nameof(inventoryManager));
+        ArgumentNullException.ThrowIfNull(inventoryManager);
     }
-    
+
     public Task<CommandValidationResult> ValidateAsync(ParsedCommand command, GameState gameState)
     {
         // Inventory is always valid
         return Task.FromResult(CommandValidationResult.Valid());
     }
-    
+
     public Task<CommandResult> ExecuteAsync(ParsedCommand command, GameState gameState)
     {
         // Use gameState inventory instead of inventory manager
         var items = gameState.Player.Inventory.Items;
-        
+
         string message;
         if (!items.Any())
         {
@@ -38,7 +36,7 @@ public class InventoryCommandHandler : ICommandHandler
             var itemList = string.Join("\n", items.Select(i => $"- {i.Name}"));
             message = $"You are carrying:\n{itemList}";
         }
-        
+
         return Task.FromResult(new CommandResult
         {
             Success = true,

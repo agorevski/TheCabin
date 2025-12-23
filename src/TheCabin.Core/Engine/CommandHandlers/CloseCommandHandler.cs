@@ -36,7 +36,7 @@ public class CloseCommandHandler : ICommandHandler
         }
 
         // Check if object can be closed
-        if (targetObject.Type != ObjectType.Door && 
+        if (targetObject.Type != ObjectType.Door &&
             targetObject.Type != ObjectType.Container)
         {
             return Task.FromResult(CommandValidationResult.Invalid(
@@ -56,7 +56,7 @@ public class CloseCommandHandler : ICommandHandler
     public async Task<CommandResult> ExecuteAsync(ParsedCommand command, GameState gameState)
     {
         var targetObject = _stateMachine.FindVisibleObject(command.Object!)!;
-        
+
         // Check if this action matches any active puzzle steps
         if (_puzzleEngine != null)
         {
@@ -64,26 +64,26 @@ public class CloseCommandHandler : ICommandHandler
             var currentRoom = _stateMachine.GetCurrentRoom();
             var inventoryItems = string.Join(", ", gameState.Player.Inventory.Items.Select(i => i.Id));
             var storyFlags = string.Join(", ", gameState.Progress.StoryFlags.Where(f => f.Value).Select(f => f.Key));
-            
+
             System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] === Current State ===");
             System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] Current Room: {currentRoom.Id}");
             System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] Inventory: [{inventoryItems}]");
             System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] Story Flags: [{storyFlags}]");
             System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] Target Object: {targetObject.Id} ({targetObject.Name})");
-            
+
             var activePuzzles = _puzzleEngine.GetActivePuzzles(gameState);
             System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] Checking {activePuzzles.Count} active puzzles for command: close {command.Object}");
-            
+
             foreach (var puzzle in activePuzzles)
             {
                 System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] Attempting puzzle '{puzzle.Id}' with {puzzle.Steps.Count} steps");
                 var puzzleResult = await _puzzleEngine.AttemptStepAsync(puzzle.Id, command, gameState);
                 System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] Puzzle '{puzzle.Id}' attempt result: Success={puzzleResult.Success}, Message='{puzzleResult.Message}'");
-                
+
                 if (puzzleResult.Success)
                 {
                     System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] ✓ Puzzle step matched! Using puzzle messages.");
-                    
+
                     // Check if already closed
                     if (targetObject.State?.Flags.ContainsKey("is_open") == true)
                     {
@@ -94,22 +94,22 @@ public class CloseCommandHandler : ICommandHandler
                             targetObject.State.Flags["is_open"] = false;
                         }
                     }
-                    
+
                     // Set completion flag if specified
-                    if (puzzleResult.AttemptedStep != null && 
+                    if (puzzleResult.AttemptedStep != null &&
                         !string.IsNullOrEmpty(puzzleResult.AttemptedStep.CompletionFlag))
                     {
                         _stateMachine.SetStoryFlag(puzzleResult.AttemptedStep.CompletionFlag, true);
                     }
-                    
+
                     // Build result message
                     var puzzleMessages = new List<string> { puzzleResult.Message };
-                    
+
                     if (puzzleResult.PuzzleCompleted && !string.IsNullOrEmpty(puzzle.CompletionMessage))
                     {
                         puzzleMessages.Add(puzzle.CompletionMessage);
                     }
-                    
+
                     System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] Returning puzzle result with {puzzleMessages.Count} messages");
                     return new CommandResult
                     {
@@ -119,14 +119,14 @@ public class CloseCommandHandler : ICommandHandler
                     };
                 }
             }
-            
+
             System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] No puzzle steps matched, using standard close behavior");
         }
         else
         {
             System.Diagnostics.Debug.WriteLine($"[CloseCommandHandler] PuzzleEngine is null, using standard close behavior");
         }
-        
+
         // No puzzle step matched, use standard close behavior
         var closeAction = targetObject.Actions["close"];
 

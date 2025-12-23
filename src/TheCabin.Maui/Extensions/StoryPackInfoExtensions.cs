@@ -15,21 +15,21 @@ public static class StoryPackInfoExtensions
             _ => "#4A90E2"
         };
     }
-    
+
     public static string GetPlayTimeDisplay(this StoryPackInfo info)
     {
         return $"~{info.EstimatedPlayTime} min";
     }
-    
+
     public static string GetTagsDisplay(this StoryPackInfo info)
     {
         return info.Tags.Count > 0 ? string.Join(" • ", info.Tags) : "";
     }
-    
+
     public static string GetIcon(this StoryPackInfo info)
     {
         var theme = info.Theme?.ToLower() ?? "";
-        
+
         if (theme.Contains("horror"))
             return "🏚️";
         if (theme.Contains("arctic") || theme.Contains("survival"))
@@ -40,7 +40,7 @@ public static class StoryPackInfoExtensions
             return "🚀";
         if (theme.Contains("cozy") || theme.Contains("mystery"))
             return "🕵️";
-        
+
         return "📖";
     }
 }

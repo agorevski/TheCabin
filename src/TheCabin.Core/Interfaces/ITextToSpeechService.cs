@@ -11,12 +11,12 @@ public interface ITextToSpeechService
     /// <param name="text">Text to speak</param>
     /// <param name="cancellationToken">Token to cancel the operation</param>
     Task SpeakAsync(string text, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Stops any currently playing speech
     /// </summary>
     Task StopAsync();
-    
+
     /// <summary>
     /// Gets whether TTS is currently speaking
     /// </summary>
