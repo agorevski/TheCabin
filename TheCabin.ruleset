@@ -120,6 +120,12 @@
 
     <!-- Suppress SA1500: Braces for multi-line statements should not share line -->
     <Rule Id="SA1500" Action="None" />
+
+    <!-- Suppress SA1400: Element should declare access modifier -->
+    <Rule Id="SA1400" Action="None" />
+
+    <!-- Suppress SA1501: Statement should not be on single line -->
+    <Rule Id="SA1501" Action="None" />
   </Rules>
 
   <Rules AnalyzerId="SonarAnalyzer.CSharp" RuleNamespace="SonarAnalyzer.CSharp">
@@ -173,5 +179,8 @@
 
     <!-- Suppress S1075: Hardcoded URIs/paths -->
     <Rule Id="S1075" Action="None" />
+
+    <!-- Suppress S1118: Add protected constructor or static keyword -->
+    <Rule Id="S1118" Action="None" />
   </Rules>
 </RuleSet>
