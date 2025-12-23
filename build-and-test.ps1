@@ -62,12 +62,25 @@ Write-Host ""
 
 # Step 5: Run Tests
 Write-Host "[5/5] Running all tests..." -ForegroundColor Yellow
+
+# Run Core Tests
+Write-Host "  Running TheCabin.Core.Tests..." -ForegroundColor Gray
 dotnet test tests/TheCabin.Core.Tests/TheCabin.Core.Tests.csproj --configuration Release --verbosity normal
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "X Tests failed or had errors" -ForegroundColor Red
+    Write-Host "X Core Tests failed or had errors" -ForegroundColor Red
     $testSuccess = $false
 } else {
-    Write-Host "√ Tests completed" -ForegroundColor Green
+    Write-Host "√ Core Tests completed" -ForegroundColor Green
+}
+
+# Run Infrastructure Tests
+Write-Host "  Running TheCabin.Infrastructure.Tests..." -ForegroundColor Gray
+dotnet test tests/TheCabin.Infrastructure.Tests/TheCabin.Infrastructure.Tests.csproj --configuration Release --verbosity normal
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "X Infrastructure Tests failed or had errors" -ForegroundColor Red
+    $testSuccess = $false
+} else {
+    Write-Host "√ Infrastructure Tests completed" -ForegroundColor Green
 }
 Write-Host ""
 

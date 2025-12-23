@@ -61,7 +61,7 @@ public class AchievementPuzzleIntegrationTests
     }
 
     [Fact]
-    public async Task HintSystem_RespectsTimeDelays()
+    public Task HintSystem_RespectsTimeDelays()
     {
         // Arrange
         var puzzle = new Puzzle
@@ -116,10 +116,12 @@ public class AchievementPuzzleIntegrationTests
 
         // Now all hints should be available
         Assert.Equal(3, availableHints.Count);
+
+        return Task.CompletedTask;
     }
 
     [Fact]
-    public async Task PuzzleStepConditions_CheckCorrectly()
+    public Task PuzzleStepConditions_CheckCorrectly()
     {
         // Arrange
         var puzzle = new Puzzle
@@ -152,10 +154,12 @@ public class AchievementPuzzleIntegrationTests
         _gameState.Progress.StoryFlags["door_unlocked"] = true;
         canExecute = _puzzleEngine.CheckStepConditions(puzzle.Steps[0], _gameState);
         Assert.True(canExecute);
+
+        return Task.CompletedTask;
     }
 
     [Fact]
-    public async Task GetActivePuzzles_ReturnsOnlyIncomplete()
+    public Task GetActivePuzzles_ReturnsOnlyIncomplete()
     {
         // Arrange
         var puzzle1 = new Puzzle
@@ -192,10 +196,12 @@ public class AchievementPuzzleIntegrationTests
         // Assert
         Assert.Single(activePuzzles);
         Assert.Equal("puzzle1", activePuzzles[0].Id);
+
+        return Task.CompletedTask;
     }
 
     [Fact]
-    public async Task GetPuzzleState_ReturnsCorrectState()
+    public Task GetPuzzleState_ReturnsCorrectState()
     {
         // Arrange
         var puzzle = new Puzzle
@@ -222,6 +228,8 @@ public class AchievementPuzzleIntegrationTests
         Assert.NotNull(actualState);
         Assert.False(actualState.IsCompleted);
         Assert.Equal(2, actualState.CompletedSteps.Count);
+
+        return Task.CompletedTask;
     }
 
     [Fact]
@@ -322,7 +330,7 @@ public class AchievementPuzzleIntegrationTests
     }
 
     [Fact]
-    public async Task SaveLoad_PreservesPuzzleAndAchievementState()
+    public Task SaveLoad_PreservesPuzzleAndAchievementState()
     {
         // Arrange - Set up some progress
         _gameState.Progress.PuzzleStates["puzzle1"] = new PuzzleState
@@ -348,6 +356,8 @@ public class AchievementPuzzleIntegrationTests
         Assert.Equal(2, loadedState.Progress.UnlockedAchievements.Count);
         Assert.True(loadedState.Progress.StoryFlags["flag1"]);
         Assert.False(loadedState.Progress.StoryFlags["flag2"]);
+
+        return Task.CompletedTask;
     }
 
     [Fact]

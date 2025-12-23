@@ -1,13 +1,13 @@
-# 🎮 The Cabin (Android Voice Edition)
+# 🎮 The Cabin (Voice Edition)
 ### Game Design Document (v3)
 
 ---
 
 ## 1. Overview
 
-**The Cabin (Voice Edition)** is a modern reimagining of the classic text adventure genre — an immersive voice-controlled interactive fiction game for Android.
+**The Cabin (Voice Edition)** is a modern reimagining of the classic text adventure genre — an immersive voice-controlled interactive fiction game for Android and Windows.
 
-Players explore a mysterious cabin by *speaking commands* instead of typing them. Speech recognition, natural language parsing, and dynamic text-to-speech narration create a hands-free, story-driven experience.
+Players explore mysterious environments by *speaking commands* instead of typing them. Speech recognition, natural language parsing, and dynamic text-to-speech narration create a hands-free, story-driven experience.
 
 ---
 
@@ -61,13 +61,13 @@ Text-to-Speech (TTS) → Audio Output
 
 | Layer | Technology | Description |
 |-------|-------------|-------------|
-| **Frontend** | Kotlin + Jetpack Compose | UI, voice controls, and game loop management. |
-| **STT Layer** | Whisper.cpp / Android SpeechRecognizer | Converts player voice into text. |
-| **Parser Layer** | GPT-based API or local intent model | Translates text commands into structured JSON actions. |
-| **Engine** | Kotlin state machine | Manages rooms, inventory, puzzles, and outcomes. |
-| **TTS Layer** | Android TextToSpeech / OpenAI TTS | Narrates game responses. |
-| **Storage** | RoomDB or JSON files | Saves world definitions, progress, and content packs. |
-| **Optional Backend** | Firebase / AWS | Theme content delivery, analytics, updates. |
+| **Frontend** | .NET MAUI + C# | UI, ViewModels, Views, and game loop management. |
+| **STT Layer** | Platform APIs / Whisper.cpp | Converts player voice into text. |
+| **Parser Layer** | GPT-based API (OpenAI / Azure OpenAI) | Translates text commands into structured JSON actions. |
+| **Engine** | C# State Machine (TheCabin.Core) | Manages rooms, inventory, puzzles, and outcomes. |
+| **TTS Layer** | MAUI TextToSpeech / Azure TTS | Narrates game responses. |
+| **Storage** | SQLite (sqlite-net-pcl) | Saves world definitions, progress, and content packs. |
+| **Optional Backend** | Azure / AWS | Theme content delivery, analytics, updates. |
 
 ---
 
@@ -123,14 +123,14 @@ Text-to-Speech (TTS) → Audio Output
   ```
 
 ### 6.3 Game Engine
-- Built in Kotlin as a finite state machine.
+- Built in C# as a finite state machine using TheCabin.Core.
 - Each command triggers transitions between rooms, updates object states, and appends to the story log.
-- Use coroutine scopes for async I/O (voice recording, GPT calls, TTS playback).
+- Uses async/await patterns for async I/O (voice recording, GPT calls, TTS playback).
 
 ### 6.4 TTS Narration
-- Uses Android TextToSpeech by default.
+- Uses MAUI TextToSpeech API by default.
 - Supports dynamic voice selection and speech speed adjustment.
-- Optional: integrate OpenAI or ElevenLabs API for realistic narration.
+- Optional: integrate Azure TTS or ElevenLabs API for realistic narration.
 
 ### 6.5 Content Management
 - Each theme pack (JSON) is stored in `/assets/themes/`.

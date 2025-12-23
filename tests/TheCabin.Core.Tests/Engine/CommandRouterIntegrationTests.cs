@@ -261,7 +261,7 @@ public class CommandRouterIntegrationTests
         Assert.Equal(initialHealth, _gameState.Player.Health); // Health unchanged
         Assert.True(_gameState.World.TurnNumber > initialTurnNumber); // Turns advanced
         Assert.True(_inventoryManager.HasItem("key")); // Key in inventory
-        Assert.Equal(1, _inventoryManager.GetAllItems().Count); // Only one item
+        Assert.Single(_inventoryManager.GetAllItems()); // Only one item
     }
 
     private StoryPack CreateIntegrationTestStoryPack()

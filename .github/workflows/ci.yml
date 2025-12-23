@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build Core
+      run: dotnet build src/TheCabin.Core/TheCabin.Core.csproj --configuration Release --no-restore
+
+    - name: Build Infrastructure
+      run: dotnet build src/TheCabin.Infrastructure/TheCabin.Infrastructure.csproj --configuration Release --no-restore
+
+    - name: Run Core Tests
+      run: dotnet test tests/TheCabin.Core.Tests/TheCabin.Core.Tests.csproj --configuration Release --no-build --verbosity normal
+
+    - name: Run Infrastructure Tests
+      run: dotnet test tests/TheCabin.Infrastructure.Tests/TheCabin.Infrastructure.Tests.csproj --configuration Release --no-build --verbosity normal

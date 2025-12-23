@@ -260,7 +260,7 @@ public class OpenCommandHandlerTests
     {
         // Arrange
         var door = CreateOpenableDoor("door", "Door");
-        door.State = null; // No state initially
+        door.State = null!; // No state initially
         var currentRoom = _stateMachine.GetCurrentRoom();
         currentRoom.State.VisibleObjectIds.Add("door");
         var command = new ParsedCommand { Verb = "open", Object = "door" };
