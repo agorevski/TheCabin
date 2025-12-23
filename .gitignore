@@ -1,2 +1,11 @@
 **/bin/*
 **/obj/*
+
+# DocFX generated output
+_site/
+api/*.yml
+api/.manifest
+
+# XML documentation files (generated during build)
+*.xml
+!docfx.json
