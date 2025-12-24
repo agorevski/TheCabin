@@ -1,5 +1,15 @@
-**/bin/*
-**/obj/*
+# Build outputs
+**/bin/
+**/obj/
+*.dll
+*.exe
+*.pdb
+
+# NuGet packages
+*.nupkg
+*.snupkg
+.nuget/
+packages/
 
 # DocFX generated output
 _site/
@@ -9,3 +19,95 @@ api/.manifest
 # XML documentation files (generated during build)
 *.xml
 !docfx.json
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.ncb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# VS Code (user-specific)
+.vscode/*.code-workspace
+.vscode/settings.local.json
+
+# Test results and coverage
+TestResults/
+*.trx
+coverage/
+coverage.json
+coverage.xml
+coverage.cobertura.xml
+*.coveragexml
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Logs
+*.log
+logs/
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+*.local.json
+appsettings.local.json
+appsettings.Development.local.json
+
+# Secrets and credentials (NEVER commit these)
+*.pfx
+*.p12
+*.key
+*.pem
+secrets.json
+secrets/
+.secrets/
+
+# API keys and tokens
+*.apikey
+api-keys.json
+tokens.json
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+.cache/
+
+# Crash dumps
+*.dmp
+*.stackdump
+
+# MAUI / Android specific
+*.apk
+*.aab
+*.aar
+*.keystore
+google-services.json
+GoogleService-Info.plist

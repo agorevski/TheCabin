@@ -18,16 +18,17 @@ public class ExamineCommandHandlerTests
         // Create test story pack first
         var storyPack = CreateTestStoryPack();
 
-        // Create inventory manager with temporary game state
+        // Create state machine first with a placeholder inventory manager
         var tempGameState = new GameState();
-        _inventoryManager = new InventoryManager(tempGameState);
-
-        // Create state machine and initialize
-        _stateMachine = new GameStateMachine(_inventoryManager);
+        var tempInventoryManager = new InventoryManager(tempGameState);
+        _stateMachine = new GameStateMachine(tempInventoryManager);
         _stateMachine.Initialize(storyPack);
 
         // Get the actual game state created by Initialize
         _gameState = _stateMachine.CurrentState;
+
+        // Create the actual inventory manager with the correct game state
+        _inventoryManager = new InventoryManager(_gameState);
 
         // Create handler
         _handler = new ExamineCommandHandler(_stateMachine, _inventoryManager);

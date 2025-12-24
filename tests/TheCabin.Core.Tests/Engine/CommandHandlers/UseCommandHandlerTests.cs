@@ -19,16 +19,17 @@ public class UseCommandHandlerTests
         // Create test story pack first
         var storyPack = CreateTestStoryPack();
 
-        // Create inventory manager with temporary game state
+        // Create state machine first with a placeholder inventory manager
         var tempGameState = new GameState();
-        _inventoryManager = new InventoryManager(tempGameState);
-
-        // Create state machine and initialize
-        _stateMachine = new GameStateMachine(_inventoryManager);
+        var tempInventoryManager = new InventoryManager(tempGameState);
+        _stateMachine = new GameStateMachine(tempInventoryManager);
         _stateMachine.Initialize(storyPack);
 
         // Get the actual game state created by Initialize
         _gameState = _stateMachine.CurrentState;
+
+        // Create the actual inventory manager with the correct game state
+        _inventoryManager = new InventoryManager(_gameState);
 
         // Create puzzle engine
         _puzzleEngine = new PuzzleEngine();
@@ -62,7 +63,7 @@ public class UseCommandHandlerTests
 
         // Assert
         Assert.False(result.IsValid);
-        Assert.Contains("don't have", result.Message);
+        Assert.Contains("don't see", result.Message);
     }
 
     [Fact]

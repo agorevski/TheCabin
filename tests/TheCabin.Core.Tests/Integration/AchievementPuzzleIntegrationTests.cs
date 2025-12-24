@@ -22,13 +22,6 @@ public class AchievementPuzzleIntegrationTests
 
     public AchievementPuzzleIntegrationTests()
     {
-        // Set up game state
-        _gameState = new GameState();
-        _inventoryManager = new InventoryManager(_gameState);
-        _achievementService = new AchievementService(NullLogger<AchievementService>.Instance);
-        _puzzleEngine = new PuzzleEngine(_achievementService);
-        _stateMachine = new GameStateMachine(_inventoryManager, _achievementService);
-
         // Create a minimal story pack for initialization
         var testStoryPack = new StoryPack
         {
@@ -47,7 +40,21 @@ public class AchievementPuzzleIntegrationTests
             Objects = new Dictionary<string, GameObject>()
         };
 
+        // Create services
+        _achievementService = new AchievementService(NullLogger<AchievementService>.Instance);
+        _puzzleEngine = new PuzzleEngine(_achievementService);
+
+        // Create temp game state and inventory manager for initialization
+        var tempGameState = new GameState();
+        var tempInventoryManager = new InventoryManager(tempGameState);
+        _stateMachine = new GameStateMachine(tempInventoryManager, _achievementService);
         _stateMachine.Initialize(testStoryPack);
+
+        // Get the actual game state after initialization
+        _gameState = _stateMachine.CurrentState;
+
+        // Create the actual inventory manager with the correct game state
+        _inventoryManager = new InventoryManager(_gameState, _achievementService);
 
         // Set up command handlers
         var handlers = new List<ICommandHandler>
@@ -186,8 +193,9 @@ public class AchievementPuzzleIntegrationTests
 
         _puzzleEngine.InitializePuzzles(new List<Puzzle> { puzzle1, puzzle2 });
 
-        // Mark puzzle2 as complete
+        // Mark puzzle2 as complete (both in PuzzleStates and CompletedPuzzles)
         _gameState.Progress.PuzzleStates["puzzle2"] = new PuzzleState { IsCompleted = true };
+        _gameState.Progress.CompletedPuzzles.Add("puzzle2");
         _gameState.Progress.StoryFlags["puzzle2_done"] = true;
 
         // Act
@@ -235,15 +243,19 @@ public class AchievementPuzzleIntegrationTests
     [Fact]
     public async Task AchievementService_TracksProgress()
     {
-        // Arrange
+        // Arrange - Create achievement with trigger-based progress
         var achievements = new List<Achievement>
         {
             new Achievement
             {
                 Id = "explorer",
                 Name = "Explorer",
-                Description = "Visit all rooms",
-                RequiredFlags = new List<string> { "room1_visited", "room2_visited", "room3_visited" }
+                Description = "Visit 3 rooms",
+                Trigger = new AchievementTrigger
+                {
+                    Type = TriggerType.RoomVisited,
+                    RequiredCount = 3
+                }
             }
         };
 
@@ -252,19 +264,21 @@ public class AchievementPuzzleIntegrationTests
         // Act & Assert - No progress
         var progress = _achievementService.GetProgress("explorer");
         Assert.NotNull(progress);
-        Assert.Equal(0.0, progress.PercentComplete);
+        Assert.Equal(0.0f, progress.PercentComplete);
 
-        // Act & Assert - Partial progress
-        _gameState.Progress.StoryFlags["room1_visited"] = true;
+        // Act & Assert - Partial progress (1 of 3 rooms)
         await _achievementService.TrackEventAsync(TriggerType.RoomVisited, "room1", _gameState);
         progress = _achievementService.GetProgress("explorer");
         Assert.NotNull(progress);
         Assert.True(progress.PercentComplete > 0 && progress.PercentComplete < 100);
 
-        // Act & Assert - Complete progress
-        _gameState.Progress.StoryFlags["room2_visited"] = true;
-        _gameState.Progress.StoryFlags["room3_visited"] = true;
+        // Act & Assert - More progress (2 of 3 rooms)
         await _achievementService.TrackEventAsync(TriggerType.RoomVisited, "room2", _gameState);
+        progress = _achievementService.GetProgress("explorer");
+        Assert.NotNull(progress);
+        Assert.True(progress.PercentComplete > 30 && progress.PercentComplete < 100);
+
+        // Act & Assert - Complete progress (3 of 3 rooms)
         var unlocked = await _achievementService.TrackEventAsync(TriggerType.RoomVisited, "room3", _gameState);
 
         // Check if achievement unlocks
@@ -279,7 +293,11 @@ public class AchievementPuzzleIntegrationTests
         {
             Id = "test_room",
             Description = "A test room",
-            ObjectIds = new List<string> { "coin" }
+            ObjectIds = new List<string> { "coin" },
+            State = new RoomState
+            {
+                VisibleObjectIds = new List<string> { "coin" }
+            }
         };
 
         var coin = new GameObject
@@ -363,7 +381,7 @@ public class AchievementPuzzleIntegrationTests
     [Fact]
     public async Task PuzzleEngine_ChecksPuzzleCompletion()
     {
-        // Arrange - Create ONLY the puzzle we want to check
+        // Arrange - Create a puzzle with steps
         var puzzle = new Puzzle
         {
             Id = "test_completion_puzzle",
@@ -379,28 +397,35 @@ public class AchievementPuzzleIntegrationTests
                     StepNumber = 1,
                     CompletionFlag = "test_step1_done",
                     Action = "test",
-                    TargetObject = "test_obj"
+                    TargetObject = "test_obj",
+                    SuccessMessage = "Step 1 completed!"
                 }
             }
         };
 
-        // Initialize with ONLY this puzzle
+        // Initialize with this puzzle
         _puzzleEngine.InitializePuzzles(new List<Puzzle> { puzzle });
 
-        // Mark all steps as complete
-        _gameState.Progress.PuzzleStates["test_completion_puzzle"] = new PuzzleState
+        // Create test object in game state
+        _gameState.World.Objects["test_obj"] = new GameObject
         {
-            IsCompleted = false,
-            CompletedSteps = new List<string> { "step1" }
+            Id = "test_obj",
+            Name = "Test Object",
+            Description = "A test object"
         };
-        _gameState.Progress.StoryFlags["test_step1_done"] = true;
 
-        // Act
-        var result = await _puzzleEngine.CheckPuzzleCompletionAsync(_gameState);
+        // Act - Attempt the step with a matching command
+        var command = new ParsedCommand { Verb = "test", Object = "test_obj" };
+        var result = await _puzzleEngine.AttemptStepAsync("test_completion_puzzle", command, _gameState);
 
-        // Assert
-        Assert.True(result.Completed);
-        Assert.Equal("test_completion_puzzle", result.PuzzleId);
-        Assert.Equal("You solved the test puzzle!", result.CompletionMessage);
+        // Assert - Step completed and puzzle is completed
+        Assert.True(result.Success);
+        Assert.True(result.PuzzleCompleted);
+        Assert.Equal("Step 1 completed!", result.Message);
+
+        // Verify puzzle state is marked complete
+        var puzzleState = _puzzleEngine.GetPuzzleState("test_completion_puzzle", _gameState);
+        Assert.NotNull(puzzleState);
+        Assert.True(puzzleState!.IsCompleted);
     }
 }

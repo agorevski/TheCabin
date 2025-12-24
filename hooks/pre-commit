@@ -1,0 +1,102 @@
+#!/bin/sh
+#
+# Pre-commit hook for secret detection
+# This hook scans staged files for potential secrets before allowing a commit.
+#
+# To install, copy this file to .git/hooks/pre-commit and make it executable:
+#   cp hooks/pre-commit .git/hooks/pre-commit
+#   chmod +x .git/hooks/pre-commit
+#
+# Or run: ./install-hooks.ps1
+
+echo "Running secret detection scan..."
+
+# Define patterns that might indicate secrets
+SECRET_PATTERNS=(
+    # API Keys
+    '[aA][pP][iI][_-]?[kK][eE][yY]\s*[:=]\s*["\x27][A-Za-z0-9_\-]{16,}["\x27]'
+    # AWS Keys
+    'AKIA[0-9A-Z]{16}'
+    'aws[_-]?secret[_-]?access[_-]?key'
+    # Azure Keys
+    '[aA]zure[A-Za-z]*[kK]ey\s*[:=]'
+    # Connection strings with passwords
+    '[pP]assword\s*=\s*[^;\s]{8,}'
+    # Private keys
+    '-----BEGIN (RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----'
+    # JWT tokens (only full tokens, not partial)
+    'eyJ[A-Za-z0-9_-]*\.eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*'
+    # Generic secrets
+    '[sS][eE][cC][rR][eE][tT]\s*[:=]\s*["\x27][A-Za-z0-9_\-]{16,}["\x27]'
+    # Bearer tokens
+    '[bB]earer\s+[A-Za-z0-9_\-\.]{20,}'
+    # GitHub tokens
+    'gh[pousr]_[A-Za-z0-9]{36,}'
+    # Slack tokens
+    'xox[pboa]-[0-9]{10,13}-[0-9]{10,13}-[a-zA-Z0-9]{24}'
+)
+
+# Files to exclude from scanning
+EXCLUDE_PATTERNS=(
+    '\.md$'
+    '\.txt$'
+    'package-lock\.json$'
+    '\.csproj$'
+    '\.sln$'
+    'SUGGESTIONS\.md$'
+)
+
+# Get list of staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR)
+
+if [ -z "$STAGED_FILES" ]; then
+    exit 0
+fi
+
+SECRETS_FOUND=0
+
+for file in $STAGED_FILES; do
+    # Skip excluded files
+    skip=0
+    for exclude in "${EXCLUDE_PATTERNS[@]}"; do
+        if echo "$file" | grep -qE "$exclude"; then
+            skip=1
+            break
+        fi
+    done
+    
+    if [ $skip -eq 1 ]; then
+        continue
+    fi
+    
+    # Skip binary files
+    if file "$file" | grep -q "binary"; then
+        continue
+    fi
+    
+    # Check each pattern
+    for pattern in "${SECRET_PATTERNS[@]}"; do
+        if git show ":$file" 2>/dev/null | grep -qE "$pattern"; then
+            echo "WARNING: Potential secret found in $file"
+            echo "  Pattern: $pattern"
+            SECRETS_FOUND=1
+        fi
+    done
+done
+
+if [ $SECRETS_FOUND -eq 1 ]; then
+    echo ""
+    echo "=========================================="
+    echo "COMMIT BLOCKED: Potential secrets detected"
+    echo "=========================================="
+    echo ""
+    echo "Please review the warnings above and ensure no secrets are being committed."
+    echo "If these are false positives, you can bypass this check with:"
+    echo "  git commit --no-verify"
+    echo ""
+    echo "To permanently exclude a pattern, edit hooks/pre-commit"
+    exit 1
+fi
+
+echo "No secrets detected. Proceeding with commit."
+exit 0

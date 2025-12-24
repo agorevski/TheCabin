@@ -1,0 +1,14 @@
+{
+    "recommendations": [
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
+        "ms-dotnettools.vscode-dotnet-runtime",
+        "editorconfig.editorconfig",
+        "josefpihrt-vscode.roslynator",
+        "kreativ-software.csharpextensions",
+        "formulahendry.dotnet-test-explorer",
+        "jmrog.vscode-nuget-package-manager",
+        "fernandoescolar.vscode-solution-explorer"
+    ],
+    "unwantedRecommendations": []
+}

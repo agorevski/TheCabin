@@ -6,6 +6,8 @@ A voice-controlled interactive fiction game built with .NET MAUI for Android and
 [![Android](https://img.shields.io/badge/Android-6.0%2B-3DDC84?logo=android)](https://www.android.com/)
 [![Windows](https://img.shields.io/badge/Windows-10%2B-0078D6?logo=windows)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/Tests-145%20Passed-success)](tests/)
+[![Coverage](https://img.shields.io/badge/Coverage-54%25-yellow)](tests/)
 
 ## ✨ Features
 
