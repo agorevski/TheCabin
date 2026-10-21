@@ -8,10 +8,18 @@ namespace TheCabin.Core.Interfaces;
 public interface IAchievementService
 {
     /// <summary>
-    /// Initialize the achievement system with available achievements
+    /// Initialize the achievement system with available achievements.
+    /// Progress is not shared between games: it is held by the game state given to <see cref="BindToGameState"/>.
     /// </summary>
     /// <param name="achievements">List of all available achievements</param>
     Task InitializeAsync(List<Achievement> achievements);
+
+    /// <summary>
+    /// Make the achievement progress of <paramref name="gameState"/> the active progress.
+    /// Progress and unlocks are then read from, and recorded on, that game state only.
+    /// </summary>
+    /// <param name="gameState">The game whose progress should be used</param>
+    void BindToGameState(GameState gameState);
 
     /// <summary>
     /// Get all available achievements
@@ -88,14 +96,4 @@ public interface IAchievementService
     /// Reset all achievement progress (for testing or new game+)
     /// </summary>
     Task ResetAllProgressAsync();
-
-    /// <summary>
-    /// Save current achievement progress
-    /// </summary>
-    Task SaveProgressAsync();
-
-    /// <summary>
-    /// Load achievement progress from storage
-    /// </summary>
-    Task LoadProgressAsync();
 }

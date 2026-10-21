@@ -1,3 +1,5 @@
+using System.Text.Json;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using TheCabin.Core.Engine;
 using TheCabin.Core.Engine.CommandHandlers;
@@ -169,6 +171,159 @@ public class GameInitializationServiceTests
         achievements.Verify(
             a => a.TrackEventAsync(It.IsAny<TriggerType>(), It.IsAny<string>(), It.IsAny<GameState>()),
             Times.Once);
+    }
+
+    [Fact]
+    public async Task NewGame_AfterAnotherGameUnlockedAchievement_StartsWithCleanProgress()
+    {
+        var achievements = new AchievementService(NullLogger<AchievementService>.Instance);
+        var saves = new InMemorySaveRepository();
+        var pack = CreatePackWithAchievement(requiredCount: 2);
+
+        var firstGame = new GameStateService(saves, Mock.Of<IStoryPackService>());
+        await StartNewGameAsync(pack, firstGame, achievements);
+        await TrackCommandAsync(achievements, firstGame.CurrentState);
+        await TrackCommandAsync(achievements, firstGame.CurrentState);
+        Assert.True(achievements.IsUnlocked("collector"));
+
+        var secondGame = new GameStateService(saves, Mock.Of<IStoryPackService>());
+        await StartNewGameAsync(pack, secondGame, achievements);
+
+        Assert.False(achievements.IsUnlocked("collector"));
+        Assert.Equal(0, achievements.GetProgress("collector")!.CurrentProgress);
+        Assert.Empty(achievements.GetUnlockedAchievements());
+        Assert.Empty(secondGame.CurrentState.Progress.UnlockedAchievements);
+    }
+
+    [Fact]
+    public async Task SaveThenLoad_RestoresProgressOfThatSave()
+    {
+        var achievements = new AchievementService(NullLogger<AchievementService>.Instance);
+        var saves = new InMemorySaveRepository();
+        var pack = CreatePackWithAchievement(requiredCount: 3);
+
+        var game = new GameStateService(saves, Mock.Of<IStoryPackService>());
+        await StartNewGameAsync(pack, game, achievements);
+        await TrackCommandAsync(achievements, game.CurrentState);
+        await TrackCommandAsync(achievements, game.CurrentState);
+        var saveId = await game.SaveGameAsync("slot");
+
+        var otherGame = new GameStateService(saves, Mock.Of<IStoryPackService>());
+        await StartNewGameAsync(pack, otherGame, achievements);
+
+        var loader = new GameStateService(saves, Mock.Of<IStoryPackService>());
+        var result = await LoadSavedGameAsync(saveId, loader, achievements, pack);
+
+        Assert.True(result.Success);
+        Assert.Equal(2, achievements.GetProgress("collector")!.CurrentProgress);
+        Assert.False(achievements.IsUnlocked("collector"));
+
+        var unlocked = await TrackCommandAsync(achievements, loader.CurrentState);
+        Assert.Single(unlocked);
+    }
+
+    [Fact]
+    public async Task LoadingAnotherSave_DoesNotLeakProgressOrUnlocksBetweenSaves()
+    {
+        var achievements = new AchievementService(NullLogger<AchievementService>.Instance);
+        var saves = new InMemorySaveRepository();
+        var pack = CreatePackWithAchievement(requiredCount: 3);
+
+        var gameA = new GameStateService(saves, Mock.Of<IStoryPackService>());
+        await StartNewGameAsync(pack, gameA, achievements);
+        await TrackCommandAsync(achievements, gameA.CurrentState);
+        await TrackCommandAsync(achievements, gameA.CurrentState);
+        var saveA = await gameA.SaveGameAsync("A");
+
+        var gameB = new GameStateService(saves, Mock.Of<IStoryPackService>());
+        await StartNewGameAsync(pack, gameB, achievements);
+        await TrackCommandAsync(achievements, gameB.CurrentState);
+        await TrackCommandAsync(achievements, gameB.CurrentState);
+        await TrackCommandAsync(achievements, gameB.CurrentState);
+        var saveB = await gameB.SaveGameAsync("B");
+
+        var loader = new GameStateService(saves, Mock.Of<IStoryPackService>());
+        await LoadSavedGameAsync(saveA, loader, achievements, pack);
+
+        Assert.Equal(2, achievements.GetProgress("collector")!.CurrentProgress);
+        Assert.False(achievements.IsUnlocked("collector"));
+        Assert.Equal(0, achievements.GetStats().UnlockedAchievements);
+
+        await LoadSavedGameAsync(saveB, loader, achievements, pack);
+
+        Assert.True(achievements.IsUnlocked("collector"));
+        Assert.Equal(1, achievements.GetStats().UnlockedAchievements);
+
+        await LoadSavedGameAsync(saveA, loader, achievements, pack);
+
+        Assert.Equal(2, achievements.GetProgress("collector")!.CurrentProgress);
+        Assert.False(achievements.IsUnlocked("collector"));
+    }
+
+    private static Task StartNewGameAsync(StoryPack pack, GameStateService gameStateService, IAchievementService achievements)
+    {
+        var stateMachine = new GameStateMachine(new InventoryManager(new GameState()), achievements);
+        return new GameInitializationService().InitializeNewGameAsync(
+            pack, stateMachine, Mock.Of<IPuzzleEngine>(), achievements, gameStateService);
+    }
+
+    private static Task<InitializationResult> LoadSavedGameAsync(
+        int saveId, GameStateService gameStateService, IAchievementService achievements, StoryPack pack)
+    {
+        var storyPackService = new Mock<IStoryPackService>();
+        storyPackService.Setup(s => s.LoadPackAsync(pack.Id)).ReturnsAsync(pack);
+        var stateMachine = new GameStateMachine(new InventoryManager(new GameState()), achievements);
+        return new GameInitializationService().LoadSavedGameAsync(
+            saveId, stateMachine, Mock.Of<IPuzzleEngine>(), achievements, gameStateService, storyPackService.Object);
+    }
+
+    private static Task<List<AchievementUnlocked>> TrackCommandAsync(IAchievementService achievements, GameState state) =>
+        achievements.TrackEventAsync(TriggerType.CommandExecuted, string.Empty, state);
+
+    private static StoryPack CreatePackWithAchievement(int requiredCount)
+    {
+        var pack = CreatePack();
+        pack.Achievements = new List<Achievement>
+        {
+            new Achievement
+            {
+                Id = "collector",
+                Name = "Collector",
+                Description = "Run commands",
+                Trigger = new AchievementTrigger { Type = TriggerType.CommandExecuted, RequiredCount = requiredCount }
+            }
+        };
+        return pack;
+    }
+
+    /// <summary>
+    /// Keeps saves as JSON, like the file repository, so each load gets its own copy of the state.
+    /// </summary>
+    private sealed class InMemorySaveRepository : IGameSaveRepository
+    {
+        private readonly Dictionary<int, string> _saves = new();
+
+        public Task<int> SaveAsync(string saveName, GameState gameState)
+        {
+            var id = _saves.Count + 1;
+            _saves[id] = JsonSerializer.Serialize(gameState);
+            return Task.FromResult(id);
+        }
+
+        public Task<GameState?> LoadAsync(int saveId) =>
+            Task.FromResult(_saves.TryGetValue(saveId, out var json)
+                ? JsonSerializer.Deserialize<GameState>(json)
+                : null);
+
+        public Task<List<GameSaveInfo>> GetAllAsync() => Task.FromResult(new List<GameSaveInfo>());
+
+        public Task DeleteAsync(int saveId)
+        {
+            _saves.Remove(saveId);
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> ExistsAsync(int saveId) => Task.FromResult(_saves.ContainsKey(saveId));
     }
 
     /// <summary>

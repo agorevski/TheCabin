@@ -81,10 +81,11 @@ public class GameStateMachine : IGameStateMachine
             }
         };
 
-        // Initialize achievements if available
-        if (_achievementService != null && storyPack.Achievements != null && storyPack.Achievements.Any())
+        // Initialize achievements for this game; their progress is kept on CurrentState
+        if (_achievementService != null)
         {
-            await _achievementService.InitializeAsync(storyPack.Achievements);
+            await _achievementService.InitializeAsync(storyPack.Achievements ?? new List<Achievement>());
+            _achievementService.BindToGameState(CurrentState);
         }
 
         // Add initial narrative entry
@@ -124,9 +125,11 @@ public class GameStateMachine : IGameStateMachine
 
         CurrentState = savedState;
 
-        if (_achievementService != null && storyPack.Achievements != null && storyPack.Achievements.Any())
+        // Progress comes from the saved game itself, not from whichever game was played before
+        if (_achievementService != null)
         {
-            await _achievementService.InitializeAsync(storyPack.Achievements);
+            await _achievementService.InitializeAsync(storyPack.Achievements ?? new List<Achievement>());
+            _achievementService.BindToGameState(savedState);
         }
     }
 

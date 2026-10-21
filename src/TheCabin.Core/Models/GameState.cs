@@ -111,6 +111,11 @@ public class ProgressState
     /// IDs of achievements that have been unlocked
     /// </summary>
     public List<string> UnlockedAchievements { get; set; } = new();
+
+    /// <summary>
+    /// Achievement progress for this game (achievement ID -> progress). Saved with the game so each save keeps its own progress.
+    /// </summary>
+    public Dictionary<string, AchievementProgress> AchievementProgress { get; set; } = new();
 }
 
 /// <summary>

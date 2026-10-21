@@ -13,41 +13,39 @@ public class AchievementService : IAchievementService
 {
     private readonly ILogger<AchievementService> _logger;
     private readonly Dictionary<string, Achievement> _achievements = new();
-    private readonly Dictionary<string, AchievementProgress> _progress = new();
-    private readonly string _progressFilePath;
+    private Dictionary<string, AchievementProgress> _progress = new();
+    private GameState? _boundState;
 
     public AchievementService(ILogger<AchievementService> logger)
     {
         _logger = logger;
-        _progressFilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "TheCabin",
-            "achievement_progress.json");
     }
 
     /// <inheritdoc/>
-    public async Task InitializeAsync(List<Achievement> achievements)
+    public Task InitializeAsync(List<Achievement> achievements)
     {
         _achievements.Clear();
-        _progress.Clear();
-
         foreach (var achievement in achievements)
         {
             _achievements[achievement.Id] = achievement;
-
-            // Initialize fresh progress for all achievements
-            _progress[achievement.Id] = new AchievementProgress
-            {
-                AchievementId = achievement.Id,
-                RequiredProgress = achievement.Trigger.RequiredCount
-            };
         }
+
+        _boundState = null;
+        AttachProgressStore(new Dictionary<string, AchievementProgress>());
 
         _logger.LogInformation("Initialized achievement system with {Count} achievements",
             achievements.Count);
 
-        // Try to load saved progress (this will override the fresh progress if save file exists)
-        await LoadProgressAsync();
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc/>
+    public void BindToGameState(GameState gameState)
+    {
+        ArgumentNullException.ThrowIfNull(gameState);
+
+        _boundState = gameState;
+        AttachProgressStore(gameState.Progress.AchievementProgress);
     }
 
     /// <inheritdoc/>
@@ -74,8 +72,13 @@ public class AchievementService : IAchievementService
         string targetId,
         GameState gameState)
     {
+        // Progress always lands on the game it is tracked for, so it is saved with that game
+        if (!ReferenceEquals(_boundState, gameState))
+        {
+            BindToGameState(gameState);
+        }
+
         var unlocked = new List<AchievementUnlocked>();
-        var progressChanged = false;
 
         foreach (var achievement in _achievements.Values.Where(a => !IsUnlocked(a.Id)))
         {
@@ -99,7 +102,6 @@ public class AchievementService : IAchievementService
             // Increment progress
             var progress = _progress[achievement.Id];
             progress.CurrentProgress++;
-            progressChanged = true;
 
             _logger.LogDebug("Achievement {Id} progress: {Current}/{Required}",
                 achievement.Id, progress.CurrentProgress, progress.RequiredProgress);
@@ -111,27 +113,20 @@ public class AchievementService : IAchievementService
                 if (notification != null)
                 {
                     unlocked.Add(notification);
-
-                    // Record the unlock on this game's state so it is included when the game is saved
-                    if (!gameState.Progress.UnlockedAchievements.Contains(achievement.Id))
-                    {
-                        gameState.Progress.UnlockedAchievements.Add(achievement.Id);
-                    }
                 }
             }
-        }
-
-        // Unlocks are already persisted by UnlockAchievementAsync; this keeps partial progress across restarts
-        if (progressChanged)
-        {
-            await SaveProgressAsync();
         }
 
         return unlocked;
     }
 
     /// <inheritdoc/>
-    public async Task<AchievementUnlocked?> UnlockAchievementAsync(string achievementId)
+    public Task<AchievementUnlocked?> UnlockAchievementAsync(string achievementId)
+    {
+        return Task.FromResult(UnlockAchievement(achievementId));
+    }
+
+    private AchievementUnlocked? UnlockAchievement(string achievementId)
     {
         if (!_achievements.TryGetValue(achievementId, out var achievement))
         {
@@ -150,19 +145,21 @@ public class AchievementService : IAchievementService
         progress.UnlockedDate = DateTime.UtcNow;
         achievement.IsUnlocked = true;
 
+        // Record the unlock on the bound game so it is included when that game is saved
+        if (_boundState != null && !_boundState.Progress.UnlockedAchievements.Contains(achievementId))
+        {
+            _boundState.Progress.UnlockedAchievements.Add(achievementId);
+        }
+
         _logger.LogInformation("Achievement unlocked: {Name} ({Id})",
             achievement.Name, achievement.Id);
 
-        var notification = new AchievementUnlocked
+        return new AchievementUnlocked
         {
             Achievement = achievement,
             UnlockedAt = progress.UnlockedDate.Value,
             Message = $"Achievement Unlocked: {achievement.Name}!"
         };
-
-        await SaveProgressAsync();
-
-        return notification;
     }
 
     /// <inheritdoc/>
@@ -220,91 +217,15 @@ public class AchievementService : IAchievementService
     }
 
     /// <inheritdoc/>
-    public async Task ResetAllProgressAsync()
+    public Task ResetAllProgressAsync()
     {
         _progress.Clear();
-
-        foreach (var achievement in _achievements.Values)
-        {
-            achievement.IsUnlocked = false;
-            _progress[achievement.Id] = new AchievementProgress
-            {
-                AchievementId = achievement.Id,
-                RequiredProgress = achievement.Trigger.RequiredCount
-            };
-        }
-
-        await SaveProgressAsync();
+        _boundState?.Progress.UnlockedAchievements.Clear();
+        AttachProgressStore(_progress);
 
         _logger.LogInformation("All achievement progress reset");
-    }
 
-    /// <inheritdoc/>
-    public async Task SaveProgressAsync()
-    {
-        try
-        {
-            // Ensure directory exists
-            var directory = Path.GetDirectoryName(_progressFilePath);
-            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
-
-            // Serialize progress
-            var json = JsonSerializer.Serialize(_progress, new JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
-
-            await File.WriteAllTextAsync(_progressFilePath, json);
-
-            _logger.LogDebug("Achievement progress saved to {Path}", _progressFilePath);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to save achievement progress");
-        }
-    }
-
-    /// <inheritdoc/>
-    public async Task LoadProgressAsync()
-    {
-        try
-        {
-            if (!File.Exists(_progressFilePath))
-            {
-                _logger.LogDebug("No saved achievement progress found");
-                return;
-            }
-
-            var json = await File.ReadAllTextAsync(_progressFilePath);
-            var loadedProgress = JsonSerializer.Deserialize<Dictionary<string, AchievementProgress>>(json);
-
-            if (loadedProgress != null)
-            {
-                foreach (var kvp in loadedProgress)
-                {
-                    if (_achievements.ContainsKey(kvp.Key))
-                    {
-                        _progress[kvp.Key] = kvp.Value;
-
-                        // Update achievement unlocked status
-                        if (kvp.Value.IsUnlocked)
-                        {
-                            _achievements[kvp.Key].IsUnlocked = true;
-                        }
-                    }
-                }
-
-                _logger.LogInformation("Loaded achievement progress: {Unlocked}/{Total} unlocked",
-                    _progress.Values.Count(p => p.IsUnlocked), _progress.Count);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to load achievement progress");
-        }
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -410,5 +331,31 @@ public class AchievementService : IAchievementService
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Uses <paramref name="store"/> as the progress of the current game, adding fresh entries for any
+    /// achievement it lacks, dropping entries for achievements the pack does not define, and syncing unlock flags.
+    /// </summary>
+    private void AttachProgressStore(Dictionary<string, AchievementProgress> store)
+    {
+        _progress = store;
+
+        foreach (var achievement in _achievements.Values)
+        {
+            if (!_progress.TryGetValue(achievement.Id, out var progress))
+            {
+                progress = new AchievementProgress { AchievementId = achievement.Id };
+                _progress[achievement.Id] = progress;
+            }
+
+            progress.RequiredProgress = achievement.Trigger.RequiredCount;
+            achievement.IsUnlocked = progress.IsUnlocked;
+        }
+
+        foreach (var staleId in _progress.Keys.Where(id => !_achievements.ContainsKey(id)).ToList())
+        {
+            _progress.Remove(staleId);
+        }
     }
 }

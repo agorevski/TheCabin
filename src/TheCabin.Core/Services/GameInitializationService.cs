@@ -54,15 +54,15 @@ public class GameInitializationService
                 _logger?.LogInformation("No puzzles defined in story pack");
             }
 
-            // Initialize achievements if available
-            if (achievementService != null && storyPack.Achievements != null && storyPack.Achievements.Any())
+            // Initialize achievements; progress is bound to the game state once it exists
+            if (achievementService != null)
             {
-                await achievementService.InitializeAsync(storyPack.Achievements);
-                _logger?.LogInformation("✓ Initialized {Count} achievement(s)", storyPack.Achievements.Count);
+                await achievementService.InitializeAsync(storyPack.Achievements ?? new List<Achievement>());
+                _logger?.LogInformation("✓ Initialized {Count} achievement(s)", storyPack.Achievements?.Count ?? 0);
             }
             else
             {
-                _logger?.LogInformation("No achievements or achievement service unavailable");
+                _logger?.LogInformation("Achievement service unavailable");
             }
 
             // Initialize game state
@@ -72,6 +72,7 @@ public class GameInitializationService
             // Initialize state machine, then make the state service hold the same state instance it plays on
             await stateMachine.InitializeAsync(storyPack);
             gameStateService.SetCurrentState(stateMachine.CurrentState);
+            achievementService?.BindToGameState(gameStateService.CurrentState);
             _logger?.LogInformation("✓ State machine initialized");
 
             // Get initial room information
@@ -141,11 +142,12 @@ public class GameInitializationService
                 _logger?.LogInformation("✓ Re-initialized {Count} puzzle(s)", storyPack.Puzzles.Count);
             }
 
-            // Re-initialize achievements if available
-            if (achievementService != null && storyPack.Achievements != null && storyPack.Achievements.Any())
+            // Re-initialize achievements; progress comes from the loaded save only
+            if (achievementService != null)
             {
-                await achievementService.InitializeAsync(storyPack.Achievements);
-                _logger?.LogInformation("✓ Re-initialized {Count} achievement(s)", storyPack.Achievements.Count);
+                await achievementService.InitializeAsync(storyPack.Achievements ?? new List<Achievement>());
+                achievementService.BindToGameState(currentState);
+                _logger?.LogInformation("✓ Re-initialized {Count} achievement(s)", storyPack.Achievements?.Count ?? 0);
             }
 
             // Resume the state machine on the loaded state itself, so commands and saves share one instance

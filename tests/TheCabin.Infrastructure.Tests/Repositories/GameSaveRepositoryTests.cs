@@ -1,3 +1,4 @@
+using System.Text.Json.Nodes;
 using TheCabin.Core.Models;
 using TheCabin.Infrastructure.Repositories;
 
@@ -145,6 +146,63 @@ public sealed class GameSaveRepositoryTests : IDisposable
         var allFiles = Directory.GetFiles(_root, "*", SearchOption.AllDirectories);
         Assert.All(allFiles, file => Assert.StartsWith(_savesPath, file, StringComparison.Ordinal));
         Assert.False(File.Exists(Path.Combine(_root, "escaped")));
+    }
+
+    [Fact]
+    public async Task SaveAndLoad_RoundTripsAchievementProgressAndUnlocks()
+    {
+        var repository = new GameSaveRepository(_savesPath);
+        var state = CreateState("Ada", 1);
+        var unlockedAt = new DateTime(2026, 1, 2, 3, 4, 5, DateTimeKind.Utc);
+        state.Progress.AchievementProgress["explorer"] = new AchievementProgress
+        {
+            AchievementId = "explorer",
+            CurrentProgress = 3,
+            RequiredProgress = 3,
+            IsUnlocked = true,
+            UnlockedDate = unlockedAt
+        };
+        state.Progress.AchievementProgress["collector"] = new AchievementProgress
+        {
+            AchievementId = "collector",
+            CurrentProgress = 1,
+            RequiredProgress = 4
+        };
+        state.Progress.UnlockedAchievements.Add("explorer");
+        var id = await repository.SaveAsync("Achievements", state);
+
+        var loaded = await repository.LoadAsync(id);
+
+        Assert.NotNull(loaded);
+        var explorer = loaded.Progress.AchievementProgress["explorer"];
+        Assert.True(explorer.IsUnlocked);
+        Assert.Equal(unlockedAt, explorer.UnlockedDate);
+        Assert.Equal(3, explorer.CurrentProgress);
+        var collector = loaded.Progress.AchievementProgress["collector"];
+        Assert.False(collector.IsUnlocked);
+        Assert.Equal(1, collector.CurrentProgress);
+        Assert.Equal(4, collector.RequiredProgress);
+        Assert.Equal(new[] { "explorer" }, loaded.Progress.UnlockedAchievements);
+    }
+
+    [Fact]
+    public async Task LoadAsync_SaveWrittenBeforeAchievementProgress_LoadsWithEmptyProgress()
+    {
+        var repository = new GameSaveRepository(_savesPath);
+        var id = await repository.SaveAsync("Old", CreateState("Ada", 5));
+
+        // Remove the progress key to match a save written before achievement progress was stored with the game
+        var filePath = Path.Combine(_savesPath, $"save_{id}.json");
+        var root = JsonNode.Parse(await File.ReadAllTextAsync(filePath))!;
+        Assert.True(root["gameState"]!["progress"]!.AsObject().Remove("achievementProgress"));
+        await File.WriteAllTextAsync(filePath, root.ToJsonString());
+
+        var loaded = await repository.LoadAsync(id);
+
+        Assert.NotNull(loaded);
+        Assert.Empty(loaded.Progress.AchievementProgress);
+        Assert.Equal(5, loaded.Progress.Score);
+        Assert.True(loaded.Progress.StoryFlags["door_unlocked"]);
     }
 
     private static GameState CreateState(string playerName, int score)

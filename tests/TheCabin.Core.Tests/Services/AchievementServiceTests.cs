@@ -16,17 +16,6 @@ public class AchievementServiceTests
     {
         _mockLogger = new Mock<ILogger<AchievementService>>();
         _service = new AchievementService(_mockLogger.Object);
-
-        // Clean up any existing progress file from previous test runs
-        var progressFilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "TheCabin",
-            "achievement_progress.json");
-
-        if (File.Exists(progressFilePath))
-        {
-            File.Delete(progressFilePath);
-        }
     }
 
     [Fact]
@@ -561,19 +550,25 @@ public class AchievementServiceTests
     }
 
     [Fact]
-    public async Task TrackEventAsync_PartialProgress_IsRestoredInNextSession()
+    public async Task TrackEventAsync_PartialProgress_IsKeptWithTheGameStateNotTheSession()
     {
         var achievement = CreateTestAchievement("collector", "Collector", TriggerType.CommandExecuted, requiredCount: 2);
+        var savedGame = CreateTestGameState();
         await _service.InitializeAsync(new List<Achievement> { achievement });
-        await _service.TrackEventAsync(TriggerType.CommandExecuted, "test", CreateTestGameState());
+        await _service.TrackEventAsync(TriggerType.CommandExecuted, "test", savedGame);
 
         var nextSession = new AchievementService(_mockLogger.Object);
         await nextSession.InitializeAsync(new List<Achievement>
         {
             CreateTestAchievement("collector", "Collector", TriggerType.CommandExecuted, requiredCount: 2)
         });
+        nextSession.BindToGameState(savedGame);
 
         Assert.Equal(1, nextSession.GetProgress("collector")!.CurrentProgress);
+
+        nextSession.BindToGameState(CreateTestGameState());
+
+        Assert.Equal(0, nextSession.GetProgress("collector")!.CurrentProgress);
     }
 
     // Helper methods
