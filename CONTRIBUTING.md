@@ -41,7 +41,7 @@ Please be respectful and constructive in all interactions. We welcome contributo
 
 #### For Android Development
 
-- Android SDK (API Level 23-34)
+- Android SDK (API Level 21-34)
 - Android device or emulator configured
 
 #### For Windows Development

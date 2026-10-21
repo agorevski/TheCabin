@@ -13,7 +13,7 @@ This document details the complete technology stack for The Cabin, including fra
 
 **Key Features Utilized**:
 
-- Single project structure
+- Multi-project solution (`TheCabin.sln`); see [Solution Layout](#solution-layout)
 - XAML-based UI with C# code-behind
 - Platform-specific code via conditional compilation
 - Hot reload for rapid development
@@ -27,6 +27,21 @@ This document details the complete technology stack for The Cabin, including fra
 - Extensive community and Microsoft support
 - Familiar C# development experience
 
+## Solution Layout
+
+`TheCabin.sln` contains the following projects:
+
+| Project | Path | Purpose |
+|---------|------|---------|
+| TheCabin.Core | `src/TheCabin.Core` | Game engine, domain models, and interfaces |
+| TheCabin.Infrastructure | `src/TheCabin.Infrastructure` | Persistence and external integrations |
+| TheCabin.Maui | `src/TheCabin.Maui` | .NET MAUI application (Android and Windows) |
+| TheCabin.Console | `src/TheCabin.Console` | Console host for development and testing |
+| TheCabin.Core.Tests | `tests/TheCabin.Core.Tests` | Core unit and integration tests |
+| TheCabin.Infrastructure.Tests | `tests/TheCabin.Infrastructure.Tests` | Infrastructure tests |
+| TheCabin.Maui.Tests | `tests/TheCabin.Maui.Tests` | MAUI ViewModel tests |
+| StoryPackValidator | `tools/StoryPackValidator` | Story pack validation tool |
+
 ## Development Environment
 
 ### Required Tools
@@ -35,7 +50,7 @@ This document details the complete technology stack for The Cabin, including fra
 |------|---------|---------|
 | Visual Studio 2022 | 17.8+ | Primary IDE |
 | .NET SDK | 8.0+ | Runtime and libraries |
-| Android SDK | API 23-34 | Android development |
+| Android SDK | API 21-34 | Android development |
 | Android Emulator | Latest | Testing |
 | Git | 2.40+ | Version control |
 
@@ -51,17 +66,17 @@ This document details the complete technology stack for The Cabin, including fra
 ### Build Configuration
 
 ```xml
-<!-- .csproj settings -->
+<!-- src/TheCabin.Maui/TheCabin.Maui.csproj (excerpt) -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net9.0-android</TargetFrameworks>
+    <TargetFrameworks>net9.0-android;net9.0-windows10.0.19041.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
-    <RootNamespace>TheCabin</RootNamespace>
+    <RootNamespace>TheCabin.Maui</RootNamespace>
     <UseMaui>true</UseMaui>
     <SingleProject>true</SingleProject>
     
     <!-- Android specific -->
-    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
     <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     

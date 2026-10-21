@@ -6,7 +6,7 @@ A voice-controlled interactive fiction game built with .NET MAUI for Android and
 [![Android](https://img.shields.io/badge/Android-6.0%2B-3DDC84?logo=android)](https://www.android.com/)
 [![Windows](https://img.shields.io/badge/Windows-10%2B-0078D6?logo=windows)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-170%20Passed-success)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-174%20Passed-success)](tests/)
 [![Coverage](https://img.shields.io/badge/Coverage-54%25-yellow)](tests/)
 
 ## ✨ Features
@@ -85,7 +85,7 @@ TheCabin/
 
 #### For Android Testing
 
-- Android SDK (API Level 23-34)
+- Android SDK (API Level 21-34)
 - Android device or emulator
 
 #### For Windows Testing
@@ -161,7 +161,7 @@ adb logcat -c && adb logcat | findstr "com.thecabin.voiceadventure"
 |-----------|-----------|
 | **Framework** | .NET MAUI 9.0 |
 | **Language** | C# 12 |
-| **Platforms** | Android 6.0+, Windows 10+ |
+| **Platforms** | Android 5.0+, Windows 10+ |
 | **UI Pattern** | MVVM (CommunityToolkit.Mvvm) |
 | **Speech Recognition** | Platform-specific APIs (Android) |
 | **Text-to-Speech** | MAUI TextToSpeech / Azure TTS |

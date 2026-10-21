@@ -26,7 +26,7 @@
 
 ### In Scope
 
-- Android application (API Level 23+, Android 6.0+)
+- Android application (API Level 21+, Android 5.0+)
 - Voice input and output
 - 5 pre-built thematic story packs
 - Local game state persistence
@@ -76,7 +76,7 @@
 
 ### Android Target Platform
 
-**Minimum SDK**: API Level 23 (Android 6.0 Marshmallow)
+**Minimum SDK**: API Level 21 (Android 5.0 Lollipop)
 
 - 95%+ device coverage
 - Runtime permissions model support

@@ -7,7 +7,6 @@ This section contains the auto-generated API documentation for The Cabin project
 - **TheCabin.Core** - Core game engine, state management, and domain models
 - **TheCabin.Infrastructure** - External service integrations (voice, storage, etc.)
 - **TheCabin.Console** - Console application for development and testing
-- **TheCabin.Maui** - Cross-platform UI application
 
 ## Getting Started
 

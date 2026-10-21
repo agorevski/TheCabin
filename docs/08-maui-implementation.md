@@ -8,94 +8,36 @@ This document provides detailed implementation guidance for The Cabin using .NET
 
 ```text
 TheCabin/
-├── TheCabin.csproj
-├── App.xaml
-├── App.xaml.cs
-├── AppShell.xaml
-├── AppShell.xaml.cs
-├── MauiProgram.cs
+├── TheCabin.sln
+├── Directory.Build.props
+├── docfx.json
+├── story_packs/
 │
-├── Models/
-│   ├── Domain/
-│   │   ├── Room.cs
-│   │   ├── GameObject.cs
-│   │   ├── Player.cs
-│   │   └── GameState.cs
-│   ├── Services/
-│   │   ├── VoiceRecognitionResult.cs
-│   │   └── ParsedCommand.cs
-│   └── UI/
-│       └── NarrativeEntry.cs
+├── src/
+│   ├── TheCabin.Core/              # Engine/, Models/, Interfaces/, Services/
+│   ├── TheCabin.Infrastructure/    # Repositories/
+│   ├── TheCabin.Console/           # Program.cs, ConsoleGameDisplay.cs
+│   └── TheCabin.Maui/              # .NET MAUI app (TheCabin.Maui.csproj)
+│       ├── App.xaml / App.xaml.cs
+│       ├── AppShell.xaml / AppShell.xaml.cs
+│       ├── MauiProgram.cs
+│       ├── Converters/
+│       ├── Extensions/
+│       ├── Models/
+│       ├── Platforms/
+│       │   └── Android/            # MainActivity.cs, MainApplication.cs, AndroidManifest.xml, Services/
+│       ├── Resources/
+│       ├── Services/
+│       ├── ViewModels/
+│       └── Views/
 │
-├── ViewModels/
-│   ├── BaseViewModel.cs
-│   ├── MainViewModel.cs
-│   ├── InventoryViewModel.cs
-│   ├── SettingsViewModel.cs
-│   └── StoryPackViewModel.cs
+├── tests/
+│   ├── TheCabin.Core.Tests/
+│   ├── TheCabin.Infrastructure.Tests/
+│   └── TheCabin.Maui.Tests/
 │
-├── Views/
-│   ├── MainPage.xaml
-│   ├── MainPage.xaml.cs
-│   ├── InventoryPage.xaml
-│   ├── InventoryPage.xaml.cs
-│   ├── SettingsPage.xaml
-│   └── SettingsPage.xaml.cs
-│
-├── Services/
-│   ├── Interfaces/
-│   │   ├── IVoiceRecognitionService.cs
-│   │   ├── ITextToSpeechService.cs
-│   │   ├── ICommandParserService.cs
-│   │   └── IGameStateService.cs
-│   └── Implementation/
-│       ├── CommandParserService.cs
-│       ├── GameStateService.cs
-│       └── StoryPackService.cs
-│
-├── Engine/
-│   ├── GameStateMachine.cs
-│   ├── CommandRouter.cs
-│   ├── CommandHandlers/
-│   │   ├── MoveCommandHandler.cs
-│   │   ├── TakeCommandHandler.cs
-│   │   └── UseCommandHandler.cs
-│   ├── InventoryManager.cs
-│   └── PuzzleEngine.cs
-│
-├── Data/
-│   ├── Repositories/
-│   │   ├── GameSaveRepository.cs
-│   │   ├── StoryPackRepository.cs
-│   │   └── CommandCacheRepository.cs
-│   └── Entities/
-│       ├── GameSaveEntity.cs
-│       └── CommandCacheEntity.cs
-│
-├── Platforms/
-│   ├── Android/
-│   │   ├── MainActivity.cs
-│   │   ├── MainApplication.cs
-│   │   ├── AndroidManifest.xml
-│   │   └── Services/
-│   │       ├── AndroidVoiceRecognitionService.cs
-│   │       └── AndroidTtsService.cs
-│   ├── iOS/ (future)
-│   └── Windows/ (future)
-│
-├── Resources/
-│   ├── Fonts/
-│   ├── Images/
-│   ├── Raw/
-│   └── Styles/
-│       ├── Colors.xaml
-│       └── Styles.xaml
-│
-└── Assets/
-    └── StoryPacks/
-        ├── classic_horror.json
-        ├── arctic_survival.json
-        └── ...
+└── tools/
+    └── StoryPackValidator/
 ```
 
 ## MauiProgram.cs Setup
@@ -640,18 +582,20 @@ public class MainActivity : MauiAppCompatActivity
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     
-    <uses-sdk android:minSdkVersion="23" android:targetSdkVersion="34" />
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="34" />
 </manifest>
 ```
 
 ## Build Configuration
 
+Excerpt from `src/TheCabin.Maui/TheCabin.Maui.csproj`:
+
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net9.0-android</TargetFrameworks>
+        <TargetFrameworks>net9.0-android;net9.0-windows10.0.19041.0</TargetFrameworks>
         <OutputType>Exe</OutputType>
-        <RootNamespace>TheCabin</RootNamespace>
+        <RootNamespace>TheCabin.Maui</RootNamespace>
         <UseMaui>true</UseMaui>
         <SingleProject>true</SingleProject>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -670,7 +614,7 @@ public class MainActivity : MauiAppCompatActivity
         <!-- Required for C# Hot Reload -->
         <UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>
 
-        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
