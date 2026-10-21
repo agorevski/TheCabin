@@ -28,7 +28,7 @@ jobs:
       run: dotnet build src/TheCabin.Infrastructure/TheCabin.Infrastructure.csproj --configuration Release --no-restore
 
     - name: Run Core Tests
-      run: dotnet test tests/TheCabin.Core.Tests/TheCabin.Core.Tests.csproj --configuration Release --no-build --verbosity normal
+      run: dotnet test tests/TheCabin.Core.Tests/TheCabin.Core.Tests.csproj --configuration Release --no-restore --verbosity normal
 
     - name: Run Infrastructure Tests
-      run: dotnet test tests/TheCabin.Infrastructure.Tests/TheCabin.Infrastructure.Tests.csproj --configuration Release --no-build --verbosity normal
+      run: dotnet test tests/TheCabin.Infrastructure.Tests/TheCabin.Infrastructure.Tests.csproj --configuration Release --no-restore --verbosity normal

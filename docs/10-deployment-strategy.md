@@ -149,23 +149,23 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
     
     - name: Install MAUI Workloads
       run: dotnet workload install maui
     
     - name: Restore Dependencies
-      run: dotnet restore TheCabin.csproj
+      run: dotnet restore src/TheCabin.Maui/TheCabin.Maui.csproj
     
     - name: Build Debug APK
       if: github.event_name == 'pull_request'
-      run: dotnet build TheCabin.csproj -c Debug -f net9.0-android
+      run: dotnet build src/TheCabin.Maui/TheCabin.Maui.csproj -c Debug -f net9.0-android
     
     - name: Build Release APK
       if: github.ref == 'refs/heads/main'
       env:
         KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-      run: dotnet publish TheCabin.csproj -c Release -f net9.0-android
+      run: dotnet publish src/TheCabin.Maui/TheCabin.Maui.csproj -c Release -f net9.0-android
     
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v3
@@ -174,7 +174,7 @@ jobs:
         path: bin/Release/net9.0-android/publish/*.apk
     
     - name: Run Tests
-      run: dotnet test TheCabin.Tests/TheCabin.Tests.csproj
+      run: dotnet test tests/TheCabin.Core.Tests/TheCabin.Core.Tests.csproj
 ```
 
 ### Azure DevOps Pipeline
@@ -195,7 +195,7 @@ variables:
 steps:
 - task: UseDotNet@2
   inputs:
-    version: '8.0.x'
+    version: '9.0.x'
 
 - script: dotnet workload install maui
   displayName: 'Install MAUI Workloads'
@@ -210,7 +210,7 @@ steps:
   displayName: 'Build Release APK'
   inputs:
     command: 'publish'
-    projects: 'TheCabin.csproj'
+    projects: 'src/TheCabin.Maui/TheCabin.Maui.csproj'
     arguments: '-c $(buildConfiguration) -f net9.0-android'
     
 - task: CopyFiles@2

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # Pre-commit hook for secret detection
 # This hook scans staged files for potential secrets before allowing a commit.
@@ -14,7 +14,7 @@ echo "Running secret detection scan..."
 # Define patterns that might indicate secrets
 SECRET_PATTERNS=(
     # API Keys
-    '[aA][pP][iI][_-]?[kK][eE][yY]\s*[:=]\s*["\x27][A-Za-z0-9_\-]{16,}["\x27]'
+    "[aA][pP][iI][_-]?[kK][eE][yY]\s*[:=]\s*[\"'][A-Za-z0-9_\-]{16,}[\"']"
     # AWS Keys
     'AKIA[0-9A-Z]{16}'
     'aws[_-]?secret[_-]?access[_-]?key'
@@ -27,7 +27,7 @@ SECRET_PATTERNS=(
     # JWT tokens (only full tokens, not partial)
     'eyJ[A-Za-z0-9_-]*\.eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*'
     # Generic secrets
-    '[sS][eE][cC][rR][eE][tT]\s*[:=]\s*["\x27][A-Za-z0-9_\-]{16,}["\x27]'
+    "[sS][eE][cC][rR][eE][tT]\s*[:=]\s*[\"'][A-Za-z0-9_\-]{16,}[\"']"
     # Bearer tokens
     '[bB]earer\s+[A-Za-z0-9_\-\.]{20,}'
     # GitHub tokens
@@ -69,8 +69,8 @@ for file in $STAGED_FILES; do
         continue
     fi
     
-    # Skip binary files
-    if file "$file" | grep -q "binary"; then
+    # Skip binary files (grep -I treats binary content as non-matching)
+    if ! git show ":$file" 2>/dev/null | grep -Iq .; then
         continue
     fi
     

@@ -27,6 +27,10 @@ $preCommitTarget = Join-Path $hooksTarget "pre-commit"
 
 if (Test-Path $preCommitSource) {
     Copy-Item -Path $preCommitSource -Destination $preCommitTarget -Force
+    # Git ignores non-executable hooks on Linux/macOS; Copy-Item does not preserve the mode
+    if ($IsLinux -or $IsMacOS) {
+        chmod +x $preCommitTarget
+    }
     Write-Host "  Installed: pre-commit (secret detection)" -ForegroundColor Green
 }
 else {

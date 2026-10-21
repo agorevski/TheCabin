@@ -79,7 +79,8 @@ TheCabin/
 │   └── TheCabin.Console/        # Console test harness
 ├── tests/
 │   ├── TheCabin.Core.Tests/
-│   └── TheCabin.Infrastructure.Tests/
+│   ├── TheCabin.Infrastructure.Tests/
+│   └── TheCabin.Maui.Tests/
 ├── story_packs/                 # JSON theme definitions
 ├── docs/                        # Comprehensive documentation
 └── tools/                       # Development utilities
