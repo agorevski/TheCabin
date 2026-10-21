@@ -92,6 +92,9 @@ public static class MauiProgram
         // Platform-specific services - register after logging is configured
 #if ANDROID
         services.AddSingleton<IVoiceRecognitionService, AndroidVoiceRecognitionService>();
+#else
+        // MainViewModel requires IVoiceRecognitionService, so every platform needs a registration.
+        services.AddSingleton<IVoiceRecognitionService, UnsupportedVoiceRecognitionService>();
 #endif
     }
 

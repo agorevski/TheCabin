@@ -151,6 +151,12 @@ public partial class MainViewModel : BaseViewModel
     }
 
     [RelayCommand]
+    private async Task ShowInventoryAsync()
+    {
+        await Shell.Current.GoToAsync("//InventoryPage");
+    }
+
+    [RelayCommand]
     private async Task SelectStoryPackAsync()
     {
         await Shell.Current.GoToAsync("//StoryPackSelectorPage");
@@ -279,9 +285,15 @@ public partial class MainViewModel : BaseViewModel
 
             _listeningCts = new CancellationTokenSource();
 
-            var result = await _voiceService.RecognizeSpeechAsync(_listeningCts.Token);
-
-            IsListening = false;
+            VoiceRecognitionResult result;
+            try
+            {
+                result = await _voiceService.RecognizeSpeechAsync(_listeningCts.Token);
+            }
+            finally
+            {
+                IsListening = false;
+            }
 
             if (result.Success)
             {
@@ -291,7 +303,7 @@ public partial class MainViewModel : BaseViewModel
             else
             {
                 TranscriptText = string.Empty;
-                await _display.ShowMessageAsync(result.ErrorMessage, MessageType.SystemMessage);
+                await _display.ShowMessageAsync(result.ErrorMessage ?? "Voice recognition failed.", MessageType.SystemMessage);
             }
         }, "Voice recognition failed");
     }
@@ -316,28 +328,33 @@ public partial class MainViewModel : BaseViewModel
         await ExecuteAsync(async () =>
         {
             IsProcessing = true;
-
-            // Process command using orchestrator
-            await _orchestrator.ProcessCommandAsync(input);
-
-            // Update UI state
-            UpdateUIState();
-
-            // Optional TTS narration for the last message
-            if (TtsEnabled && StoryFeed.Any())
+            try
             {
-                var lastEntry = StoryFeed.Last();
-                if (lastEntry.Type == NarrativeType.Success || lastEntry.Type == NarrativeType.Description)
+                // Process command using orchestrator
+                await _orchestrator.ProcessCommandAsync(input);
+
+                // Update UI state
+                UpdateUIState();
+
+                // Optional TTS narration for the last message
+                if (TtsEnabled && StoryFeed.Any())
                 {
-                    // Clean up display formatting for TTS
-                    var ttsText = lastEntry.Text
-                        .Replace("📍 You see:", "You see:")
-                        .Replace("🚪 Exits:", "Exits:");
-                    await _ttsService.SpeakAsync(ttsText);
+                    var lastEntry = StoryFeed.Last();
+                    if (lastEntry.Type == NarrativeType.Success || lastEntry.Type == NarrativeType.Description)
+                    {
+                        // Clean up display formatting for TTS
+                        var ttsText = lastEntry.Text
+                            .Replace("📍 You see:", "You see:")
+                            .Replace("🚪 Exits:", "Exits:");
+                        await _ttsService.SpeakAsync(ttsText);
+                    }
                 }
             }
+            finally
+            {
+                IsProcessing = false;
+            }
 
-            IsProcessing = false;
             TranscriptText = string.Empty;
         }, "Command processing failed");
     }

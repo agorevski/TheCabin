@@ -343,7 +343,7 @@ public class InventoryViewModelTests
     {
         // Arrange
         var mockStateMachine = new Mock<IGameStateMachine>();
-        mockStateMachine.Setup(x => x.CurrentState).Returns((GameState?)null);
+        mockStateMachine.Setup(x => x.CurrentState).Returns((GameState)null!);
 
         // Act
         var vm = new InventoryViewModel(mockStateMachine.Object);

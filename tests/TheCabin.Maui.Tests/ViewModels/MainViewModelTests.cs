@@ -5,6 +5,7 @@ using TheCabin.Maui.ViewModels;
 using TheCabin.Core.Interfaces;
 using TheCabin.Core.Models;
 using TheCabin.Core.Engine;
+using TheCabin.Core.Services;
 using TheCabin.Maui.Services;
 using Microsoft.Extensions.Logging;
 using TheCabin.Maui.Models;
@@ -59,6 +60,7 @@ public class MainViewModelTests
         {
             Id = "test_pack",
             Theme = "Test Theme",
+            StartingRoomId = "test_room",
             Rooms = new List<Room>
             {
                 new Room
@@ -86,17 +88,17 @@ public class MainViewModelTests
 
         _viewModel = new MainViewModel(
             _mockVoiceService.Object,
-            _mockParserService.Object,
-            _mockGameStateService.Object,
             _mockTtsService.Object,
+            _mockGameStateService.Object,
             _mockStoryPackService.Object,
-            _mockAchievementService.Object,
-            _mockNotificationService.Object,
-            _mockLogger.Object,
+            _mockParserService.Object,
             _commandRouter,
-            _mainThreadDispatcher,
             _gameStateMachine,
-            _mockPuzzleEngine.Object
+            _mockPuzzleEngine.Object,
+            new GameInitializationService(),
+            _mainThreadDispatcher,
+            _mockAchievementService.Object,
+            _mockLogger.Object
         );
     }
 
@@ -504,6 +506,7 @@ public class MainViewModelTests
     {
         // Arrange
         await _viewModel.InitializeAsync();
+        _mockTtsService.Invocations.Clear();
         _viewModel.TtsEnabled = true;
 
         var parsedCommand = new ParsedCommand { Verb = "look", Object = "" };
@@ -526,6 +529,7 @@ public class MainViewModelTests
     {
         // Arrange
         await _viewModel.InitializeAsync();
+        _mockTtsService.Invocations.Clear();
         _viewModel.TtsEnabled = false;
 
         var parsedCommand = new ParsedCommand { Verb = "look", Object = "" };
@@ -546,6 +550,7 @@ public class MainViewModelTests
     {
         // Arrange
         await _viewModel.InitializeAsync();
+        _mockTtsService.Invocations.Clear();
         _viewModel.TtsEnabled = true;
 
         var parsedCommand = new ParsedCommand { Verb = "invalid", Object = "" };
