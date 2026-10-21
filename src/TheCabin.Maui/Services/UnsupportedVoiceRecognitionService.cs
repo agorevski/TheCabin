@@ -10,6 +10,7 @@ public class UnsupportedVoiceRecognitionService : IVoiceRecognitionService
 {
     public Task<VoiceRecognitionResult> RecognizeSpeechAsync(CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         return Task.FromResult(new VoiceRecognitionResult
         {
             Success = false,

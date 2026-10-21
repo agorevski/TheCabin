@@ -411,6 +411,48 @@ public class MainViewModelTests
     }
 
     [Fact]
+    public async Task VoiceRecognition_StoppedByPlayer_ExitsWithoutError()
+    {
+        // Arrange
+        await _viewModel.InitializeAsync();
+        var recognitionStarted = new TaskCompletionSource();
+        _mockVoiceService.Setup(x => x.RecognizeSpeechAsync(It.IsAny<CancellationToken>()))
+            .Returns<CancellationToken>(async ct =>
+            {
+                recognitionStarted.TrySetResult();
+                await Task.Delay(Timeout.Infinite, ct);
+                return new VoiceRecognitionResult();
+            });
+
+        // Act
+        var listening = _viewModel.ToggleListeningCommand.ExecuteAsync(null);
+        await recognitionStarted.Task;
+        await _viewModel.ToggleListeningCommand.ExecuteAsync(null);
+        await listening;
+
+        // Assert
+        _viewModel.IsListening.Should().BeFalse();
+        _viewModel.ErrorMessage.Should().BeEmpty();
+        _viewModel.StoryFeed.Should().NotContain(e => e.Type == NarrativeType.SystemMessage);
+    }
+
+    [Fact]
+    public async Task VoiceRecognition_CancellationNotRequestedByPlayer_ReportsError()
+    {
+        // Arrange
+        await _viewModel.InitializeAsync();
+        _mockVoiceService.Setup(x => x.RecognizeSpeechAsync(It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new OperationCanceledException("Recognizer timed out"));
+
+        // Act
+        await _viewModel.ToggleListeningCommand.ExecuteAsync(null);
+
+        // Assert
+        _viewModel.IsListening.Should().BeFalse();
+        _viewModel.ErrorMessage.Should().StartWith("Voice recognition failed");
+    }
+
+    [Fact]
     public void SaveGameCommand_IsNotNull()
     {
         // Assert

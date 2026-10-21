@@ -284,12 +284,18 @@ public partial class MainViewModel : BaseViewModel
             TranscriptText = "Listening...";
 
             _listeningCts?.Dispose();
-            _listeningCts = new CancellationTokenSource();
+            var listeningCts = new CancellationTokenSource();
+            _listeningCts = listeningCts;
 
             VoiceRecognitionResult result;
             try
             {
-                result = await _voiceService.RecognizeSpeechAsync(_listeningCts.Token);
+                result = await _voiceService.RecognizeSpeechAsync(listeningCts.Token);
+            }
+            catch (OperationCanceledException) when (listeningCts.IsCancellationRequested)
+            {
+                // Cancelled by the player via StopListening; not an error.
+                return;
             }
             finally
             {

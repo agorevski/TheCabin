@@ -66,6 +66,10 @@ public class AndroidVoiceRecognitionService : IVoiceRecognitionService
                 return await _tcs.Task;
             }
         }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Voice recognition failed");
