@@ -59,8 +59,8 @@ class Program
         services.AddSingleton<IInventoryManager>(sp =>
         {
             var achievementService = sp.GetService<IAchievementService>();
-            var emptyState = new GameState();
-            return new InventoryManager(emptyState, achievementService);
+            var stateMachine = sp.GetRequiredService<IGameStateMachine>();
+            return new InventoryManager(() => stateMachine.CurrentState, achievementService);
         });
 
         // Command handlers

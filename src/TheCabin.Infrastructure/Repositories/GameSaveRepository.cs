@@ -109,7 +109,9 @@ public class GameSaveRepository : IGameSaveRepository
             throw new InvalidDataException($"Save {saveId} is corrupt and cannot be loaded.", ex);
         }
 
-        return saveData?.GameState ?? throw new InvalidDataException($"Save {saveId} does not contain a game state.");
+        var gameState = saveData?.GameState ?? throw new InvalidDataException($"Save {saveId} does not contain a game state.");
+        RestoreGlobalVariableTypes(gameState.World.GlobalVariables);
+        return gameState;
     }
 
     /// <summary>
@@ -182,6 +184,47 @@ public class GameSaveRepository : IGameSaveRepository
         var filePath = Path.Combine(_savesPath, fileName);
 
         return Task.FromResult(File.Exists(filePath));
+    }
+
+    // GlobalVariables is typed as object, so System.Text.Json restores every value as a JsonElement.
+    // Scalars are converted back to the CLR types they were saved from so comparisons behave as they did before saving.
+    // Nulls, objects, and arrays are left as JsonElement because they have no direct CLR equivalent here.
+    private static void RestoreGlobalVariableTypes(Dictionary<string, object> variables)
+    {
+        foreach (var key in variables.Keys.ToList())
+        {
+            if (variables[key] is not JsonElement element)
+            {
+                continue;
+            }
+
+            switch (element.ValueKind)
+            {
+                case JsonValueKind.True:
+                    variables[key] = true;
+                    break;
+                case JsonValueKind.False:
+                    variables[key] = false;
+                    break;
+                case JsonValueKind.String:
+                    variables[key] = element.GetString() ?? string.Empty;
+                    break;
+                case JsonValueKind.Number:
+                    if (element.TryGetInt32(out var intValue))
+                    {
+                        variables[key] = intValue;
+                    }
+                    else if (element.TryGetInt64(out var longValue))
+                    {
+                        variables[key] = longValue;
+                    }
+                    else
+                    {
+                        variables[key] = element.GetDouble();
+                    }
+                    break;
+            }
+        }
     }
 
     private void LoadNextId()

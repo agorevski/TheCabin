@@ -41,6 +41,11 @@ public interface IGameStateService
     /// </summary>
     /// <param name="saveId">ID of the save to delete</param>
     Task DeleteSaveAsync(int saveId);
+
+    /// <summary>
+    /// Makes the given state the active game state, so saves write the instance the state machine plays on
+    /// </summary>
+    void SetCurrentState(GameState state);
 }
 
 /// <summary>

@@ -8,13 +8,32 @@ namespace TheCabin.Core.Engine;
 /// </summary>
 public class InventoryManager : IInventoryManager
 {
-    private readonly GameState _gameState;
+    private readonly Func<GameState> _stateProvider;
     private readonly IAchievementService? _achievementService;
 
     public InventoryManager(GameState gameState, IAchievementService? achievementService = null)
+        : this(FixedState(gameState), achievementService)
     {
-        _gameState = gameState ?? throw new ArgumentNullException(nameof(gameState));
+    }
+
+    /// <summary>
+    /// Creates an inventory manager that always works on the state returned by <paramref name="stateProvider"/>,
+    /// so it follows the live game state when a new game or save is loaded.
+    /// </summary>
+    public InventoryManager(Func<GameState> stateProvider, IAchievementService? achievementService = null)
+    {
+        _stateProvider = stateProvider ?? throw new ArgumentNullException(nameof(stateProvider));
         _achievementService = achievementService; // Optional dependency
+    }
+
+    private GameState State => _stateProvider();
+
+    private static Func<GameState> FixedState(GameState gameState)
+    {
+        if (gameState == null)
+            throw new ArgumentNullException(nameof(gameState));
+
+        return () => gameState;
     }
 
     /// <summary>
@@ -25,7 +44,8 @@ public class InventoryManager : IInventoryManager
         if (item == null)
             return false;
 
-        var inventory = _gameState.Player.Inventory;
+        var inventory = State.Player.Inventory;
+
         return inventory.TotalWeight + item.Weight <= inventory.MaxCapacity;
     }
 
@@ -45,7 +65,7 @@ public class InventoryManager : IInventoryManager
         if (item == null)
             throw new ArgumentNullException(nameof(item));
 
-        var inventory = _gameState.Player.Inventory;
+        var inventory = State.Player.Inventory;
         if (inventory.Items.Any(i => i.Id == item.Id))
             return; // Already carried; adding again would duplicate the item and its weight
 
@@ -56,7 +76,7 @@ public class InventoryManager : IInventoryManager
         inventory.TotalWeight += item.Weight;
 
         // Update stats
-        _gameState.Player.Stats.ItemsCollected++;
+        State.Player.Stats.ItemsCollected++;
 
         // Track achievement
         if (_achievementService != null)
@@ -64,7 +84,7 @@ public class InventoryManager : IInventoryManager
             await _achievementService.TrackEventAsync(
                 TriggerType.ItemCollected,
                 item.Id,
-                _gameState);
+                State);
         }
     }
 
@@ -84,7 +104,7 @@ public class InventoryManager : IInventoryManager
         if (string.IsNullOrWhiteSpace(itemId))
             throw new ArgumentException("Item ID cannot be empty", nameof(itemId));
 
-        var inventory = _gameState.Player.Inventory;
+        var inventory = State.Player.Inventory;
         var item = inventory.Items.FirstOrDefault(i => i.Id == itemId);
 
         if (item != null)
@@ -98,7 +118,7 @@ public class InventoryManager : IInventoryManager
                 await _achievementService.TrackEventAsync(
                     TriggerType.ItemDropped,
                     item.Id,
-                    _gameState);
+                    State);
             }
         }
     }
@@ -111,7 +131,7 @@ public class InventoryManager : IInventoryManager
         if (string.IsNullOrWhiteSpace(itemId))
             return false;
 
-        return _gameState.Player.Inventory.Items
+        return State.Player.Inventory.Items
             .Any(i => i.Id.Equals(itemId, StringComparison.OrdinalIgnoreCase));
     }
 
@@ -126,14 +146,14 @@ public class InventoryManager : IInventoryManager
         itemId = itemId.ToLowerInvariant();
 
         // Try exact ID match first
-        var exactMatch = _gameState.Player.Inventory.Items
+        var exactMatch = State.Player.Inventory.Items
             .FirstOrDefault(i => i.Id.Equals(itemId, StringComparison.OrdinalIgnoreCase));
 
         if (exactMatch != null)
             return exactMatch;
 
         // Try partial name match
-        return _gameState.Player.Inventory.Items
+        return State.Player.Inventory.Items
             .FirstOrDefault(i =>
                 i.Id.ToLowerInvariant().Contains(itemId) ||
                 i.Name.ToLowerInvariant().Contains(itemId));
@@ -144,7 +164,7 @@ public class InventoryManager : IInventoryManager
     /// </summary>
     public List<GameObject> GetAllItems()
     {
-        return new List<GameObject>(_gameState.Player.Inventory.Items);
+        return new List<GameObject>(State.Player.Inventory.Items);
     }
 
     /// <summary>
@@ -152,7 +172,7 @@ public class InventoryManager : IInventoryManager
     /// </summary>
     public string GetInventoryDescription()
     {
-        var inventory = _gameState.Player.Inventory;
+        var inventory = State.Player.Inventory;
 
         if (inventory.Items.Count == 0)
         {

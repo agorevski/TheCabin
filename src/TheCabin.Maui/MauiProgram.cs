@@ -176,10 +176,10 @@ public static class MauiProgram
         services.AddSingleton<IInventoryManager>(sp =>
         {
             var achievementService = sp.GetService<IAchievementService>();
+            var stateMachine = sp.GetRequiredService<IGameStateMachine>();
 
-            // Create with empty state - the actual state comes from GameStateService
-            var emptyState = new GameState();
-            return new InventoryManager(emptyState, achievementService);
+            // Follow the live game state, which changes whenever a new game or save is loaded
+            return new InventoryManager(() => stateMachine.CurrentState, achievementService);
         });
 
         // Command router - needs concrete GameStateMachine for now

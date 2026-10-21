@@ -109,6 +109,28 @@ public class GameStateMachine : IGameStateMachine
     }
 
     /// <summary>
+    /// Resumes play on a saved state. The state is adopted as-is, so the machine and any
+    /// state holder share the same instance, and no room visits are counted again.
+    /// </summary>
+    public async Task RestoreStateAsync(StoryPack storyPack, GameState savedState)
+    {
+        if (storyPack == null)
+            throw new ArgumentNullException(nameof(storyPack));
+        if (savedState == null)
+            throw new ArgumentNullException(nameof(savedState));
+
+        if (!savedState.World.Rooms.ContainsKey(savedState.Player.CurrentLocationId))
+            throw new InvalidOperationException($"Saved location '{savedState.Player.CurrentLocationId}' not found");
+
+        CurrentState = savedState;
+
+        if (_achievementService != null && storyPack.Achievements != null && storyPack.Achievements.Any())
+        {
+            await _achievementService.InitializeAsync(storyPack.Achievements);
+        }
+    }
+
+    /// <summary>
     /// Gets the room the player is currently in
     /// </summary>
     public Room GetCurrentRoom()

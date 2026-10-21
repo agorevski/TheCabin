@@ -42,6 +42,25 @@ public sealed class GameSaveRepositoryTests : IDisposable
     }
 
     [Fact]
+    public async Task SaveAndLoad_RestoresGlobalVariablesToOriginalTypes()
+    {
+        var repository = new GameSaveRepository(_savesPath);
+        var state = CreateState("Ada", 1);
+        state.World.GlobalVariables["lamp_lit"] = true;
+        state.World.GlobalVariables["matches_left"] = 3;
+        state.World.GlobalVariables["visitor_name"] = "Mara";
+        var id = await repository.SaveAsync("Globals", state);
+
+        var loaded = await repository.LoadAsync(id);
+
+        Assert.NotNull(loaded);
+        var variables = loaded.World.GlobalVariables;
+        Assert.True(variables["lamp_lit"] is true);
+        Assert.True(variables["matches_left"] is int matches && matches == 3);
+        Assert.Equal("Mara", variables["visitor_name"] as string);
+    }
+
+    [Fact]
     public async Task LoadAsync_MissingSave_ReturnsNull()
     {
         var repository = new GameSaveRepository(_savesPath);

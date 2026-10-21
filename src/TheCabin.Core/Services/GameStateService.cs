@@ -129,6 +129,20 @@ public class GameStateService : IGameStateService
     }
 
     /// <summary>
+    /// Makes <paramref name="state"/> the active game state. Used so saves write the same instance the state machine plays on.
+    /// </summary>
+    public void SetCurrentState(GameState state)
+    {
+        if (state == null)
+            throw new ArgumentNullException(nameof(state));
+
+        lock (_stateLock)
+        {
+            _currentState = state;
+        }
+    }
+
+    /// <summary>
     /// Gets a list of all saved games
     /// </summary>
     public async Task<List<GameSaveInfo>> GetSavedGamesAsync()
@@ -161,40 +175,6 @@ public class GameStateService : IGameStateService
         }
     }
 
-    internal void UpdateState(CommandResult result)
-    {
-        if (result == null)
-            throw new ArgumentNullException(nameof(result));
-
-        lock (_stateLock)
-        {
-            if (_currentState == null)
-                throw new InvalidOperationException("No active game state");
-
-            // Add result message to story log
-            _currentState.StoryLog.Add(new NarrativeEntry
-            {
-                Text = result.Message,
-                Type = result.Success ? NarrativeType.Success : NarrativeType.Failure,
-                Timestamp = DateTime.Now,
-                IsImportant = !result.Success
-            });
-
-            // Apply state changes if any
-            if (result.StateChange != null)
-            {
-                ApplyStateChanges(result.StateChange);
-            }
-
-            // Increment turn counter
-            _currentState.World.TurnNumber++;
-
-            // Update play time
-            _currentState.Player.Stats.PlayTime =
-                DateTime.UtcNow - _currentState.Player.Stats.StartTime;
-        }
-    }
-
     internal void AddNarrativeEntry(string text, NarrativeType type)
     {
         lock (_stateLock)
@@ -224,64 +204,5 @@ public class GameStateService : IGameStateService
 
         var roomId = _currentState.Player.CurrentLocationId;
         return _currentState.World.Rooms[roomId];
-    }
-
-    private void ApplyStateChanges(GameStateChange changes)
-    {
-        if (_currentState == null)
-            return;
-
-        // Location change
-        if (!string.IsNullOrEmpty(changes.LocationChanged))
-        {
-            _currentState.Player.CurrentLocationId = changes.LocationChanged;
-
-            // Mark room as visited and increment counter if first visit
-            if (_currentState.World.Rooms.TryGetValue(changes.LocationChanged, out var room))
-            {
-                if (!room.IsVisited)
-                {
-                    room.IsVisited = true;
-                    _currentState.Player.Stats.RoomsExplored++;
-                }
-            }
-        }
-
-        // Items added to inventory
-        foreach (var itemId in changes.ItemsAdded)
-        {
-            if (_currentState.World.Objects.TryGetValue(itemId, out var obj))
-            {
-                _currentState.Player.Inventory.Items.Add(obj);
-                _currentState.Player.Inventory.TotalWeight += obj.Weight;
-                _currentState.Player.Stats.ItemsCollected++;
-            }
-        }
-
-        // Items removed from inventory
-        foreach (var itemId in changes.ItemsRemoved)
-        {
-            var item = _currentState.Player.Inventory.Items
-                .FirstOrDefault(i => i.Id == itemId);
-            if (item != null)
-            {
-                _currentState.Player.Inventory.Items.Remove(item);
-                _currentState.Player.Inventory.TotalWeight -= item.Weight;
-            }
-        }
-
-        // Health change
-        if (changes.HealthChange != 0)
-        {
-            _currentState.Player.Health = Math.Max(0,
-                Math.Min(_currentState.Player.MaxHealth,
-                    _currentState.Player.Health + changes.HealthChange));
-        }
-
-        // Flags changed
-        foreach (var flag in changes.FlagsChanged)
-        {
-            _currentState.Progress.StoryFlags[flag.Key] = flag.Value;
-        }
     }
 }

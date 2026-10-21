@@ -23,6 +23,11 @@ public interface IGameStateMachine
     Task InitializeAsync(StoryPack storyPack);
 
     /// <summary>
+    /// Resumes play on a saved state without re-running new-game setup or re-counting visits
+    /// </summary>
+    Task RestoreStateAsync(StoryPack storyPack, GameState savedState);
+
+    /// <summary>
     /// Gets the room the player is currently in
     /// </summary>
     Room GetCurrentRoom();

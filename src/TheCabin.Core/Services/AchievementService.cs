@@ -111,6 +111,12 @@ public class AchievementService : IAchievementService
                 if (notification != null)
                 {
                     unlocked.Add(notification);
+
+                    // Record the unlock on this game's state so it is included when the game is saved
+                    if (!gameState.Progress.UnlockedAchievements.Contains(achievement.Id))
+                    {
+                        gameState.Progress.UnlockedAchievements.Add(achievement.Id);
+                    }
                 }
             }
         }

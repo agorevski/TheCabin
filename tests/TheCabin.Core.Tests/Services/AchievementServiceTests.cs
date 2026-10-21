@@ -90,6 +90,19 @@ public class AchievementServiceTests
     }
 
     [Fact]
+    public async Task TrackEventAsync_Unlock_RecordsAchievementOnGameState()
+    {
+        var achievement = CreateTestAchievement("room_visitor", "Room Visitor",
+            TriggerType.RoomVisited, "main_room");
+        await _service.InitializeAsync(new List<Achievement> { achievement });
+        var gameState = CreateTestGameState();
+
+        await _service.TrackEventAsync(TriggerType.RoomVisited, "main_room", gameState);
+
+        Assert.Equal(new[] { "room_visitor" }, gameState.Progress.UnlockedAchievements);
+    }
+
+    [Fact]
     public async Task TrackEventAsync_MultipleEvents_AccumulatesProgress()
     {
         // Arrange

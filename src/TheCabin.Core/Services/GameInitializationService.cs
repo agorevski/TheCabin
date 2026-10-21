@@ -69,9 +69,9 @@ public class GameInitializationService
             await gameStateService.InitializeNewGameAsync(storyPack);
             _logger?.LogInformation("✓ Game state initialized");
 
-            // Initialize state machine
+            // Initialize state machine, then make the state service hold the same state instance it plays on
             await stateMachine.InitializeAsync(storyPack);
-            ShareState(stateMachine.CurrentState, gameStateService.CurrentState);
+            gameStateService.SetCurrentState(stateMachine.CurrentState);
             _logger?.LogInformation("✓ State machine initialized");
 
             // Get initial room information
@@ -148,9 +148,8 @@ public class GameInitializationService
                 _logger?.LogInformation("✓ Re-initialized {Count} achievement(s)", storyPack.Achievements.Count);
             }
 
-            // Re-initialize state machine, then make it play on the loaded state so progress is restored
-            await stateMachine.InitializeAsync(storyPack);
-            ShareState(currentState, stateMachine.CurrentState);
+            // Resume the state machine on the loaded state itself, so commands and saves share one instance
+            await stateMachine.RestoreStateAsync(storyPack, currentState);
 
             _logger?.LogInformation("✓ State machine restored");
 
@@ -187,20 +186,5 @@ public class GameInitializationService
                 ErrorMessage = $"Failed to load game: {ex.Message}"
             };
         }
-    }
-
-    /// <summary>
-    /// Makes <paramref name="target"/> use the same live sub-objects as <paramref name="source"/>, so the
-    /// state machine that runs commands and the state that gets saved are always the same progress.
-    /// </summary>
-    private static void ShareState(GameState source, GameState target)
-    {
-        target.Id = source.Id;
-        target.SaveName = source.SaveName;
-        target.Player = source.Player;
-        target.World = source.World;
-        target.Progress = source.Progress;
-        target.Meta = source.Meta;
-        target.StoryLog = source.StoryLog;
     }
 }
