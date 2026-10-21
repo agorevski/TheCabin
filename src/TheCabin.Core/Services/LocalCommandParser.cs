@@ -24,7 +24,7 @@ public class LocalCommandParser : ILocalCommandParser
 
     private static readonly HashSet<string> FillerWords = new()
     {
-        "the", "a", "an", "to", "at", "in", "on", "with", "and", "or"
+        "the", "a", "an", "to", "at", "in", "on", "and", "or"
     };
 
     public bool CanHandle(string input)
@@ -69,6 +69,12 @@ public class LocalCommandParser : ILocalCommandParser
             return Task.FromResult(CreateHelpCommand(input));
         }
 
+        // "pick up X" means "take X"; the particle is not part of the object name
+        if (words.Count > 1 && words[0] == "pick" && words[1] == "up")
+        {
+            words.RemoveAt(1);
+        }
+
         // Normalize verb
         var verb = NormalizeVerb(words[0]);
 
@@ -78,21 +84,20 @@ public class LocalCommandParser : ILocalCommandParser
 
         if (words.Count > 1)
         {
-            // Remove filler words but keep "on" and "in" for pattern matching
+            // Remove filler words but keep "on", "in" and "with" for pattern matching
             var filtered = words.Skip(1)
                 .Where(w => !FillerWords.Contains(w) || w == "on" || w == "in")
                 .ToList();
 
             if (filtered.Count > 0)
             {
-                // Check for "use X on Y" pattern
-                var onIndex = filtered.IndexOf("on");
+                // Check for "use X on Y" / "use X with Y" pattern
+                var onIndex = filtered.FindIndex(w => w == "on" || w == "with");
                 if (onIndex > 0 && filtered.Count > onIndex + 1)
                 {
-                    // Object is everything before "on"
-                    obj = string.Join(" ", filtered.Take(onIndex));
-                    // Target is everything after "on"
-                    target = string.Join(" ", filtered.Skip(onIndex + 1));
+                    // Object is everything before the delimiter; names are joined with underscores to match object IDs
+                    obj = string.Join("_", filtered.Take(onIndex));
+                    target = string.Join("_", filtered.Skip(onIndex + 1));
                 }
                 // Check for "put X in Y" pattern
                 else
@@ -101,15 +106,14 @@ public class LocalCommandParser : ILocalCommandParser
                     if (inIndex > 0 && filtered.Count > inIndex + 1)
                     {
                         // Object is everything before "in"
-                        obj = string.Join(" ", filtered.Take(inIndex));
+                        obj = string.Join("_", filtered.Take(inIndex));
                         // Target is everything after "in"
-                        target = string.Join(" ", filtered.Skip(inIndex + 1));
+                        target = string.Join("_", filtered.Skip(inIndex + 1));
                     }
                     else
                     {
                         // No pattern detected - object is all remaining words
-                        // Join with spaces, then normalize to underscores for matching
-                        obj = string.Join(" ", filtered).Replace(" ", "_");
+                        obj = string.Join("_", filtered);
                     }
                 }
             }

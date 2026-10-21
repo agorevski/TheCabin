@@ -71,6 +71,7 @@ public class GameInitializationService
 
             // Initialize state machine
             await stateMachine.InitializeAsync(storyPack);
+            ShareState(stateMachine.CurrentState, gameStateService.CurrentState);
             _logger?.LogInformation("✓ State machine initialized");
 
             // Get initial room information
@@ -147,14 +148,9 @@ public class GameInitializationService
                 _logger?.LogInformation("✓ Re-initialized {Count} achievement(s)", storyPack.Achievements.Count);
             }
 
-            // Re-initialize state machine
+            // Re-initialize state machine, then make it play on the loaded state so progress is restored
             await stateMachine.InitializeAsync(storyPack);
-
-            // Restore player location in state machine
-            if (!string.IsNullOrEmpty(currentState.Player.CurrentLocationId))
-            {
-                stateMachine.CurrentState.Player.CurrentLocationId = currentState.Player.CurrentLocationId;
-            }
+            ShareState(currentState, stateMachine.CurrentState);
 
             _logger?.LogInformation("✓ State machine restored");
 
@@ -191,5 +187,20 @@ public class GameInitializationService
                 ErrorMessage = $"Failed to load game: {ex.Message}"
             };
         }
+    }
+
+    /// <summary>
+    /// Makes <paramref name="target"/> use the same live sub-objects as <paramref name="source"/>, so the
+    /// state machine that runs commands and the state that gets saved are always the same progress.
+    /// </summary>
+    private static void ShareState(GameState source, GameState target)
+    {
+        target.Id = source.Id;
+        target.SaveName = source.SaveName;
+        target.Player = source.Player;
+        target.World = source.World;
+        target.Progress = source.Progress;
+        target.Meta = source.Meta;
+        target.StoryLog = source.StoryLog;
     }
 }

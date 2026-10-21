@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Moq;
 using TheCabin.Core.Models;
@@ -528,6 +529,38 @@ public class AchievementServiceTests
         Assert.Equal(2, allProgress.Count);
         Assert.Contains("test1", allProgress.Keys);
         Assert.Contains("test2", allProgress.Keys);
+    }
+
+    [Fact]
+    public async Task TrackEventAsync_ConditionFromPackJson_EvaluatesWithoutCastErrors()
+    {
+        // Pack files deserialize condition values as JsonElement rather than boxed numbers
+        var achievement = CreateTestAchievement("json_healthy", "Json Healthy", TriggerType.CommandExecuted);
+        achievement.Trigger.Conditions = JsonSerializer.Deserialize<Dictionary<string, object>>("{\"minHealth\": 50}")!;
+        await _service.InitializeAsync(new List<Achievement> { achievement });
+
+        var gameState = CreateTestGameState();
+        gameState.Player.Health = 100;
+
+        var unlocked = await _service.TrackEventAsync(TriggerType.CommandExecuted, "test", gameState);
+
+        Assert.Single(unlocked);
+    }
+
+    [Fact]
+    public async Task TrackEventAsync_PartialProgress_IsRestoredInNextSession()
+    {
+        var achievement = CreateTestAchievement("collector", "Collector", TriggerType.CommandExecuted, requiredCount: 2);
+        await _service.InitializeAsync(new List<Achievement> { achievement });
+        await _service.TrackEventAsync(TriggerType.CommandExecuted, "test", CreateTestGameState());
+
+        var nextSession = new AchievementService(_mockLogger.Object);
+        await nextSession.InitializeAsync(new List<Achievement>
+        {
+            CreateTestAchievement("collector", "Collector", TriggerType.CommandExecuted, requiredCount: 2)
+        });
+
+        Assert.Equal(1, nextSession.GetProgress("collector")!.CurrentProgress);
     }
 
     // Helper methods

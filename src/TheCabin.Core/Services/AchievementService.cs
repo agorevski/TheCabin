@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using TheCabin.Core.Interfaces;
@@ -74,6 +75,7 @@ public class AchievementService : IAchievementService
         GameState gameState)
     {
         var unlocked = new List<AchievementUnlocked>();
+        var progressChanged = false;
 
         foreach (var achievement in _achievements.Values.Where(a => !IsUnlocked(a.Id)))
         {
@@ -97,6 +99,7 @@ public class AchievementService : IAchievementService
             // Increment progress
             var progress = _progress[achievement.Id];
             progress.CurrentProgress++;
+            progressChanged = true;
 
             _logger.LogDebug("Achievement {Id} progress: {Current}/{Required}",
                 achievement.Id, progress.CurrentProgress, progress.RequiredProgress);
@@ -112,7 +115,8 @@ public class AchievementService : IAchievementService
             }
         }
 
-        if (unlocked.Any())
+        // Unlocks are already persisted by UnlockAchievementAsync; this keeps partial progress across restarts
+        if (progressChanged)
         {
             await SaveProgressAsync();
         }
@@ -298,6 +302,23 @@ public class AchievementService : IAchievementService
     }
 
     /// <summary>
+    /// Reads a numeric trigger condition, which may arrive as a JSON element when loaded from a pack file
+    /// </summary>
+    private static int ToInt32(object value)
+    {
+        return value is JsonElement element
+            ? element.GetInt32()
+            : Convert.ToInt32(value, CultureInfo.InvariantCulture);
+    }
+
+    private static double ToDouble(object value)
+    {
+        return value is JsonElement element
+            ? element.GetDouble()
+            : Convert.ToDouble(value, CultureInfo.InvariantCulture);
+    }
+
+    /// <summary>
     /// Check if additional trigger conditions are met
     /// </summary>
     private bool CheckConditions(Achievement achievement, GameState gameState)
@@ -310,37 +331,37 @@ public class AchievementService : IAchievementService
             switch (condition.Key.ToLower())
             {
                 case "minhealth":
-                    if (gameState.Player.Health < Convert.ToInt32(condition.Value))
+                    if (gameState.Player.Health < ToInt32(condition.Value))
                         return false;
                     break;
 
                 case "maxhealth":
-                    if (gameState.Player.Health > Convert.ToInt32(condition.Value))
+                    if (gameState.Player.Health > ToInt32(condition.Value))
                         return false;
                     break;
 
                 case "minplaytime":
-                    if (gameState.Player.Stats.PlayTime.TotalMinutes < Convert.ToDouble(condition.Value))
+                    if (gameState.Player.Stats.PlayTime.TotalMinutes < ToDouble(condition.Value))
                         return false;
                     break;
 
                 case "maxplaytime":
-                    if (gameState.Player.Stats.PlayTime.TotalMinutes > Convert.ToDouble(condition.Value))
+                    if (gameState.Player.Stats.PlayTime.TotalMinutes > ToDouble(condition.Value))
                         return false;
                     break;
 
                 case "inventorycount":
-                    if (gameState.Player.Inventory.Items.Count != Convert.ToInt32(condition.Value))
+                    if (gameState.Player.Inventory.Items.Count != ToInt32(condition.Value))
                         return false;
                     break;
 
                 case "mininventory":
-                    if (gameState.Player.Inventory.Items.Count < Convert.ToInt32(condition.Value))
+                    if (gameState.Player.Inventory.Items.Count < ToInt32(condition.Value))
                         return false;
                     break;
 
                 case "maxinventory":
-                    if (gameState.Player.Inventory.Items.Count > Convert.ToInt32(condition.Value))
+                    if (gameState.Player.Inventory.Items.Count > ToInt32(condition.Value))
                         return false;
                     break;
 
@@ -349,8 +370,9 @@ public class AchievementService : IAchievementService
                     var timeRange = condition.Value.ToString()?.Split('-');
                     if (timeRange?.Length == 2)
                     {
-                        var startHour = int.Parse(timeRange[0]);
-                        var endHour = int.Parse(timeRange[1]);
+                        if (!int.TryParse(timeRange[0], out var startHour) || !int.TryParse(timeRange[1], out var endHour))
+                            return false;
+
                         if (hour < startHour || hour >= endHour)
                             return false;
                     }

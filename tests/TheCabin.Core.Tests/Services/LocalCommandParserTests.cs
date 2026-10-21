@@ -125,6 +125,20 @@ public class LocalCommandParserTests
         Assert.Equal("table", result.Object);
     }
 
+    [Theory]
+    [InlineData("pick up the lantern", "take", "lantern", null)]
+    [InlineData("use rusty key on old door", "use", "rusty_key", "old_door")]
+    [InlineData("use rusty key with old door", "use", "rusty_key", "old_door")]
+    public async Task ParseAsync_MultiWordNamesAndParticles_NormalizesToObjectIds(
+        string input, string expectedVerb, string? expectedObject, string? expectedTarget)
+    {
+        var result = await _parser.ParseAsync(input, _context);
+
+        Assert.Equal(expectedVerb, result.Verb);
+        Assert.Equal(expectedObject, result.Object);
+        Assert.Equal(expectedTarget, result.Target);
+    }
+
     [Fact]
     public void CanHandle_ValidCommand_ReturnsTrue()
     {

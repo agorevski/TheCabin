@@ -9,7 +9,6 @@ namespace TheCabin.Core.Services;
 /// </summary>
 public class StoryPackService : IStoryPackService
 {
-    private readonly Dictionary<string, StoryPack> _loadedPacks = new();
     private readonly string _storyPacksPath;
 
     public StoryPackService(string? storyPacksPath = null)
@@ -84,22 +83,18 @@ public class StoryPackService : IStoryPackService
     }
 
     /// <summary>
-    /// Loads a story pack by ID
+    /// Loads a story pack by ID. Each call returns a new instance so that games never share
+    /// mutable room or object state with each other.
     /// </summary>
     public async Task<StoryPack> LoadPackAsync(string packId)
     {
         if (string.IsNullOrEmpty(packId))
             throw new ArgumentException("Pack ID cannot be null or empty", nameof(packId));
 
-        // Check if already loaded
-        if (_loadedPacks.TryGetValue(packId, out var cachedPack))
-        {
-            return cachedPack;
-        }
+        if (!IsValidPackId(packId))
+            throw new ArgumentException("Pack ID may only contain letters, digits, '-' and '_'", nameof(packId));
 
-        // Find the file
-        var fileName = $"{packId}.json";
-        var filePath = Path.Combine(_storyPacksPath, fileName);
+        var filePath = Path.Combine(_storyPacksPath, $"{packId}.json");
 
         if (!File.Exists(filePath))
         {
@@ -108,24 +103,21 @@ public class StoryPackService : IStoryPackService
 
         var pack = await LoadPackFromFileAsync(filePath);
 
-        // Load puzzles from separate file
-        await LoadPuzzlesAsync(pack, filePath);
-
-        // Validate the pack
-        ValidatePack(pack);
-
-        // Cache it
-        _loadedPacks[packId] = pack;
+        var validation = ValidatePack(pack);
+        if (!validation.IsValid)
+        {
+            throw new InvalidDataException(
+                $"Story pack '{packId}' is invalid: {string.Join("; ", validation.Errors)}");
+        }
 
         return pack;
     }
 
     /// <summary>
-    /// Unloads a story pack from memory
+    /// Unloads a story pack from memory. Packs are not cached, so there is nothing to release.
     /// </summary>
     public void UnloadPack(string packId)
     {
-        _loadedPacks.Remove(packId);
     }
 
     /// <summary>
@@ -146,6 +138,11 @@ public class StoryPackService : IStoryPackService
         }
 
         return result;
+    }
+
+    private static bool IsValidPackId(string packId)
+    {
+        return packId.All(c => char.IsAsciiLetterOrDigit(c) || c is '_' or '-');
     }
 
     private async Task<StoryPack> LoadPackFromFileAsync(string filePath)
@@ -170,6 +167,12 @@ public class StoryPackService : IStoryPackService
         }
 
         System.Diagnostics.Debug.WriteLine($"LoadPackFromFileAsync: After deserialization - Id='{pack.Id}', Theme='{pack.Theme}', Description='{pack.Description}'");
+
+        // The pack ID is used to build sibling file names, so it must not contain path characters
+        if (!string.IsNullOrEmpty(pack.Id) && !IsValidPackId(pack.Id))
+        {
+            throw new InvalidDataException($"Invalid story pack ID in {filePath}");
+        }
 
         // Try to load achievements and puzzles from separate files
         await LoadAchievementsAsync(pack, filePath);
@@ -204,9 +207,10 @@ public class StoryPackService : IStoryPackService
                     pack.Achievements = achievements;
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 // If achievements file is invalid, just continue without them
+                System.Diagnostics.Debug.WriteLine($"LoadAchievementsAsync: Error loading achievements for {pack.Id}: {ex.Message}");
                 pack.Achievements = new List<Achievement>();
             }
         }
@@ -270,6 +274,9 @@ public class StoryPackService : IStoryPackService
 
         if (pack.Rooms == null || pack.Rooms.Count == 0)
             throw new InvalidDataException("Pack must contain at least one room");
+
+        if (pack.Rooms.GroupBy(r => r.Id).Any(g => g.Count() > 1))
+            throw new InvalidDataException("Pack contains duplicate room IDs");
 
         if (string.IsNullOrEmpty(pack.StartingRoomId))
             throw new InvalidDataException("Starting room ID is required");

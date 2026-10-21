@@ -1,3 +1,4 @@
+using System.Text.Json;
 using TheCabin.Core.Models;
 using TheCabin.Core.Services;
 using Xunit;
@@ -171,6 +172,89 @@ public class StoryPackServiceTests
 
         // Assert
         Assert.True(isValid);
+    }
+
+    [Fact]
+    public async Task LoadPackAsync_PathTraversalPackId_ThrowsArgumentException()
+    {
+        await Assert.ThrowsAsync<ArgumentException>(() => _service.LoadPackAsync("../secret"));
+    }
+
+    [Fact]
+    public async Task GetAvailablePacksAsync_PackWithPathCharactersInId_IsSkipped()
+    {
+        var dir = CreatePackDirectory();
+        try
+        {
+            var pack = CreateValidStoryPack();
+            pack.Id = "../escape";
+            await WritePackAsync(dir, pack, "evil");
+
+            var packs = await new StoryPackService(dir).GetAvailablePacksAsync();
+
+            Assert.Empty(packs);
+        }
+        finally
+        {
+            Directory.Delete(dir, recursive: true);
+        }
+    }
+
+    [Fact]
+    public async Task LoadPackAsync_CalledTwice_ReturnsIndependentInstances()
+    {
+        var dir = CreatePackDirectory();
+        try
+        {
+            await WritePackAsync(dir, CreateValidStoryPack());
+            var service = new StoryPackService(dir);
+
+            var first = await service.LoadPackAsync("test_theme");
+            first.Rooms[0].IsVisited = true;
+            first.Objects["test_object"].IsVisible = false;
+
+            var second = await service.LoadPackAsync("test_theme");
+
+            Assert.False(second.Rooms[0].IsVisited);
+            Assert.True(second.Objects["test_object"].IsVisible);
+        }
+        finally
+        {
+            Directory.Delete(dir, recursive: true);
+        }
+    }
+
+    [Fact]
+    public async Task LoadPackAsync_InvalidPack_ThrowsInvalidDataException()
+    {
+        var dir = CreatePackDirectory();
+        try
+        {
+            var pack = CreateValidStoryPack();
+            pack.StartingRoomId = "missing_room";
+            await WritePackAsync(dir, pack);
+
+            await Assert.ThrowsAsync<InvalidDataException>(
+                () => new StoryPackService(dir).LoadPackAsync("test_theme"));
+        }
+        finally
+        {
+            Directory.Delete(dir, recursive: true);
+        }
+    }
+
+    private static string CreatePackDirectory()
+    {
+        var dir = Path.Combine(AppContext.BaseDirectory, "story_pack_tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(dir);
+        return dir;
+    }
+
+    private static Task WritePackAsync(string dir, StoryPack pack, string? fileName = null)
+    {
+        return File.WriteAllTextAsync(
+            Path.Combine(dir, $"{fileName ?? pack.Id}.json"),
+            JsonSerializer.Serialize(pack));
     }
 
     private StoryPack CreateValidStoryPack()

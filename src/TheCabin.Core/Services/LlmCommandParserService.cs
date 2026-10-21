@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Text.Json;
 using TheCabin.Core.Interfaces;
 using TheCabin.Core.Models;
@@ -9,6 +10,18 @@ namespace TheCabin.Core.Services;
 /// </summary>
 public class LlmCommandParserService : ICommandParserService
 {
+    private const string CompletionsUrl = "https://api.openai.com/v1/chat/completions";
+    private const int MaxInputLength = 500;
+    private static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(10);
+
+    // Verbs the game grammar accepts; anything else from the model is rejected so it falls back to the local parser
+    private static readonly HashSet<string> AllowedVerbs = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "go", "take", "drop", "use", "open", "close", "examine", "look", "read", "push", "pull", "inventory", "help"
+    };
+
+    private static readonly JsonSerializerOptions ResponseOptions = new() { PropertyNameCaseInsensitive = true };
+
     private readonly HttpClient _httpClient;
     private readonly string _apiKey;
     private readonly ILocalCommandParser _fallbackParser;
@@ -42,7 +55,9 @@ Input: 'look around' → {""verb"":""look"",""object"":null,""confidence"":0.95}
         _apiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey));
         _fallbackParser = fallbackParser ?? throw new ArgumentNullException(nameof(fallbackParser));
 
-        _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
+        // Validate without echoing the key so it cannot leak through exception messages
+        if (string.IsNullOrWhiteSpace(_apiKey) || _apiKey.Any(char.IsWhiteSpace))
+            throw new ArgumentException("API key is missing or malformed.", nameof(apiKey));
     }
 
     public async Task<ParsedCommand> ParseAsync(string input, GameContext context, CancellationToken cancellationToken = default)
@@ -61,6 +76,7 @@ Input: 'look around' → {""verb"":""look"",""object"":null,""confidence"":0.95}
         {
             // Build context information for better parsing
             var contextInfo = BuildContextInfo(context);
+            var boundedInput = input.Length > MaxInputLength ? input[..MaxInputLength] : input;
 
             var userPrompt = $@"
 Context:
@@ -69,7 +85,7 @@ Context:
 - Inventory: {string.Join(", ", context.InventoryItems)}
 - Recent actions: {string.Join(", ", context.RecentCommands.TakeLast(3))}
 
-Player input: ""{input}""
+Player input: {JsonSerializer.Serialize(boundedInput)}
 
 Parse this command into JSON.";
 
@@ -87,23 +103,31 @@ Parse this command into JSON.";
             };
 
             var jsonRequest = JsonSerializer.Serialize(requestBody);
-            var content = new StringContent(jsonRequest, System.Text.Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync(
-                "https://api.openai.com/v1/chat/completions",
-                content);
+            using var request = new HttpRequestMessage(HttpMethod.Post, CompletionsUrl)
+            {
+                Content = new StringContent(jsonRequest, System.Text.Encoding.UTF8, "application/json")
+            };
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+
+            using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            timeoutCts.CancelAfter(RequestTimeout);
+
+            using var response = await _httpClient.SendAsync(request, timeoutCts.Token);
 
             if (response.IsSuccessStatusCode)
             {
-                var jsonResponse = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonSerializer.Deserialize<LlmApiResponse>(jsonResponse);
+                var jsonResponse = await response.Content.ReadAsStringAsync(timeoutCts.Token);
+                var apiResponse = JsonSerializer.Deserialize<LlmApiResponse>(jsonResponse, ResponseOptions);
 
                 if (apiResponse?.Choices?.Length > 0)
                 {
                     var messageContent = apiResponse.Choices[0].Message.Content;
-                    var parsed = JsonSerializer.Deserialize<ParsedCommand>(messageContent);
+                    var parsed = string.IsNullOrEmpty(messageContent)
+                        ? null
+                        : JsonSerializer.Deserialize<ParsedCommand>(messageContent, ResponseOptions);
 
-                    if (parsed != null)
+                    if (parsed != null && IsAllowedVerb(parsed.Verb))
                     {
                         parsed.RawInput = input;
                         parsed.Timestamp = DateTime.UtcNow;
@@ -112,13 +136,26 @@ Parse this command into JSON.";
                 }
             }
         }
-        catch (Exception)
+        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
-            // Fall back to local parser on any error
+            // Request timed out; fall back to local parser
+        }
+        catch (HttpRequestException)
+        {
+            // Network or API failure; fall back to local parser
+        }
+        catch (JsonException)
+        {
+            // Malformed API or model output; fall back to local parser
         }
 
         // Fallback to local parser
         return await _fallbackParser.ParseAsync(input, context);
+    }
+
+    private static bool IsAllowedVerb(string? verb)
+    {
+        return !string.IsNullOrEmpty(verb) && AllowedVerbs.Contains(verb);
     }
 
     private string BuildContextInfo(GameContext context)
