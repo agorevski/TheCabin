@@ -200,12 +200,13 @@ public class PuzzleEngine : IPuzzleEngine
         if (puzzle.Type == PuzzleType.Sequential)
         {
             // Sequential: must complete in order
+            var orderedSteps = puzzle.Steps.OrderBy(s => s.StepNumber).ToList();
             var nextStepIndex = puzzleState.CompletedSteps.Count;
             System.Diagnostics.Debug.WriteLine($"[PuzzleEngine] Sequential puzzle - checking step {nextStepIndex + 1} of {puzzle.Steps.Count}");
 
-            if (nextStepIndex < puzzle.Steps.Count)
+            if (nextStepIndex < orderedSteps.Count)
             {
-                var nextStep = puzzle.Steps[nextStepIndex];
+                var nextStep = orderedSteps[nextStepIndex];
                 System.Diagnostics.Debug.WriteLine($"[PuzzleEngine] Next expected step: '{nextStep.Id}' (Step {nextStep.StepNumber})");
                 System.Diagnostics.Debug.WriteLine($"[PuzzleEngine]   Expected Action: '{nextStep.Action}'");
                 System.Diagnostics.Debug.WriteLine($"[PuzzleEngine]   Expected Target: '{nextStep.TargetObject}'");
@@ -539,18 +540,13 @@ public class PuzzleEngine : IPuzzleEngine
     {
         System.Diagnostics.Debug.WriteLine($"[PuzzleEngine.ApplyStateChangeToObject] Applying change to object '{obj.Id}': Property='{change.Property}', NewValue='{change.NewValue}'");
 
-        var property = obj.GetType().GetProperty(change.Property);
-        if (property != null && property.CanWrite)
+        if (StateChangeValues.TrySetProperty(obj, change.Property, change.NewValue))
         {
-            var oldValue = property.GetValue(obj);
-            property.SetValue(obj, change.NewValue);
-            var newValue = property.GetValue(obj);
-
-            System.Diagnostics.Debug.WriteLine($"[PuzzleEngine.ApplyStateChangeToObject] ✓ Property '{change.Property}' changed from '{oldValue}' to '{newValue}'");
+            System.Diagnostics.Debug.WriteLine($"[PuzzleEngine.ApplyStateChangeToObject] ✓ Property '{change.Property}' set to '{change.NewValue}'");
         }
         else
         {
-            System.Diagnostics.Debug.WriteLine($"[PuzzleEngine.ApplyStateChangeToObject] ✗ Property '{change.Property}' not found or not writable on object '{obj.Id}'");
+            System.Diagnostics.Debug.WriteLine($"[PuzzleEngine.ApplyStateChangeToObject] ✗ Property '{change.Property}' not found, not writable, or value not convertible on object '{obj.Id}'");
         }
     }
 }

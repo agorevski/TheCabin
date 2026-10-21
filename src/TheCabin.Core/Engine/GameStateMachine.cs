@@ -1,3 +1,4 @@
+using System.Text.Json;
 using TheCabin.Core.Interfaces;
 using TheCabin.Core.Models;
 
@@ -59,7 +60,8 @@ public class GameStateMachine : IGameStateMachine
             World = new WorldState
             {
                 CurrentThemeId = storyPack.Id,
-                Rooms = storyPack.Rooms.ToDictionary(r => r.Id, r =>
+                // Story packs are cached and shared across games, so each game works on its own copies
+                Rooms = storyPack.Rooms.Select(r => CloneModel(r)).ToDictionary(r => r.Id, r =>
                 {
                     // Initialize room state with visible objects from story pack
                     if (r.State.VisibleObjectIds == null || !r.State.VisibleObjectIds.Any())
@@ -68,7 +70,7 @@ public class GameStateMachine : IGameStateMachine
                     }
                     return r;
                 }),
-                Objects = new Dictionary<string, GameObject>(storyPack.Objects),
+                Objects = storyPack.Objects.ToDictionary(kvp => kvp.Key, kvp => CloneModel(kvp.Value)),
                 TurnNumber = 0
             },
             Progress = new ProgressState(),
@@ -210,9 +212,7 @@ public class GameStateMachine : IGameStateMachine
             }
         }
 
-        // Increment turn counter
-        CurrentState.World.TurnNumber++;
-
+        // Turn counting is done once per command by CommandRouter, not per room transition
         // Update play time
         CurrentState.Player.Stats.PlayTime = DateTime.UtcNow - CurrentState.Meta.SaveTimestamp;
     }
@@ -245,6 +245,9 @@ public class GameStateMachine : IGameStateMachine
     /// </summary>
     public GameObject? FindVisibleObject(string identifier)
     {
+        if (string.IsNullOrWhiteSpace(identifier))
+            return null;
+
         var visibleObjects = GetVisibleObjects();
         identifier = identifier.ToLowerInvariant();
 
@@ -256,10 +259,11 @@ public class GameStateMachine : IGameStateMachine
             // Check both directions for flexible matching:
             // 1. Object ID/name contains the identifier (e.g., "fuel_can" contains "fuel")
             // 2. Identifier contains the object ID/name (e.g., "insulated coat" contains "coat")
+            // Empty IDs/names are skipped because every string contains the empty string.
             return objId.Contains(identifier) ||
                    objName.Contains(identifier) ||
-                   identifier.Contains(objId) ||
-                   identifier.Contains(objName);
+                   (objId.Length > 0 && identifier.Contains(objId)) ||
+                   (objName.Length > 0 && identifier.Contains(objName));
         });
     }
 
@@ -272,8 +276,8 @@ public class GameStateMachine : IGameStateMachine
         if (room.State.Flags.GetValueOrDefault("requires_key", false))
         {
             // Key ID would be stored in a separate metadata dictionary on the room
-            // For now, check if player has any key-type item
-            var keyItems = _inventoryManager.GetAllItems()
+            // For now, check if player has any key-type item in the current game state
+            var keyItems = CurrentState.Player.Inventory.Items
                 .Where(i => i.Type == ObjectType.Item && i.Id.Contains("key"))
                 .ToList();
 
@@ -338,5 +342,10 @@ public class GameStateMachine : IGameStateMachine
     public bool GetStoryFlag(string flagName)
     {
         return CurrentState.Progress.StoryFlags.GetValueOrDefault(flagName, false);
+    }
+
+    private static T CloneModel<T>(T model)
+    {
+        return JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(model))!;
     }
 }

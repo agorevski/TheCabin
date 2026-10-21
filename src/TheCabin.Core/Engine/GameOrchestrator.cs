@@ -172,8 +172,8 @@ public class GameOrchestrator
 
         try
         {
-            var currentState = _gameStateService.CurrentState;
-            if (currentState == null || string.IsNullOrEmpty(currentState.Player?.CurrentLocationId))
+            var currentState = _stateMachine.CurrentState;
+            if (string.IsNullOrEmpty(currentState.Player?.CurrentLocationId))
             {
                 await _display.ShowMessageAsync(
                     "Game not properly initialized. Please start a new game.",
@@ -212,11 +212,11 @@ public class GameOrchestrator
     }
 
     /// <summary>
-    /// Get the current game state
+    /// Get the current game state (the state that commands are executed against)
     /// </summary>
     public GameState GetCurrentState()
     {
-        return _gameStateService.CurrentState;
+        return _stateMachine.CurrentState;
     }
 
     /// <summary>

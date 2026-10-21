@@ -130,6 +130,24 @@ public class DropCommandHandlerTests
         Assert.Contains("Custom drop message", result.Message);
     }
 
+    [Fact]
+    public async Task ExecuteAsync_DropsItem_ReducesInventoryWeight()
+    {
+        // Arrange
+        var lantern = CreateTestObject("lantern", "Lantern", isCollectable: true);
+        lantern.Weight = 4;
+        _inventoryManager.AddItem(lantern);
+        Assert.Equal(4, _gameState.Player.Inventory.TotalWeight);
+        var command = new ParsedCommand { Verb = "drop", Object = "lantern" };
+
+        // Act
+        var result = await _handler.ExecuteAsync(command, _gameState);
+
+        // Assert
+        Assert.True(result.Success);
+        Assert.Equal(0, _gameState.Player.Inventory.TotalWeight);
+    }
+
     private GameState CreateTestGameState()
     {
         return new GameState

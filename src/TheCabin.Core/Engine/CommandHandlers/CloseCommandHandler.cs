@@ -177,28 +177,15 @@ public class CloseCommandHandler : ICommandHandler
         switch (change.Target)
         {
             case "self":
-                var property = targetObject.GetType().GetProperty(change.Property);
-                if (property != null && property.CanWrite)
-                {
-                    property.SetValue(targetObject, change.NewValue);
-                }
+                StateChangeValues.TrySetProperty(targetObject, change.Property, change.NewValue);
                 break;
             case "room":
-                var room = _stateMachine.GetCurrentRoom();
-                var roomProperty = room.GetType().GetProperty(change.Property);
-                if (roomProperty != null && roomProperty.CanWrite)
-                {
-                    roomProperty.SetValue(room, change.NewValue);
-                }
+                StateChangeValues.TrySetProperty(_stateMachine.GetCurrentRoom(), change.Property, change.NewValue);
                 break;
             default:
                 if (gameState.World.Objects.TryGetValue(change.Target, out var obj))
                 {
-                    var objProperty = obj.GetType().GetProperty(change.Property);
-                    if (objProperty != null && objProperty.CanWrite)
-                    {
-                        objProperty.SetValue(obj, change.NewValue);
-                    }
+                    StateChangeValues.TrySetProperty(obj, change.Property, change.NewValue);
                 }
                 break;
         }

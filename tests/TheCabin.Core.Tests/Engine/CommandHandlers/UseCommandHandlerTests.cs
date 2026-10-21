@@ -271,6 +271,28 @@ public class UseCommandHandlerTests
         Assert.Equal(LightLevel.Bright, currentRoom.LightLevel);
     }
 
+    [Fact]
+    public async Task ExecuteAsync_WhenBuiltInPuzzleCompletes_CountsPuzzleOnce()
+    {
+        // Arrange: every room is visited, so the exploration puzzle completes on this use
+        foreach (var room in _gameState.World.Rooms.Values)
+        {
+            room.IsVisited = true;
+        }
+
+        var lantern = CreateTestObject("lantern", "Lantern", isCollectable: true);
+        lantern.Actions["use"] = new ActionDefinition { Verb = "use", SuccessMessage = "You use the lantern." };
+        _inventoryManager.AddItem(lantern);
+        var command = new ParsedCommand { Verb = "use", Object = "lantern" };
+
+        // Act
+        var result = await _handler.ExecuteAsync(command, _gameState);
+
+        // Assert
+        Assert.True(result.Success);
+        Assert.Equal(1, _gameState.Player.Stats.PuzzlesSolved);
+    }
+
     private GameState CreateTestGameState()
     {
         return new GameState

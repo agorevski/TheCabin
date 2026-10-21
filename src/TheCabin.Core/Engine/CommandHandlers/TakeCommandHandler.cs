@@ -46,7 +46,7 @@ public class TakeCommandHandler : ICommandHandler
                 $"You can't take the {targetObject.Name}."));
         }
 
-        if (!_inventoryManager.CanAdd(targetObject))
+        if (!gameState.Player.Inventory.CanAdd(targetObject))
         {
             return Task.FromResult(CommandValidationResult.Invalid(
                 "You're carrying too much. Drop something first."));
@@ -88,7 +88,7 @@ public class TakeCommandHandler : ICommandHandler
                     // Puzzle step matched! Use puzzle messages and complete the action
 
                     // Add to inventory using gameState
-                    gameState.Player.Inventory.Items.Add(targetObject);
+                    AddToInventory(gameState, targetObject);
 
                     // Remove from room's visible objects
                     var room = _stateMachine.GetCurrentRoom();
@@ -137,7 +137,7 @@ public class TakeCommandHandler : ICommandHandler
             : $"You pick up the {targetObject.Name}.";
 
         // Add to inventory using gameState
-        gameState.Player.Inventory.Items.Add(targetObject);
+        AddToInventory(gameState, targetObject);
 
         // Remove from room's visible objects
         var roomForCleanup = _stateMachine.GetCurrentRoom();
@@ -154,5 +154,13 @@ public class TakeCommandHandler : ICommandHandler
                 ItemsAdded = new List<string> { targetObject.Id }
             }
         };
+    }
+
+    private static void AddToInventory(GameState gameState, GameObject item)
+    {
+        var inventory = gameState.Player.Inventory;
+        inventory.Items.Add(item);
+        inventory.TotalWeight += item.Weight;
+        gameState.Player.Stats.ItemsCollected++;
     }
 }

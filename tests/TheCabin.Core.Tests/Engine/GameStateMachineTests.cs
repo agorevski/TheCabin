@@ -190,6 +190,53 @@ public class GameStateMachineTests
     }
 
     [Fact]
+    public void Initialize_CalledTwiceWithSamePack_DoesNotShareStateBetweenGames()
+    {
+        // Arrange: story packs are cached and reused, so a second game must start from a clean copy
+        var storyPack = CreateTestStoryPack();
+        var firstGame = new GameStateMachine(new InventoryManager(new GameState()));
+        firstGame.Initialize(storyPack);
+        firstGame.CurrentState.World.Objects["key"].IsVisible = false;
+        firstGame.TransitionTo("room2");
+
+        // Act
+        var secondGame = new GameStateMachine(new InventoryManager(new GameState()));
+        secondGame.Initialize(storyPack);
+
+        // Assert
+        Assert.True(secondGame.CurrentState.World.Objects["key"].IsVisible);
+        Assert.Contains("key", secondGame.CurrentState.World.Rooms["room1"].State.VisibleObjectIds);
+        Assert.False(secondGame.CurrentState.World.Rooms["room2"].IsVisited);
+    }
+
+    [Fact]
+    public void CanTransitionTo_LockedRoomRequiringKey_UsesCurrentGameInventory()
+    {
+        // Arrange: the inventory manager is bound to a different GameState than the one in play
+        var stateMachine = CreateStateMachine(out _);
+        stateMachine.Initialize(CreateTestStoryPack());
+        var lockedRoom = stateMachine.CurrentState.World.Rooms["room2"];
+        lockedRoom.State.IsLocked = true;
+        lockedRoom.State.Flags["requires_key"] = true;
+        stateMachine.CurrentState.Player.Inventory.Items.Add(stateMachine.CurrentState.World.Objects["key"]);
+
+        // Act & Assert
+        Assert.True(stateMachine.CanTransitionTo("room2"));
+    }
+
+    [Fact]
+    public void FindVisibleObject_WithBlankIdentifier_ReturnsNull()
+    {
+        // Arrange
+        var stateMachine = CreateStateMachine(out _);
+        stateMachine.Initialize(CreateTestStoryPack());
+
+        // Act & Assert
+        Assert.Null(stateMachine.FindVisibleObject(""));
+        Assert.Null(stateMachine.FindVisibleObject("   "));
+    }
+
+    [Fact]
     public void ModifyHealth_ClampsHealthCorrectly()
     {
         // Arrange

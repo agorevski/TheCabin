@@ -180,7 +180,6 @@ public class UseCommandHandler : ICommandHandler
         if (puzzleResult.Completed && !string.IsNullOrEmpty(puzzleResult.CompletionMessage))
         {
             messages.Add(puzzleResult.CompletionMessage);
-            gameState.Player.Stats.PuzzlesSolved++;
         }
 
         // Consume item if needed (only for inventory items)
@@ -241,8 +240,10 @@ public class UseCommandHandler : ICommandHandler
         // Try to set as a state flag first
         if (obj.State != null && change.Property.StartsWith("is_", StringComparison.OrdinalIgnoreCase))
         {
-            var flagKey = change.Property.ToLower();
-            obj.State.Flags[flagKey] = Convert.ToBoolean(change.NewValue);
+            if (StateChangeValues.TryConvert(change.NewValue, typeof(bool), out var flagValue))
+            {
+                obj.State.Flags[change.Property.ToLower()] = (bool)flagValue!;
+            }
             return;
         }
 
@@ -254,19 +255,11 @@ public class UseCommandHandler : ICommandHandler
         }
 
         // Try to set as a property
-        var property = obj.GetType().GetProperty(change.Property);
-        if (property != null && property.CanWrite)
-        {
-            property.SetValue(obj, change.NewValue);
-        }
+        StateChangeValues.TrySetProperty(obj, change.Property, change.NewValue);
     }
 
     private void ApplyToRoom(Room room, StateChange change)
     {
-        var property = room.GetType().GetProperty(change.Property);
-        if (property != null && property.CanWrite)
-        {
-            property.SetValue(room, change.NewValue);
-        }
+        StateChangeValues.TrySetProperty(room, change.Property, change.NewValue);
     }
 }

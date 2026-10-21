@@ -78,7 +78,7 @@ public class DropCommandHandler : ICommandHandler
                     System.Diagnostics.Debug.WriteLine($"[DropCommandHandler] ✓ Puzzle step matched! Using puzzle messages.");
 
                     // Remove from inventory using gameState
-                    gameState.Player.Inventory.Items.Remove(item);
+                    RemoveFromInventory(gameState, item);
 
                     // Add to current room
                     if (!currentRoom.ObjectIds.Contains(item.Id))
@@ -131,7 +131,7 @@ public class DropCommandHandler : ICommandHandler
             : $"You drop the {item.Name}.";
 
         // Remove from inventory using gameState
-        gameState.Player.Inventory.Items.Remove(item);
+        RemoveFromInventory(gameState, item);
 
         // Add to current room
         var roomForCleanup = _stateMachine.GetCurrentRoom();
@@ -152,5 +152,14 @@ public class DropCommandHandler : ICommandHandler
                 ItemsRemoved = new List<string> { item.Id }
             }
         };
+    }
+
+    private static void RemoveFromInventory(GameState gameState, GameObject item)
+    {
+        var inventory = gameState.Player.Inventory;
+        if (inventory.Items.Remove(item))
+        {
+            inventory.TotalWeight -= item.Weight;
+        }
     }
 }

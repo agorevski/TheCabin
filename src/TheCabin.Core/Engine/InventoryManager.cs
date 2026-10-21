@@ -45,10 +45,13 @@ public class InventoryManager : IInventoryManager
         if (item == null)
             throw new ArgumentNullException(nameof(item));
 
+        var inventory = _gameState.Player.Inventory;
+        if (inventory.Items.Any(i => i.Id == item.Id))
+            return; // Already carried; adding again would duplicate the item and its weight
+
         if (!CanAdd(item))
             throw new InvalidOperationException("Cannot add item: inventory is full");
 
-        var inventory = _gameState.Player.Inventory;
         inventory.Items.Add(item);
         inventory.TotalWeight += item.Weight;
 

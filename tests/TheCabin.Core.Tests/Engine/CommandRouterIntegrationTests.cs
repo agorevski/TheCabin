@@ -264,6 +264,43 @@ public class CommandRouterIntegrationTests
         Assert.Single(_inventoryManager.GetAllItems()); // Only one item
     }
 
+    [Fact]
+    public async Task IntegrationTest_TakeAndDrop_TrackInventoryWeight()
+    {
+        await _router.RouteAsync(new ParsedCommand { Verb = "take", Object = "key" });
+        Assert.Equal(1, _gameState.Player.Inventory.TotalWeight);
+
+        await _router.RouteAsync(new ParsedCommand { Verb = "drop", Object = "key" });
+        Assert.Equal(0, _gameState.Player.Inventory.TotalWeight);
+    }
+
+    [Fact]
+    public async Task IntegrationTest_TakeRejectedWhenOverCapacity()
+    {
+        // Wired the way the app wires it: the take handler's inventory manager is not bound to the game state in play
+        var router = new CommandRouter(
+            new ICommandHandler[] { new TakeCommandHandler(_stateMachine, new InventoryManager(new GameState())) },
+            _stateMachine);
+        _gameState.Player.Inventory.MaxCapacity = 0;
+
+        var result = await router.RouteAsync(new ParsedCommand { Verb = "take", Object = "key" });
+
+        Assert.False(result.Success);
+        Assert.Equal(CommandResultType.RequirementsNotMet, result.Type);
+        Assert.Empty(_gameState.Player.Inventory.Items);
+    }
+
+    [Fact]
+    public async Task IntegrationTest_MoveAdvancesTurnByOne()
+    {
+        var initialTurnNumber = _gameState.World.TurnNumber;
+
+        var result = await _router.RouteAsync(new ParsedCommand { Verb = "go", Object = "north" });
+
+        Assert.True(result.Success);
+        Assert.Equal(initialTurnNumber + 1, _gameState.World.TurnNumber);
+    }
+
     private StoryPack CreateIntegrationTestStoryPack()
     {
         // Create a simple story pack for integration testing
