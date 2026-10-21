@@ -1,8 +1,8 @@
-using Xunit;
-using Moq;
 using FluentAssertions;
-using TheCabin.Maui.ViewModels;
+using Moq;
 using TheCabin.Maui.Tests.Mocks;
+using TheCabin.Maui.ViewModels;
+using Xunit;
 
 namespace TheCabin.Maui.Tests.ViewModels;
 
@@ -17,8 +17,6 @@ public class SettingsViewModelTests
         _preferencesService = new MockPreferencesService();
         _viewModel = new SettingsViewModel(_preferencesService);
     }
-
-    #region Initialization Tests (SE-01 to SE-04)
 
     [Fact]
     public void Constructor_InitializesProperties()
@@ -72,10 +70,6 @@ public class SettingsViewModelTests
         _viewModel.AppVersion.Should().NotBeNullOrEmpty();
         _viewModel.AppVersion.Should().Contain("Version");
     }
-
-    #endregion
-
-    #region Voice Recognition Settings Tests (SE-10 to SE-16)
 
     [Fact]
     public void VoiceEnabled_CanBeToggled()
@@ -170,10 +164,6 @@ public class SettingsViewModelTests
         _viewModel.TestVoiceCommand.Should().NotBeNull();
     }
 
-    #endregion
-
-    #region TTS Settings Tests (SE-20 to SE-26)
-
     [Fact]
     public void TtsEnabled_CanBeToggled()
     {
@@ -241,10 +231,6 @@ public class SettingsViewModelTests
         _viewModel.TestTtsCommand.Should().NotBeNull();
     }
 
-    #endregion
-
-    #region Display Settings Tests (SE-30 to SE-35)
-
     [Fact]
     public void FontSize_CanBeAdjusted()
     {
@@ -299,10 +285,6 @@ public class SettingsViewModelTests
         _viewModel.SelectedTheme.Should().Be("High Contrast");
     }
 
-    #endregion
-
-    #region Reset Settings Tests (SE-40 to SE-42)
-
     [Fact]
     public void ResetToDefaultsCommand_IsNotNull()
     {
@@ -330,20 +312,12 @@ public class SettingsViewModelTests
         newViewModel.SelectedTheme.Should().Be("Dark");
     }
 
-    #endregion
-
-    #region Navigation Tests (SE-52)
-
     [Fact]
     public void CloseCommand_IsNotNull()
     {
         // Assert
         _viewModel.CloseCommand.Should().NotBeNull();
     }
-
-    #endregion
-
-    #region Persistence Tests (SE-50 to SE-51)
 
     [Fact]
     public void Settings_PersistAcrossInstances()
@@ -385,10 +359,6 @@ public class SettingsViewModelTests
         vm.PushToTalk.Should().BeFalse();
         vm.ConfidenceThreshold.Should().Be(0.80);
     }
-
-    #endregion
-
-    #region Range Validation Tests
 
     [Fact]
     public void ConfidenceThreshold_AcceptsValidRange()
@@ -446,10 +416,6 @@ public class SettingsViewModelTests
         _viewModel.FontSize.Should().Be(24.0);
     }
 
-    #endregion
-
-    #region Integration Tests
-
     [Fact]
     public void MultipleSettings_CanBeChangedIndependently()
     {
@@ -495,6 +461,4 @@ public class SettingsViewModelTests
         newVm.FontSize.Should().Be(19.0);
         newVm.SelectedTheme.Should().Be("Light");
     }
-
-    #endregion
 }

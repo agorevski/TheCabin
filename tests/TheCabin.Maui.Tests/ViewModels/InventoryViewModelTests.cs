@@ -1,10 +1,10 @@
-using Xunit;
-using Moq;
+using System.Collections.ObjectModel;
 using FluentAssertions;
-using TheCabin.Maui.ViewModels;
+using Moq;
 using TheCabin.Core.Interfaces;
 using TheCabin.Core.Models;
-using System.Collections.ObjectModel;
+using TheCabin.Maui.ViewModels;
+using Xunit;
 
 namespace TheCabin.Maui.Tests.ViewModels;
 
@@ -30,8 +30,6 @@ public class InventoryViewModelTests
 
         _viewModel = new InventoryViewModel(_mockStateMachine.Object);
     }
-
-    #region Initialization Tests (I-01 to I-04)
 
     [Fact]
     public void Constructor_InitializesProperties()
@@ -93,20 +91,12 @@ public class InventoryViewModelTests
         _viewModel.Items[0].Name.Should().Be("Flashlight");
     }
 
-    #endregion
-
-    #region Empty State Tests (I-10 to I-12)
-
     [Fact]
     public void EmptyState_WhenNoItems()
     {
         // Assert
         _viewModel.Items.Should().BeEmpty();
     }
-
-    #endregion
-
-    #region Item Display Tests (I-20 to I-26)
 
     [Fact]
     public void ItemDisplay_ShowsItemName()
@@ -181,10 +171,6 @@ public class InventoryViewModelTests
         _viewModel.Items.Should().HaveCount(3);
     }
 
-    #endregion
-
-    #region Weight Calculation Tests
-
     [Fact]
     public void Weight_CalculatesTotalWeight()
     {
@@ -235,10 +221,6 @@ public class InventoryViewModelTests
         _viewModel.WeightDisplay.Should().Be("0 / 20 kg");
     }
 
-    #endregion
-
-    #region Drop Item Tests (I-30 to I-35)
-
     [Fact]
     public void DropItemCommand_IsNotNull()
     {
@@ -263,10 +245,6 @@ public class InventoryViewModelTests
         // Assert
         _viewModel.Items.Should().NotContain(item);
     }
-
-    #endregion
-
-    #region Use Item Tests (I-32 to I-34)
 
     [Fact]
     public void UseItemCommand_IsNotNull()
@@ -295,10 +273,6 @@ public class InventoryViewModelTests
         _viewModel.UseItemCommand.Should().NotBeNull();
     }
 
-    #endregion
-
-    #region Examine Item Tests (I-40 to I-41)
-
     [Fact]
     public void ExamineItemCommand_IsNotNull()
     {
@@ -323,20 +297,12 @@ public class InventoryViewModelTests
         _viewModel.ExamineItemCommand.Should().NotBeNull();
     }
 
-    #endregion
-
-    #region Navigation Tests (I-42 to I-43)
-
     [Fact]
     public void CloseCommand_IsNotNull()
     {
         // Assert
         _viewModel.CloseCommand.Should().NotBeNull();
     }
-
-    #endregion
-
-    #region Integration Tests
 
     [Fact]
     public void Inventory_HandlesNullGameState()
@@ -399,6 +365,4 @@ public class InventoryViewModelTests
         _viewModel.WeightDisplay.Should().Contain("5");
         _viewModel.WeightDisplay.Should().Contain("20");
     }
-
-    #endregion
 }

@@ -172,15 +172,15 @@ public partial class MainViewModel : BaseViewModel
     [RelayCommand]
     private async Task ShowHelpAsync()
     {
-        await Shell.Current.DisplayAlert(
-            "Help",
+        const string helpText =
             "🎙️ Voice Commands:\n\n" +
             "• Look around\n" +
             "• Inventory\n" +
             "• [Take | Use | Examine | Drop | Open] [object]\n" +
             "• [Go | Move] [direction]\n\n" +
-            "Tap the microphone to speak!",
-            "OK");
+            "Tap the microphone to speak!";
+
+        await Shell.Current.DisplayAlert("Help", helpText, "OK");
     }
 
     [RelayCommand]
@@ -283,6 +283,7 @@ public partial class MainViewModel : BaseViewModel
             IsListening = true;
             TranscriptText = "Listening...";
 
+            _listeningCts?.Dispose();
             _listeningCts = new CancellationTokenSource();
 
             VoiceRecognitionResult result;
@@ -339,7 +340,7 @@ public partial class MainViewModel : BaseViewModel
                 // Optional TTS narration for the last message
                 if (TtsEnabled && StoryFeed.Any())
                 {
-                    var lastEntry = StoryFeed.Last();
+                    var lastEntry = StoryFeed[^1];
                     if (lastEntry.Type == NarrativeType.Success || lastEntry.Type == NarrativeType.Description)
                     {
                         // Clean up display formatting for TTS

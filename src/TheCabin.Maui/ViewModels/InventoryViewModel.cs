@@ -1,8 +1,8 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.ObjectModel;
-using TheCabin.Core.Models;
 using TheCabin.Core.Interfaces;
+using TheCabin.Core.Models;
 
 namespace TheCabin.Maui.ViewModels;
 
@@ -60,7 +60,7 @@ public partial class InventoryViewModel : BaseViewModel
 
         if (confirm)
         {
-            // TODO: Implement drop logic through game state
+            // Drop is currently UI-only; game-state drop logic is not wired up yet.
             Items.Remove(item);
             TotalWeight -= item.Weight;
             WeightDisplay = $"{TotalWeight} / {MaxCapacity} kg";
@@ -81,7 +81,7 @@ public partial class InventoryViewModel : BaseViewModel
             return;
         }
 
-        // TODO: Implement use logic through game state
+        // Use is currently a placeholder; game-state use logic is not wired up yet.
         await Shell.Current.DisplayAlert(
             "Item Used",
             $"You used the {item.Name}.",

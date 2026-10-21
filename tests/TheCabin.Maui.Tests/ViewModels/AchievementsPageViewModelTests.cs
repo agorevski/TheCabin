@@ -1,10 +1,10 @@
-using Xunit;
-using Moq;
+using System.Collections.Generic;
 using FluentAssertions;
-using TheCabin.Maui.ViewModels;
+using Moq;
 using TheCabin.Core.Interfaces;
 using TheCabin.Core.Models;
-using System.Collections.Generic;
+using TheCabin.Maui.ViewModels;
+using Xunit;
 
 namespace TheCabin.Maui.Tests.ViewModels;
 
@@ -69,8 +69,6 @@ public class AchievementsPageViewModelTests
         _viewModel = new AchievementsPageViewModel(_mockAchievementService.Object);
     }
 
-    #region Initialization Tests (A-01 to A-04)
-
     [Fact]
     public void Constructor_InitializesProperties()
     {
@@ -114,10 +112,6 @@ public class AchievementsPageViewModelTests
         // Assert
         _viewModel.Achievements.Should().HaveCount(3);
     }
-
-    #endregion
-
-    #region Filter Tests (A-10 to A-16)
 
     [Fact]
     public void FilterAchievementsCommand_IsNotNull()
@@ -182,10 +176,6 @@ public class AchievementsPageViewModelTests
         // Assert
         _viewModel.SelectedFilter.Should().Be("Unlocked");
     }
-
-    #endregion
-
-    #region Achievement Display Tests (A-20 to A-30)
 
     [Fact]
     public async Task Achievements_DisplayName()
@@ -253,10 +243,6 @@ public class AchievementsPageViewModelTests
         unlockedAchievement!.UnlockDate.Should().NotBeNull();
     }
 
-    #endregion
-
-    #region Statistics Tests (A-43)
-
     [Fact]
     public async Task Statistics_CalculatesTotalCount()
     {
@@ -323,10 +309,6 @@ public class AchievementsPageViewModelTests
         vm.CompletionText.Should().Contain("0/0");
     }
 
-    #endregion
-
-    #region Empty State Tests
-
     [Fact]
     public async Task HasAchievements_TrueWhenAchievementsExist()
     {
@@ -359,10 +341,6 @@ public class AchievementsPageViewModelTests
         _viewModel.EmptyStateMessage.Should().NotBeNullOrEmpty();
     }
 
-    #endregion
-
-    #region Refresh Tests (A-42)
-
     [Fact]
     public void RefreshCommand_IsNotNull()
     {
@@ -384,10 +362,6 @@ public class AchievementsPageViewModelTests
         _mockAchievementService.Verify(x => x.GetAllAchievements(), Times.AtLeast(2));
     }
 
-    #endregion
-
-    #region Sorting Tests
-
     [Fact]
     public async Task FilteredAchievements_SortsUnlockedFirst()
     {
@@ -396,7 +370,7 @@ public class AchievementsPageViewModelTests
         _viewModel.FilterAchievementsCommand.Execute("All");
 
         // Assert
-        var firstAchievement = _viewModel.FilteredAchievements.First();
+        var firstAchievement = _viewModel.FilteredAchievements[0];
         firstAchievement.IsUnlocked.Should().BeTrue();
     }
 
@@ -421,13 +395,9 @@ public class AchievementsPageViewModelTests
         vm.FilterAchievementsCommand.Execute("All");
 
         // Assert
-        vm.FilteredAchievements.First().Name.Should().Be("Alpha");
-        vm.FilteredAchievements.Last().Name.Should().Be("Zulu");
+        vm.FilteredAchievements[0].Name.Should().Be("Alpha");
+        vm.FilteredAchievements[^1].Name.Should().Be("Zulu");
     }
-
-    #endregion
-
-    #region OnAppearing Tests
 
     [Fact]
     public async Task OnAppearingAsync_LoadsAchievements()
@@ -439,10 +409,6 @@ public class AchievementsPageViewModelTests
         _mockAchievementService.Verify(x => x.GetAllAchievements(), Times.Once);
         _viewModel.Achievements.Should().HaveCount(3);
     }
-
-    #endregion
-
-    #region Integration Tests
 
     [Fact]
     public async Task LoadAndFilter_WorksTogether()
@@ -493,6 +459,4 @@ public class AchievementsPageViewModelTests
         _viewModel.UnlockedCount.Should().Be(1);
         _viewModel.LockedCount.Should().Be(2);
     }
-
-    #endregion
 }

@@ -1,10 +1,10 @@
-using Xunit;
-using Moq;
+using System.Collections.Generic;
 using FluentAssertions;
-using TheCabin.Maui.ViewModels;
+using Moq;
 using TheCabin.Core.Interfaces;
 using TheCabin.Core.Models;
-using System.Collections.Generic;
+using TheCabin.Maui.ViewModels;
+using Xunit;
 
 namespace TheCabin.Maui.Tests.ViewModels;
 
@@ -53,8 +53,6 @@ public class LoadGameViewModelTests
         _viewModel = new LoadGameViewModel(_mockGameStateService.Object);
     }
 
-    #region Initialization Tests (L-01 to L-03)
-
     [Fact]
     public void Constructor_InitializesProperties()
     {
@@ -91,10 +89,6 @@ public class LoadGameViewModelTests
         _viewModel.SavedGames.Should().HaveCount(3);
     }
 
-    #endregion
-
-    #region Empty State Tests (L-10 to L-11)
-
     [Fact]
     public async Task HasSavedGames_TrueWhenSavesExist()
     {
@@ -119,10 +113,6 @@ public class LoadGameViewModelTests
         // Assert
         vm.HasSavedGames.Should().BeFalse();
     }
-
-    #endregion
-
-    #region Save Game Display Tests (L-20 to L-28)
 
     [Fact]
     public async Task SavedGames_DisplayName()
@@ -151,7 +141,7 @@ public class LoadGameViewModelTests
         await _viewModel.LoadSavedGamesAsync();
 
         // Assert
-        var save = _viewModel.SavedGames.First();
+        var save = _viewModel.SavedGames[0];
         save.SavedDate.Should().NotBe(default(DateTime));
     }
 
@@ -173,14 +163,10 @@ public class LoadGameViewModelTests
         await _viewModel.LoadSavedGamesAsync();
 
         // Assert
-        var firstSave = _viewModel.SavedGames.First();
-        var lastSave = _viewModel.SavedGames.Last();
+        var firstSave = _viewModel.SavedGames[0];
+        var lastSave = _viewModel.SavedGames[^1];
         firstSave.SavedDate.Should().BeAfter(lastSave.SavedDate);
     }
-
-    #endregion
-
-    #region Load Game Tests (L-30 to L-37)
 
     [Fact]
     public void LoadGameCommand_IsNotNull()
@@ -194,7 +180,7 @@ public class LoadGameViewModelTests
     {
         // Arrange
         await _viewModel.LoadSavedGamesAsync();
-        var saveToLoad = _viewModel.SavedGames.First();
+        var saveToLoad = _viewModel.SavedGames[0];
 
         // Note: Shell.Current.GoToAsync would be called in real scenario
         // For unit testing, we verify the property is set
@@ -205,10 +191,6 @@ public class LoadGameViewModelTests
         // Assert
         _viewModel.SelectedSave.Should().Be(saveToLoad);
     }
-
-    #endregion
-
-    #region Delete Game Tests (L-32 to L-34)
 
     [Fact]
     public void DeleteGameCommand_IsNotNull()
@@ -222,7 +204,7 @@ public class LoadGameViewModelTests
     {
         // Arrange
         await _viewModel.LoadSavedGamesAsync();
-        var saveToDelete = _viewModel.SavedGames.First();
+        var saveToDelete = _viewModel.SavedGames[0];
         var initialCount = _viewModel.SavedGames.Count;
 
         _mockGameStateService.Setup(x => x.DeleteSaveAsync(saveToDelete.Id))
@@ -266,7 +248,7 @@ public class LoadGameViewModelTests
     {
         // Arrange
         await _viewModel.LoadSavedGamesAsync();
-        var saveToDelete = _viewModel.SavedGames.First();
+        var saveToDelete = _viewModel.SavedGames[0];
 
         _mockGameStateService.Setup(x => x.DeleteSaveAsync(saveToDelete.Id))
             .Returns(Task.CompletedTask);
@@ -278,10 +260,6 @@ public class LoadGameViewModelTests
         _mockGameStateService.Verify(x => x.DeleteSaveAsync(saveToDelete.Id), Times.Once);
     }
 
-    #endregion
-
-    #region Navigation Tests (L-35 to L-36)
-
     [Fact]
     public void CancelCommand_IsNotNull()
     {
@@ -289,17 +267,13 @@ public class LoadGameViewModelTests
         _viewModel.CancelCommand.Should().NotBeNull();
     }
 
-    #endregion
-
-    #region Integration Tests
-
     [Fact]
     public async Task LoadAndDelete_WorksTogether()
     {
         // Arrange
         await _viewModel.LoadSavedGamesAsync();
         var initialCount = _viewModel.SavedGames.Count;
-        var saveToDelete = _viewModel.SavedGames.First();
+        var saveToDelete = _viewModel.SavedGames[0];
 
         _mockGameStateService.Setup(x => x.DeleteSaveAsync(saveToDelete.Id))
             .Returns(Task.CompletedTask);
@@ -371,10 +345,6 @@ public class LoadGameViewModelTests
         _viewModel.SavedGames.Should().HaveCount(1);
     }
 
-    #endregion
-
-    #region SelectedSave Tests
-
     [Fact]
     public void SelectedSave_CanBeSet()
     {
@@ -409,10 +379,6 @@ public class LoadGameViewModelTests
         _viewModel.SelectedSave.Should().BeNull();
     }
 
-    #endregion
-
-    #region Error Handling Tests
-
     [Fact]
     public async Task LoadSavedGames_HandlesServiceException()
     {
@@ -434,7 +400,7 @@ public class LoadGameViewModelTests
     {
         // Arrange
         await _viewModel.LoadSavedGamesAsync();
-        var save = _viewModel.SavedGames.First();
+        var save = _viewModel.SavedGames[0];
 
         _mockGameStateService.Setup(x => x.DeleteSaveAsync(save.Id))
             .ThrowsAsync(new Exception("Delete failed"));
@@ -443,6 +409,4 @@ public class LoadGameViewModelTests
         await Assert.ThrowsAsync<Exception>(async () =>
             await _mockGameStateService.Object.DeleteSaveAsync(save.Id));
     }
-
-    #endregion
 }

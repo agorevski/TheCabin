@@ -1,10 +1,10 @@
-using Xunit;
-using Moq;
+using System.Collections.Generic;
 using FluentAssertions;
-using TheCabin.Maui.ViewModels;
+using Moq;
 using TheCabin.Core.Interfaces;
 using TheCabin.Core.Models;
-using System.Collections.Generic;
+using TheCabin.Maui.ViewModels;
+using Xunit;
 
 namespace TheCabin.Maui.Tests.ViewModels;
 
@@ -74,8 +74,6 @@ public class StoryPackSelectorViewModelTests
         _viewModel = new StoryPackSelectorViewModel(_mockStoryPackService.Object);
     }
 
-    #region Initialization Tests (S-01 to S-04)
-
     [Fact]
     public void Constructor_InitializesProperties()
     {
@@ -122,10 +120,6 @@ public class StoryPackSelectorViewModelTests
         _viewModel.SelectedPack.Should().NotBeNull();
         _viewModel.SelectedPack!.Id.Should().Be("classic_horror");
     }
-
-    #endregion
-
-    #region Story Pack Card Display Tests (S-10 to S-22)
 
     [Fact]
     public async Task Packs_DisplayThemeName()
@@ -193,10 +187,6 @@ public class StoryPackSelectorViewModelTests
         _viewModel.AvailablePacks.Should().AllSatisfy(p => p.Tags.Should().NotBeEmpty());
     }
 
-    #endregion
-
-    #region Pack Selection Tests (S-30 to S-33)
-
     [Fact]
     public void SelectPackCommand_IsNotNull()
     {
@@ -236,20 +226,12 @@ public class StoryPackSelectorViewModelTests
         _viewModel.SelectedPack.Id.Should().Be("fantasy_magic");
     }
 
-    #endregion
-
-    #region Navigation Tests (S-32)
-
     [Fact]
     public void CancelCommand_IsNotNull()
     {
         // Assert
         _viewModel.CancelCommand.Should().NotBeNull();
     }
-
-    #endregion
-
-    #region Integration Tests
 
     [Fact]
     public async Task LoadAndSelect_WorksTogether()
@@ -298,10 +280,6 @@ public class StoryPackSelectorViewModelTests
         _viewModel.AvailablePacks.Should().HaveCount(1);
     }
 
-    #endregion
-
-    #region Difficulty Tests
-
     [Fact]
     public async Task Packs_ContainVariousDifficulties()
     {
@@ -338,10 +316,6 @@ public class StoryPackSelectorViewModelTests
         hardPacks.Should().AllSatisfy(p => p.EstimatedPlayTime.Should().BeGreaterOrEqualTo(60));
     }
 
-    #endregion
-
-    #region SelectedPack Tests
-
     [Fact]
     public void SelectedPack_CanBeNull()
     {
@@ -363,10 +337,6 @@ public class StoryPackSelectorViewModelTests
         _viewModel.SelectedPack.Should().BeNull();
     }
 
-    #endregion
-
-    #region Error Handling Tests
-
     [Fact]
     public async Task LoadPacks_HandlesServiceException()
     {
@@ -382,10 +352,6 @@ public class StoryPackSelectorViewModelTests
         vm.ErrorMessage.Should().NotBeEmpty();
         vm.ErrorMessage.Should().Contain("Failed to load story packs");
     }
-
-    #endregion
-
-    #region Theme Variety Tests
 
     [Fact]
     public async Task Packs_CoverDifferentThemes()
@@ -417,6 +383,4 @@ public class StoryPackSelectorViewModelTests
             pack.EstimatedPlayTime.Should().BeGreaterThan(0);
         });
     }
-
-    #endregion
 }

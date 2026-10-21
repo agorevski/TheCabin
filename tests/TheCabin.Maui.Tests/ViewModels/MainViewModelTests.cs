@@ -1,15 +1,15 @@
-using Xunit;
-using Moq;
 using FluentAssertions;
-using TheCabin.Maui.ViewModels;
+using Microsoft.Extensions.Logging;
+using Moq;
+using TheCabin.Core.Engine;
 using TheCabin.Core.Interfaces;
 using TheCabin.Core.Models;
-using TheCabin.Core.Engine;
 using TheCabin.Core.Services;
-using TheCabin.Maui.Services;
-using Microsoft.Extensions.Logging;
 using TheCabin.Maui.Models;
+using TheCabin.Maui.Services;
 using TheCabin.Maui.Tests.Mocks;
+using TheCabin.Maui.ViewModels;
+using Xunit;
 
 namespace TheCabin.Maui.Tests.ViewModels;
 
@@ -102,8 +102,6 @@ public class MainViewModelTests
         );
     }
 
-    #region Initialization & Properties Tests (M-01 to M-06)
-
     [Fact]
     public void Constructor_InitializesProperties()
     {
@@ -180,10 +178,6 @@ public class MainViewModelTests
         _viewModel.PlayerHealth.Should().Be(100);
     }
 
-    #endregion
-
-    #region Stats Bar Tests (M-10 to M-17)
-
     [Fact]
     public async Task StatsBar_DisplaysLocationName()
     {
@@ -217,8 +211,13 @@ public class MainViewModelTests
     [Fact]
     public async Task StatsBar_DisplaysGameTime()
     {
+        // Arrange - a new game always starts at 0:00, so game time comes from a loaded save
+        const int saveId = 7;
+        _mockGameStateService.Setup(x => x.LoadGameAsync(saveId))
+            .Returns(Task.CompletedTask);
+
         // Act
-        await _viewModel.InitializeAsync();
+        await _viewModel.LoadSavedGameAsync(saveId);
 
         // Assert
         _viewModel.GameTime.Should().Be("0:30");
@@ -246,10 +245,6 @@ public class MainViewModelTests
         _viewModel.CurrentLocation.Should().NotBeEmpty();
         _viewModel.PlayerHealth.Should().BeGreaterOrEqualTo(0);
     }
-
-    #endregion
-
-    #region Story Feed Tests (M-20 to M-29)
 
     [Fact]
     public void StoryFeed_InitiallyEmpty()
@@ -334,10 +329,6 @@ public class MainViewModelTests
         _viewModel.StoryFeed.Count.Should().BeLessOrEqualTo(101); // +1 for initial room description
     }
 
-    #endregion
-
-    #region Voice Control Tests (M-30 to M-37)
-
     [Fact]
     public async Task ToggleListeningCommand_WhenNotListening_StartsListening()
     {
@@ -419,10 +410,6 @@ public class MainViewModelTests
         _viewModel.StoryFeed.Should().Contain(e => e.Type == NarrativeType.SystemMessage);
     }
 
-    #endregion
-
-    #region Command Tests (M-50 to M-58)
-
     [Fact]
     public void SaveGameCommand_IsNotNull()
     {
@@ -497,10 +484,6 @@ public class MainViewModelTests
         _viewModel.StoryFeed.Should().Contain(e => e.Type == NarrativeType.SystemMessage);
     }
 
-    #endregion
-
-    #region TTS Integration Tests
-
     [Fact]
     public async Task ProcessCommand_CallsTtsWhenEnabled()
     {
@@ -566,10 +549,6 @@ public class MainViewModelTests
         _mockTtsService.Verify(x => x.SpeakAsync(It.Is<string>(s => !string.IsNullOrEmpty(s)), It.IsAny<CancellationToken>()), Times.Never);
     }
 
-    #endregion
-
-    #region Game State & Loading Tests
-
     [Fact]
     public async Task LoadSavedGameAsync_LoadsGameState()
     {
@@ -599,10 +578,6 @@ public class MainViewModelTests
         // Assert
         _viewModel.StoryFeed.Should().Contain(e => e.Text.Contains("loaded successfully"));
     }
-
-    #endregion
-
-    #region Command Processing Tests
 
     [Fact]
     public async Task ProcessTextCommand_IgnoresEmptyInput()
@@ -665,6 +640,4 @@ public class MainViewModelTests
         // Assert
         _viewModel.TranscriptText.Should().BeEmpty();
     }
-
-    #endregion
 }

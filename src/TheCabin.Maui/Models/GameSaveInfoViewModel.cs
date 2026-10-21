@@ -25,7 +25,7 @@ public class GameSaveInfoViewModel
         >= 75 => Color.FromArgb("#7ED321"), // Green
         >= 50 => Color.FromArgb("#F5A623"), // Orange
         >= 25 => Color.FromArgb("#FF6B35"), // Dark Orange
-        _ => Color.FromArgb("#D0021B")      // Red
+        _ => Color.FromArgb("#D0021B") // Red
     };
 
     private string GetThemeIcon()

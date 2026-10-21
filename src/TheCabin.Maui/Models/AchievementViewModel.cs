@@ -77,11 +77,18 @@ public partial class AchievementViewModel : ObservableObject
         }
 
         // Set status text
-        viewModel.StatusText = viewModel.IsUnlocked
-            ? $"Unlocked {viewModel.UnlockDate:MMM d, yyyy}"
-            : viewModel.HasProgress
-                ? $"Progress: {viewModel.ProgressText}"
-                : "Locked";
+        if (viewModel.IsUnlocked)
+        {
+            viewModel.StatusText = $"Unlocked {viewModel.UnlockDate:MMM d, yyyy}";
+        }
+        else if (viewModel.HasProgress)
+        {
+            viewModel.StatusText = $"Progress: {viewModel.ProgressText}";
+        }
+        else
+        {
+            viewModel.StatusText = "Locked";
+        }
 
         return viewModel;
     }
@@ -108,11 +115,18 @@ public partial class AchievementViewModel : ObservableObject
             ProgressPercentage = IsUnlocked ? 1.0 : 0.0;
         }
 
-        StatusText = IsUnlocked
-            ? $"Unlocked {UnlockDate:MMM d, yyyy}"
-            : HasProgress
-                ? $"Progress: {ProgressText}"
-                : "Locked";
+        if (IsUnlocked)
+        {
+            StatusText = $"Unlocked {UnlockDate:MMM d, yyyy}";
+        }
+        else if (HasProgress)
+        {
+            StatusText = $"Progress: {ProgressText}";
+        }
+        else
+        {
+            StatusText = "Locked";
+        }
     }
 
     /// <summary>
