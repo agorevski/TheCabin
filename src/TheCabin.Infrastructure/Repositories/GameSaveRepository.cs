@@ -10,6 +10,7 @@ namespace TheCabin.Infrastructure.Repositories;
 public class GameSaveRepository : IGameSaveRepository
 {
     private readonly string _savesPath;
+    private readonly object _idLock = new();
     private int _nextId = 1;
 
     public GameSaveRepository(string? savesPath = null)
@@ -37,7 +38,15 @@ public class GameSaveRepository : IGameSaveRepository
         if (gameState == null)
             throw new ArgumentNullException(nameof(gameState));
 
-        var saveId = _nextId++;
+        int saveId;
+        lock (_idLock)
+        {
+            saveId = _nextId++;
+
+            // Persist the counter before writing the save so a crash cannot leave a stale counter that reuses this ID.
+            SaveNextId();
+        }
+
         var fileName = $"save_{saveId}.json";
         var filePath = Path.Combine(_savesPath, fileName);
 
@@ -58,35 +67,49 @@ public class GameSaveRepository : IGameSaveRepository
         };
 
         var json = JsonSerializer.Serialize(saveData, options);
-        await File.WriteAllTextAsync(filePath, json);
 
-        // Save next ID
-        SaveNextId();
+        // Write to a temp file and move it into place so a crash never leaves a truncated save behind.
+        var tempPath = filePath + ".tmp";
+        await File.WriteAllTextAsync(tempPath, json);
+        File.Move(tempPath, filePath, overwrite: true);
 
         return saveId;
     }
 
     /// <summary>
-    /// Loads a game state by ID
+    /// Loads a game state by ID. Returns null when the save does not exist; throws <see cref="InvalidDataException"/> when it exists but cannot be read.
     /// </summary>
     public async Task<GameState?> LoadAsync(int saveId)
     {
         var fileName = $"save_{saveId}.json";
         var filePath = Path.Combine(_savesPath, fileName);
 
-        if (!File.Exists(filePath))
+        string json;
+        try
+        {
+            json = await File.ReadAllTextAsync(filePath);
+        }
+        catch (FileNotFoundException)
+        {
             return null;
-
-        var json = await File.ReadAllTextAsync(filePath);
+        }
 
         var options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         };
 
-        var saveData = JsonSerializer.Deserialize<SaveFileData>(json, options);
+        SaveFileData? saveData;
+        try
+        {
+            saveData = JsonSerializer.Deserialize<SaveFileData>(json, options);
+        }
+        catch (JsonException ex)
+        {
+            throw new InvalidDataException($"Save {saveId} is corrupt and cannot be loaded.", ex);
+        }
 
-        return saveData?.GameState;
+        return saveData?.GameState ?? throw new InvalidDataException($"Save {saveId} does not contain a game state.");
     }
 
     /// <summary>
@@ -144,10 +167,8 @@ public class GameSaveRepository : IGameSaveRepository
         var fileName = $"save_{saveId}.json";
         var filePath = Path.Combine(_savesPath, fileName);
 
-        if (File.Exists(filePath))
-        {
-            File.Delete(filePath);
-        }
+        // File.Delete is a no-op for missing files, avoiding a check-then-delete race.
+        File.Delete(filePath);
 
         return Task.CompletedTask;
     }
@@ -165,30 +186,29 @@ public class GameSaveRepository : IGameSaveRepository
 
     private void LoadNextId()
     {
+        // The counter file can lag behind existing saves (e.g. after a crash), so never go below the highest existing ID.
+        var nextIdFromFile = 1;
         var idFile = Path.Combine(_savesPath, ".nextid");
-        if (File.Exists(idFile))
+        if (File.Exists(idFile) && int.TryParse(File.ReadAllText(idFile), out var storedId))
         {
-            var content = File.ReadAllText(idFile);
-            if (int.TryParse(content, out var id))
-            {
-                _nextId = id;
-                return;
-            }
+            nextIdFromFile = storedId;
         }
 
-        // Find highest ID from existing saves
-        var files = Directory.GetFiles(_savesPath, "save_*.json");
-        foreach (var file in files)
+        var nextIdFromSaves = 1;
+        foreach (var file in Directory.GetFiles(_savesPath, "save_*.json"))
         {
             var fileName = Path.GetFileNameWithoutExtension(file);
-            if (fileName.StartsWith("save_") &&
+            if (fileName.StartsWith("save_", StringComparison.Ordinal) &&
                 int.TryParse(fileName.Substring(5), out var id))
             {
-                _nextId = Math.Max(_nextId, id + 1);
+                nextIdFromSaves = Math.Max(nextIdFromSaves, id + 1);
             }
         }
+
+        _nextId = Math.Max(nextIdFromFile, nextIdFromSaves);
     }
 
+    // Must be called while holding _idLock.
     private void SaveNextId()
     {
         var idFile = Path.Combine(_savesPath, ".nextid");
