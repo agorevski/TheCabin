@@ -25,6 +25,7 @@ dotnet clean src/TheCabin.Core/TheCabin.Core.csproj --configuration Release --ve
 dotnet clean src/TheCabin.Infrastructure/TheCabin.Infrastructure.csproj --configuration Release --verbosity quiet 2>$null
 dotnet clean tests/TheCabin.Core.Tests/TheCabin.Core.Tests.csproj --configuration Release --verbosity quiet 2>$null
 dotnet clean tests/TheCabin.Infrastructure.Tests/TheCabin.Infrastructure.Tests.csproj --configuration Release --verbosity quiet 2>$null
+dotnet clean tests/TheCabin.Maui.Tests/TheCabin.Maui.Tests.csproj --configuration Release --verbosity quiet 2>$null
 Write-Host "√ Clean successful" -ForegroundColor Green
 Write-Host ""
 
@@ -69,16 +70,11 @@ if (Test-Path "./TestResults") {
     Remove-Item -Recurse -Force "./TestResults"
 }
 
-# Prepare test arguments
-$testArgs = @("--configuration", "Release", "--verbosity", "quiet")
-if ($WithCoverage) {
-    $testArgs += @('--collect:"XPlat Code Coverage"', "--results-directory", "./TestResults", "--settings", "tests/coverlet.runsettings")
-}
-
+# Coverage is collected only for Core and Infrastructure, using the filters in tests/coverlet.runsettings
 # Run Core Tests
 Write-Host "  Running TheCabin.Core.Tests..." -ForegroundColor Gray
 if ($WithCoverage) {
-    dotnet test tests/TheCabin.Core.Tests/TheCabin.Core.Tests.csproj --configuration Release --verbosity quiet --collect:"XPlat Code Coverage" --results-directory ./TestResults
+    dotnet test tests/TheCabin.Core.Tests/TheCabin.Core.Tests.csproj --configuration Release --verbosity quiet --collect:"XPlat Code Coverage" --results-directory ./TestResults --settings tests/coverlet.runsettings
 } else {
     dotnet test tests/TheCabin.Core.Tests/TheCabin.Core.Tests.csproj --configuration Release --verbosity quiet
 }
@@ -92,7 +88,7 @@ if ($LASTEXITCODE -ne 0) {
 # Run Infrastructure Tests
 Write-Host "  Running TheCabin.Infrastructure.Tests..." -ForegroundColor Gray
 if ($WithCoverage) {
-    dotnet test tests/TheCabin.Infrastructure.Tests/TheCabin.Infrastructure.Tests.csproj --configuration Release --verbosity quiet --collect:"XPlat Code Coverage" --results-directory ./TestResults
+    dotnet test tests/TheCabin.Infrastructure.Tests/TheCabin.Infrastructure.Tests.csproj --configuration Release --verbosity quiet --collect:"XPlat Code Coverage" --results-directory ./TestResults --settings tests/coverlet.runsettings
 } else {
     dotnet test tests/TheCabin.Infrastructure.Tests/TheCabin.Infrastructure.Tests.csproj --configuration Release --verbosity quiet
 }
@@ -102,6 +98,16 @@ if ($LASTEXITCODE -ne 0) {
 } else {
     Write-Host "√ Infrastructure Tests completed"-ForegroundColor Green
 }
+
+# Run MAUI ViewModel Tests (no coverage: the runsettings filter only targets Core and Infrastructure)
+Write-Host "  Running TheCabin.Maui.Tests..." -ForegroundColor Gray
+dotnet test tests/TheCabin.Maui.Tests/TheCabin.Maui.Tests.csproj --configuration Release --verbosity quiet
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "X MAUI Tests failed or had errors" -ForegroundColor Red
+    $testSuccess = $false
+} else {
+    Write-Host "√ MAUI Tests completed" -ForegroundColor Green
+}
 Write-Host ""
 
 # Check Coverage Threshold
@@ -110,24 +116,29 @@ if ($WithCoverage -and $testSuccess) {
     $coverageFiles = Get-ChildItem -Recurse -Path "./TestResults" -Filter "coverage.cobertura.xml" -ErrorAction SilentlyContinue
     
     if ($coverageFiles) {
-        $totalLineCoverage = 0
-        $fileCount = 0
-        
+        # Merge reports so a line counts as covered if any test project hits it (Core is referenced by both test projects)
+        $lineHits = @{}
         foreach ($file in $coverageFiles) {
-            $xml = [xml](Get-Content $file.FullName)
-            $lineRate = [decimal]$xml.coverage.'line-rate'
-            if ($lineRate -gt 0) {
-                $totalLineCoverage += $lineRate * 100
-                $fileCount++
+            $xml = [xml](Get-Content $file.FullName -Raw)
+            foreach ($classNode in $xml.SelectNodes("//class")) {
+                foreach ($lineNode in $classNode.SelectNodes("lines/line")) {
+                    $key = "$($classNode.filename):$($lineNode.number)"
+                    $hits = [int]$lineNode.hits
+                    if (-not $lineHits.ContainsKey($key) -or $hits -gt $lineHits[$key]) {
+                        $lineHits[$key] = $hits
+                    }
+                }
             }
         }
-        
-        if ($fileCount -gt 0) {
-            $averageCoverage = [math]::Round($totalLineCoverage / $fileCount, 2)
-            Write-Host "  Line Coverage: $averageCoverage% (Threshold: $CoverageThreshold%)" -ForegroundColor Gray
+
+        $totalLines = $lineHits.Count
+        if ($totalLines -gt 0) {
+            $coveredLines = @($lineHits.Values | Where-Object { $_ -gt 0 }).Count
+            $lineCoverage = [math]::Round(100 * $coveredLines / $totalLines, 2)
+            Write-Host "  Line Coverage: $lineCoverage% ($coveredLines/$totalLines lines, Threshold: $CoverageThreshold%)" -ForegroundColor Gray
             
-            if ($averageCoverage -lt $CoverageThreshold) {
-                Write-Host "X Coverage below threshold ($averageCoverage% < $CoverageThreshold%)" -ForegroundColor Red
+            if ($lineCoverage -lt $CoverageThreshold) {
+                Write-Host "X Coverage below threshold ($lineCoverage% < $CoverageThreshold%)" -ForegroundColor Red
                 $coverageSuccess = $false
             } else {
                 Write-Host "√ Coverage meets threshold" -ForegroundColor Green

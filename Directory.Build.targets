@@ -1,0 +1,6 @@
+<Project>
+  <!-- Imported after each project body, so project-declared TargetFramework/TargetFrameworks (e.g. TheCabin.Maui, StoryPackValidator) are already known here. -->
+  <PropertyGroup>
+    <TargetFramework Condition="'$(TargetFramework)' == '' And '$(TargetFrameworks)' == ''">net9.0</TargetFramework>
+  </PropertyGroup>
+</Project>
