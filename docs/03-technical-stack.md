@@ -50,7 +50,7 @@ This document details the complete technology stack for The Cabin, including fra
 |------|---------|---------|
 | Visual Studio 2022 | 17.8+ | Primary IDE |
 | .NET SDK | 8.0+ | Runtime and libraries |
-| Android SDK | API 21-34 | Android development |
+| Android SDK | API 21+ | Android development |
 | Android Emulator | Latest | Testing |
 | Git | 2.40+ | Version control |
 

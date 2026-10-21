@@ -82,7 +82,7 @@
 - Runtime permissions model support
 - Modern speech recognition APIs
 
-**Target SDK**: API Level 34 (Android 14)
+**Target SDK**: not pinned in the project; uses the .NET Android SDK default (minimum API Level 21)
 
 - Latest security and performance features
 - Predictive back gesture support

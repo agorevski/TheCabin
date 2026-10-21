@@ -44,13 +44,13 @@ TheCabin/
 
 ```csharp
 using Microsoft.Extensions.Logging;
-using TheCabin.ViewModels;
-using TheCabin.Views;
-using TheCabin.Services;
-using TheCabin.Engine;
+using TheCabin.Maui.ViewModels;
+using TheCabin.Maui.Views;
+using TheCabin.Maui.Services;
+using TheCabin.Core.Engine;
 using CommunityToolkit.Maui;
 
-namespace TheCabin;
+namespace TheCabin.Maui;
 
 public static class MauiProgram
 {
@@ -183,7 +183,7 @@ public static class MauiProgram
 <?xml version="1.0" encoding="UTF-8" ?>
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="TheCabin.App">
+             x:Class="TheCabin.Maui.App">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -196,7 +196,7 @@ public static class MauiProgram
 ```
 
 ```csharp
-namespace TheCabin;
+namespace TheCabin.Maui;
 
 public partial class App : Application
 {
@@ -230,10 +230,10 @@ public partial class App : Application
 ```xaml
 <?xml version="1.0" encoding="UTF-8" ?>
 <Shell
-    x:Class="TheCabin.AppShell"
+    x:Class="TheCabin.Maui.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:TheCabin.Views"
+    xmlns:local="clr-namespace:TheCabin.Maui.Views"
     Shell.FlyoutBehavior="Disabled"
     Shell.NavBarIsVisible="False">
 
@@ -251,7 +251,7 @@ public partial class App : Application
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace TheCabin.ViewModels;
+namespace TheCabin.Maui.ViewModels;
 
 public partial class BaseViewModel : ObservableObject
 {
@@ -320,7 +320,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 
-namespace TheCabin.ViewModels;
+namespace TheCabin.Maui.ViewModels;
 
 public partial class MainViewModel : BaseViewModel
 {
@@ -533,7 +533,7 @@ using Android.App;
 using Android.Content.PM;
 using Android.OS;
 
-namespace TheCabin.Platforms.Android;
+namespace TheCabin.Maui;
 
 [Activity(
     Theme = "@style/Maui.SplashTheme", 
@@ -582,7 +582,7 @@ public class MainActivity : MauiAppCompatActivity
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     
-    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="34" />
+    <uses-sdk android:minSdkVersion="21" />
 </manifest>
 ```
 
@@ -671,9 +671,9 @@ Excerpt from `src/TheCabin.Maui/TheCabin.Maui.csproj`:
 ```csharp
 #if DEBUG
 [assembly: System.Reflection.Metadata.MetadataUpdateHandler(
-    typeof(TheCabin.HotReloadService))]
+    typeof(TheCabin.Maui.HotReloadService))]
 
-namespace TheCabin;
+namespace TheCabin.Maui;
 
 public static class HotReloadService
 {

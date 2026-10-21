@@ -7,7 +7,7 @@ A voice-controlled interactive fiction game built with .NET MAUI for Android and
 [![Windows](https://img.shields.io/badge/Windows-10%2B-0078D6?logo=windows)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/Tests-174%20Passed-success)](tests/)
-[![Coverage](https://img.shields.io/badge/Coverage-54%25-yellow)](tests/)
+[![Coverage](https://img.shields.io/badge/Core%2BInfra%20line%20coverage-74%25-yellow)](tests/)
 
 ## ✨ Features
 
@@ -85,7 +85,7 @@ TheCabin/
 
 #### For Android Testing
 
-- Android SDK (API Level 21-34)
+- Android SDK (API Level 21+)
 - Android device or emulator
 
 #### For Windows Testing
